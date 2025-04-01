@@ -13,6 +13,5 @@ namespace RealEstate.Domain.Entities.dbo
         public DateTime FechaPago { get; set; }
         public decimal Monto { get; set; }
         public string MetodoPago { get; set; }
-
     }
 }
