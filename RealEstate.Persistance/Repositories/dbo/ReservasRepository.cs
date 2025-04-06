@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Domain.Result;
+using RealEstate.Identity.Shared.Context;
 using RealEstate.Persistance.Base;
 using RealEstate.Persistance.Context;
 using RealEstate.Persistance.Interfaces.dbo;
@@ -10,12 +11,13 @@ using RealEstate.Persistance.Validations;
 
 namespace RealEstate.Persistance.Repositories.dbo
 {
-    public sealed class ReservasRepository(RealEstateContext realEstateContext, ILogger<ReservasRepository> logger,
+    public sealed class ReservasRepository(RealEstateContext realEstateContext, IdentityContext identityContext, ILogger<ReservasRepository> logger,
         ReservasValidate reservasValidate) : BaseRepository<Reservas>(realEstateContext), IReservasRepository
     {
-        private readonly RealEstateContext realEstate_Context = realEstateContext;
+        private readonly RealEstateContext _realEstateContext = realEstateContext;
+        private readonly IdentityContext _identityContext = identityContext;
         private readonly ILogger<ReservasRepository> logger = logger;
-        private readonly ReservasValidate reservas_Validate = reservasValidate;
+        private readonly ReservasValidate _reservasValidate = reservasValidate;
 
         public async override Task<OperationResult> Save(Reservas reservas)
         {
@@ -23,7 +25,7 @@ namespace RealEstate.Persistance.Repositories.dbo
 
             try
             {
-                reservas_Validate.ReservasValidations(result, reservas);
+                _reservasValidate.ReservasValidations(result, reservas);
 
                 result = await base.Save(reservas);
             }
@@ -35,16 +37,18 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
         public async override Task<OperationResult> Update(Reservas reservas)
         {
             OperationResult result = new OperationResult();
 
             try
             {
-                reservas_Validate.ReservasValidations(result, reservas);
+                _reservasValidate.ReservasValidations(result, reservas);
 
-                Reservas? reservasToUpdate = await realEstate_Context.Reservas.FindAsync(reservas.ReservaID);
+                Reservas? reservasToUpdate = await _realEstateContext.Reservas.FindAsync(reservas.ReservaID);
                 
+                reservasToUpdate.ReservaID = reservas.ReservaID;
                 reservasToUpdate.PropiedadID = reservas.PropiedadID;
                 reservasToUpdate.ClienteID = reservas.ClienteID;
                 reservasToUpdate.FechaHora = reservas.FechaHora;
@@ -60,6 +64,7 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
         public async override Task<OperationResult> Remove(Reservas reservas)
         {
             OperationResult result = new OperationResult();
@@ -83,58 +88,85 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
         public async override Task<OperationResult> GetAll()
         {
             OperationResult result = new OperationResult();
 
             try
             {
-                result.Data = await (from reserva in realEstate_Context.Reservas
-                                     join propiedad in realEstate_Context.Propiedades on reserva.PropiedadID equals propiedad.PropiedadID
-                                     orderby reserva.ReservaID ascending
-                                     /*join cliente in realEstate_Context.Usuarios on reserva.ClienteID equals cliente.UserId*/
-                                     select new ReservasModel()
-                                     {
-                                         ReservaID = reserva.ReservaID,
-                                         PropiedadID = propiedad.PropiedadID,
-                                         //ClienteID = cliente.UserId,
-                                         FechaHora = reserva.FechaHora,
-                                         Estado = reserva.Estado
-                                     }).AsNoTracking()
-                                     .ToListAsync();
+                var propiedades = await _realEstateContext.Propiedades
+                    .ToListAsync();
+
+                var usuarios = await _identityContext.Users
+                    .ToListAsync();
+
+                var reservas = await _realEstateContext.Reservas 
+                    .ToListAsync();
+
+                var datos = (from reserva in reservas
+                             join propiedad in propiedades on reserva.PropiedadID equals propiedad.PropiedadID
+                             join cliente in usuarios on reserva.ClienteID equals cliente.Id
+
+                             orderby reserva.ReservaID ascending
+                             select new ReservasModel()
+                             {
+                                 ReservaID = reserva.ReservaID,
+                                 PropiedadID = propiedad.PropiedadID,
+                                 ClienteID = cliente.Id,
+                                 FechaHora = reserva.FechaHora,
+                                 Estado = reserva.Estado
+
+                             }).ToList();
+
+                result.Data = datos;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "Error al obtener las reservas";
+                result.Message = "Ha ocurrido un error obteniendo las reservas";
                 logger.LogError(result.Message, ex.ToString());
             }
             return result;
         }
+
         public async override Task<OperationResult> GetById(int id)
         {
             OperationResult result = new OperationResult();
 
             try
             {
-                result.Data = await (from reserva in realEstate_Context.Reservas
-                                     join propiedad in realEstate_Context.Propiedades on reserva.PropiedadID equals propiedad.PropiedadID
-                                     /*join cliente in realEstate_Context.Usuarios on reserva.ClienteID equals cliente.UserId*/
-                                     where reserva.ReservaID == id
-                                     select new ReservasModel()
-                                     {
-                                         ReservaID = reserva.ReservaID,
-                                         PropiedadID = propiedad.PropiedadID,
-                                         //ClienteID = cliente.UserId,
-                                         FechaHora = reserva.FechaHora,
-                                         Estado = reserva.Estado
-                                     }).AsNoTracking()
-                                     .FirstOrDefaultAsync();
+                var propiedades = await _realEstateContext.Propiedades
+                    .ToListAsync();
+
+                var usuarios = await _identityContext.Users
+                    .ToListAsync();
+
+                var reservas = await _realEstateContext.Reservas
+                    .ToListAsync();
+
+                var datos = (from reserva in reservas
+                             join propiedad in propiedades on reserva.PropiedadID equals propiedad.PropiedadID
+                             join cliente in usuarios on reserva.ClienteID equals cliente.Id
+
+                             where reserva.ReservaID == id
+
+                             select new ReservasModel()
+                             {
+                                 ReservaID = reserva.ReservaID,
+                                 PropiedadID = propiedad.PropiedadID,
+                                 ClienteID = cliente.Id,
+                                 FechaHora = reserva.FechaHora,
+                                 Estado = reserva.Estado
+
+                             }).ToList();
+
+                result.Data = datos;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "Error al obtener la reserva";
+                result.Message = "Ha ocurrido un error obteniendo las reservas";
                 logger.LogError(result.Message, ex.ToString());
             }
             return result;

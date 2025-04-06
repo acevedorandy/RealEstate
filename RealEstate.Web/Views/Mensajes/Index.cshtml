@@ -1,0 +1,81 @@
+﻿@model IEnumerable<RealEstate.Persistance.Models.dbo.MensajesModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@if (Model == null || !Model.Any())
+{
+    <h2>No existen mensajes registrados actualmente.</h2>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.MensajeID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RemitenteID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DestinatarioID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PropiedadID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Mensaje)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Enviado)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Visto)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MensajeID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RemitenteID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DestinatarioID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PropiedadID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Mensaje)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Enviado)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Visto)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id=item.MensajeID }) |
+                        @Html.ActionLink("Details", "Details", new { id=item.MensajeID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id=item.MensajeID })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}

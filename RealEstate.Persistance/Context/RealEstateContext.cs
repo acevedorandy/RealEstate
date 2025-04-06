@@ -19,6 +19,7 @@ namespace RealEstate.Persistance.Context
         public DbSet<Mensajes> Mensajes { get; set; }
         public DbSet<Pagos> Pagos { get; set; }
         public DbSet<Propiedades> Propiedades { get; set; }
+        public DbSet<PropiedadFotos> PropiedadFotos { get; set; }
         public DbSet<Reservas> Reservas { get; set; }
         public DbSet<Usuarios> Usuarios { get; set; }
 
