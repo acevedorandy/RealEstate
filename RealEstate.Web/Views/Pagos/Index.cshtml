@@ -1,0 +1,68 @@
+﻿@model IEnumerable<RealEstate.Persistance.Models.dbo.PagosModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@if (Model == null || !Model.Any())
+{
+    <h2>No hay pagos registrados.</h2>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PagoID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ContratoID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaPago)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Monto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MetodoPago)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PagoID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ContratoID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaPago)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Monto)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MetodoPago)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.PagoID }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.PagoID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.PagoID })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -9,6 +9,7 @@ namespace RealEstate.Domain.Entities.dbo
     public class Favoritos
     {
         [Key]
+        public int FavoritoID { get; set; }
         public string UsuarioID { get; set; }
         public int PropiedadID { get; set; }
         public bool IsFavoritos { get; set; }

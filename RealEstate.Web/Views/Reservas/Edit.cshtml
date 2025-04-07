@@ -1,0 +1,52 @@
+﻿@model RealEstate.Persistance.Models.dbo.ReservasModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ReservaID" class="control-label"></label>
+                <input asp-for="ReservaID" class="form-control" />
+                <span asp-validation-for="ReservaID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PropiedadID" class="control-label"></label>
+                <input asp-for="PropiedadID" class="form-control" />
+                <span asp-validation-for="PropiedadID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClienteID" class="control-label"></label>
+                <input asp-for="ClienteID" class="form-control" />
+                <span asp-validation-for="ClienteID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaHora" class="control-label"></label>
+                <input asp-for="FechaHora" class="form-control" />
+                <span asp-validation-for="FechaHora" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Estado" /> @Html.DisplayNameFor(model => model.Estado)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

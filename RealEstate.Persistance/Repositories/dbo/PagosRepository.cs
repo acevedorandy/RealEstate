@@ -13,9 +13,9 @@ namespace RealEstate.Persistance.Repositories.dbo
     public sealed class PagosRepository(RealEstateContext realEstateContext, ILogger<PagosRepository> logger,
         PagosValidate pagosValidate) : BaseRepository<Pagos>(realEstateContext), IPagosRepository
     {
-        private readonly RealEstateContext realEstate_Context = realEstateContext;
+        private readonly RealEstateContext _realEstateContext = realEstateContext;
         private readonly ILogger<PagosRepository> logger = logger;
-        private readonly PagosValidate pagos_Validate = pagosValidate;
+        private readonly PagosValidate _pagosValidate = pagosValidate;
 
         public async override Task<OperationResult> Save(Pagos pagos)
         {
@@ -23,7 +23,7 @@ namespace RealEstate.Persistance.Repositories.dbo
 
             try
             {
-                pagos_Validate.PagosValidations(result, pagos);
+                _pagosValidate.PagosValidations(result, pagos);
 
                 result = await base.Save(pagos);
             }
@@ -35,14 +35,16 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
         public async override Task<OperationResult> Update(Pagos pagos)
         {
             OperationResult result = new OperationResult();
 
             try
             {
-                Pagos? pagosToUpdate = await realEstate_Context.Pagos.FindAsync(pagos.PagoID);
+                Pagos? pagosToUpdate = await _realEstateContext.Pagos.FindAsync(pagos.PagoID);
 
+                pagosToUpdate.PagoID = pagos.PagoID;
                 pagosToUpdate.ContratoID = pagos.ContratoID;
                 pagosToUpdate.FechaPago = pagos.FechaPago;
                 pagosToUpdate.Monto = pagos.Monto;
@@ -58,6 +60,7 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
         public async override Task<OperationResult> Remove(Pagos pagos)
         {
             OperationResult result = new OperationResult();
@@ -74,14 +77,16 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
         public async override Task<OperationResult> GetAll()
         {
             OperationResult result = new OperationResult();
 
             try
             {
-                result.Data = await (from pagos in realEstate_Context.Pagos
-                                     join contrato in realEstate_Context.Contratos on pagos.ContratoID equals contrato.ContratoID
+                result.Data = await (from pagos in _realEstateContext.Pagos
+                                     join contrato in _realEstateContext.Contratos on pagos.ContratoID equals contrato.ContratoID
+
                                      select new PagosModel()
                                      {
                                          PagoID = pagos.PagoID,
@@ -89,6 +94,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                          FechaPago = pagos.FechaPago,
                                          Monto = pagos.Monto,
                                          MetodoPago = pagos.MetodoPago
+
                                      }).AsNoTracking()
                                      .ToListAsync();
             }
@@ -106,8 +112,11 @@ namespace RealEstate.Persistance.Repositories.dbo
 
             try
             {
-                result.Data = await (from pagos in realEstate_Context.Pagos
-                                     join contrato in realEstate_Context.Contratos on pagos.ContratoID equals contrato.ContratoID
+                result.Data = await (from pagos in _realEstateContext.Pagos
+                                     join contrato in _realEstateContext.Contratos on pagos.ContratoID equals contrato.ContratoID
+
+                                     where pagos.PagoID == id
+
                                      select new PagosModel()
                                      {
                                          PagoID = pagos.PagoID,
@@ -115,6 +124,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                          FechaPago = pagos.FechaPago,
                                          Monto = pagos.Monto,
                                          MetodoPago = pagos.MetodoPago
+
                                      }).AsNoTracking()
                                      .FirstOrDefaultAsync();
             }

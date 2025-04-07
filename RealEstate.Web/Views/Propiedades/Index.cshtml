@@ -1,0 +1,135 @@
+﻿@model IEnumerable<RealEstate.Persistance.Models.dbo.PropiedadesModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@if (Model == null || !Model.Any())
+{
+    <h2>No hay propiedades registradas actualmente.</h2>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PropiedadID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Codigo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AgenteID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Titulo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Descripcion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Precio)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Direccion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ciudad)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sector)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CodigoPostal)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TotalNivel)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Piso)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AñoConstruccion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TipoPropiedad)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Disponibilidad)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Imagen)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PropiedadID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Codigo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AgenteID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Titulo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Descripcion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Direccion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ciudad)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sector)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CodigoPostal)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TotalNivel)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Piso)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AñoConstruccion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoPropiedad)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Disponibilidad)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Imagen)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.PropiedadID }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.PropiedadID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.PropiedadID })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}

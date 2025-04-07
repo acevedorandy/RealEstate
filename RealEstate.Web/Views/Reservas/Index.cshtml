@@ -1,0 +1,69 @@
+﻿@model IEnumerable<RealEstate.Persistance.Models.dbo.ReservasModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@if (Model == null || !Model.Any())
+{
+    <h2>No hay reservas registratas actualmente.</h2>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReservaID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PropiedadID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClienteID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaHora)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Estado)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReservaID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PropiedadID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClienteID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaHora)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Estado)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ReservaID }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.ReservaID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.ReservaID })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
