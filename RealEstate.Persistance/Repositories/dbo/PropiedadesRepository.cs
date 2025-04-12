@@ -58,6 +58,12 @@ namespace RealEstate.Persistance.Repositories.dbo
                 propiedadesToUpdate.Ciudad = propiedades.Ciudad;
                 propiedadesToUpdate.Sector = propiedades.Sector;
                 propiedadesToUpdate.CodigoPostal = propiedades.CodigoPostal;
+
+                propiedadesToUpdate.Habitaciones = propiedades.Habitaciones;
+                propiedadesToUpdate.Baños = propiedades.Baños;
+                propiedadesToUpdate.Parqueos = propiedades.Parqueos;
+                propiedadesToUpdate.TamañoTerreno = propiedades.TamañoTerreno;
+
                 propiedadesToUpdate.TotalNivel = propiedades.TotalNivel;
                 propiedadesToUpdate.Piso = propiedades.Piso;
                 propiedadesToUpdate.AñoConstruccion = propiedades.AñoConstruccion;
@@ -114,6 +120,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                 var datos = (from propiedad in propiedades
                              join agente in usuarios on propiedad.AgenteID equals agente.Id
 
+                             orderby propiedad.PropiedadID descending
+
                                 select new PropiedadesModel()
                                 {
                                     PropiedadID = propiedad.PropiedadID,
@@ -126,14 +134,20 @@ namespace RealEstate.Persistance.Repositories.dbo
                                     Ciudad = propiedad.Ciudad,
                                     Sector = propiedad.Sector,
                                     CodigoPostal = propiedad.CodigoPostal,
+                                    Habitaciones = propiedad.Habitaciones,
+                                    Baños = propiedad.Baños,
+                                    Parqueos = propiedad.Parqueos,
+                                    TamañoTerreno = propiedad.TamañoTerreno,
                                     TotalNivel = propiedad.TotalNivel,
                                     Piso = propiedad.Piso,
                                     AñoConstruccion = propiedad.AñoConstruccion,
                                     TipoPropiedad = propiedad.TipoPropiedad,
                                     Disponibilidad = propiedad.Disponibilidad,
-                                    Imagen = propiedad.Imagen
+                                    Imagen = propiedad != null ? propiedad.Imagen : (string?)null
 
                                 }).ToList();
+
+                result.Data = datos;
             }
             catch (Exception ex)
             {
@@ -173,6 +187,10 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  Ciudad = propiedad.Ciudad,
                                  Sector = propiedad.Sector,
                                  CodigoPostal = propiedad.CodigoPostal,
+                                 Habitaciones = propiedad.Habitaciones,
+                                 Baños = propiedad.Baños,
+                                 Parqueos = propiedad.Parqueos,
+                                 TamañoTerreno = propiedad.TamañoTerreno,
                                  TotalNivel = propiedad.TotalNivel,
                                  Piso = propiedad.Piso,
                                  AñoConstruccion = propiedad.AñoConstruccion,
@@ -181,11 +199,216 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  Imagen = propiedad.Imagen
 
                              }).FirstOrDefault();
+
+                result.Data = datos;
             }
             catch (Exception ex)
             {
                 result.Success = false;
                 result.Message = "Ha ocurrido un error obteniendo la propiedad";
+                logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> GetAgentByProperty(int propiedadId)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var propiedades = await _realEstateContext.Propiedades
+                    .ToListAsync();
+
+                var usuarios = await _identityContext.Users
+                    .ToListAsync();
+
+                var datos = (from propiedad in propiedades
+                             join user in usuarios on propiedad.AgenteID equals user.Id
+
+                             where propiedad.PropiedadID == propiedadId
+
+                             select new UsuariosModel
+                             {
+                                 Id = user.Id,
+                                 Nombre = user.Nombre,
+                                 Apellido = user.Apellido,
+                                 Email = user.Email,
+                                 Telefono = user.PhoneNumber
+
+                             }).FirstOrDefault();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo la propiedad";
+                logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> FilterByType(string? tipoPropiedad)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var propiedades = await _realEstateContext.Propiedades
+                    .ToListAsync();
+
+                var usuarios = await _identityContext.Users
+                    .ToListAsync();
+
+                var datos = (from propiedad in propiedades
+                             join agente in usuarios on propiedad.AgenteID equals agente.Id
+
+                             where propiedad.TipoPropiedad == tipoPropiedad 
+
+                             orderby propiedad.PropiedadID descending
+
+                             select new PropiedadesModel()
+                             {
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Codigo = propiedad.Codigo,
+                                 AgenteID = agente.Id,
+                                 Titulo = propiedad.Titulo,
+                                 Descripcion = propiedad.Descripcion,
+                                 Precio = propiedad.Precio,
+                                 Direccion = propiedad.Direccion,
+                                 Ciudad = propiedad.Ciudad,
+                                 Sector = propiedad.Sector,
+                                 CodigoPostal = propiedad.CodigoPostal,
+                                 Habitaciones = propiedad.Habitaciones,
+                                 Baños = propiedad.Baños,
+                                 Parqueos = propiedad.Parqueos,
+                                 TamañoTerreno = propiedad.TamañoTerreno,
+                                 TotalNivel = propiedad.TotalNivel,
+                                 Piso = propiedad.Piso,
+                                 AñoConstruccion = propiedad.AñoConstruccion,
+                                 TipoPropiedad = propiedad.TipoPropiedad,
+                                 Disponibilidad = propiedad.Disponibilidad,
+                                 Imagen = propiedad != null ? propiedad.Imagen : (string?)null
+
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo las propiedades";
+                logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> FilterByPrice(decimal? minPrice, decimal? maxPrice)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var propiedades = await _realEstateContext.Propiedades
+                    .ToListAsync();
+
+                var usuarios = await _identityContext.Users
+                    .ToListAsync();
+
+                var datos = (from propiedad in propiedades
+                             join agente in usuarios on propiedad.AgenteID equals agente.Id
+
+                             where propiedad.Precio >= minPrice && propiedad.Precio <= maxPrice
+
+                             orderby propiedad.PropiedadID descending
+
+                             select new PropiedadesModel()
+                             {
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Codigo = propiedad.Codigo,
+                                 AgenteID = agente.Id,
+                                 Titulo = propiedad.Titulo,
+                                 Descripcion = propiedad.Descripcion,
+                                 Precio = propiedad.Precio,
+                                 Direccion = propiedad.Direccion,
+                                 Ciudad = propiedad.Ciudad,
+                                 Sector = propiedad.Sector,
+                                 CodigoPostal = propiedad.CodigoPostal,
+                                 Habitaciones = propiedad.Habitaciones,
+                                 Baños = propiedad.Baños,
+                                 Parqueos = propiedad.Parqueos,
+                                 TamañoTerreno = propiedad.TamañoTerreno,
+                                 TotalNivel = propiedad.TotalNivel,
+                                 Piso = propiedad.Piso,
+                                 AñoConstruccion = propiedad.AñoConstruccion,
+                                 TipoPropiedad = propiedad.TipoPropiedad,
+                                 Disponibilidad = propiedad.Disponibilidad,
+                                 Imagen = propiedad != null ? propiedad.Imagen : (string?)null
+
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo las propiedades";
+                logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> FilterRoom(int? habitacion, int? baños)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var propiedades = await _realEstateContext.Propiedades
+                    .ToListAsync();
+
+                var usuarios = await _identityContext.Users
+                    .ToListAsync();
+
+                var datos = (from propiedad in propiedades
+                             join agente in usuarios on propiedad.AgenteID equals agente.Id
+
+                             where propiedad.Habitaciones == habitacion && propiedad.Baños == baños
+
+                             orderby propiedad.PropiedadID descending
+
+                             select new PropiedadesModel()
+                             {
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Codigo = propiedad.Codigo,
+                                 AgenteID = agente.Id,
+                                 Titulo = propiedad.Titulo,
+                                 Descripcion = propiedad.Descripcion,
+                                 Precio = propiedad.Precio,
+                                 Direccion = propiedad.Direccion,
+                                 Ciudad = propiedad.Ciudad,
+                                 Sector = propiedad.Sector,
+                                 CodigoPostal = propiedad.CodigoPostal,
+                                 Habitaciones = propiedad.Habitaciones,
+                                 Baños = propiedad.Baños,
+                                 Parqueos = propiedad.Parqueos,
+                                 TamañoTerreno = propiedad.TamañoTerreno,
+                                 TotalNivel = propiedad.TotalNivel,
+                                 Piso = propiedad.Piso,
+                                 AñoConstruccion = propiedad.AñoConstruccion,
+                                 TipoPropiedad = propiedad.TipoPropiedad,
+                                 Disponibilidad = propiedad.Disponibilidad,
+                                 Imagen = propiedad != null ? propiedad.Imagen : (string?)null
+
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo las propiedades";
                 logger.LogError(result.Message, ex.ToString());
             }
             return result;

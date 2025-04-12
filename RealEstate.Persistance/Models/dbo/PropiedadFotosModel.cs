@@ -6,6 +6,6 @@ namespace RealEstate.Persistance.Models.dbo
     {
         public int RelacionID { get; set; }
         public int PropiedadID { get; set; }
-        public string Foto { get; set; }
+        public string? Imagen { get; set; }
     }
 }

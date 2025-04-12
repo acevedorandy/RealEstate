@@ -10,8 +10,10 @@ namespace RealEstate.Domain.Entities.dbo
     {
         [Key]
         public int RelacionID { get; set; }
+
+        [ForeignKey("Propiedades")]
         public int PropiedadID { get; set; }
-        public string Foto { get; set; }
+        public string? Imagen { get; set; }
 
     }
 }

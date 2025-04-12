@@ -1,17 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
+using RealEstate.Application.Services.dbo;
 using RealEstate.Persistance.Models.dbo;
+using RealEstate.Persistance.Models.EnumerablesModel;
+using RealEstate.Web.Helpers.Imagenes;
 
 namespace RealEstate.Web.Controllers
 {
     public class PropiedadesController : Controller
     {
         private readonly IPropiedadesService _propiedadesService;
+        private readonly IPropiedadFotosService _propiedadFotosService;
+        private readonly ImagenHelper _imagenHelper;
+        private readonly IUsuariosService _usuariosService;
 
-        public PropiedadesController(IPropiedadesService propiedadesService)
+        public PropiedadesController(IPropiedadesService propiedadesService,
+                                     ImagenHelper imagenHelper,
+                                     IPropiedadFotosService propiedadFotosService,
+                                     IUsuariosService usuariosService)
         {
             _propiedadesService = propiedadesService;
+            _imagenHelper = imagenHelper;
+            _propiedadFotosService = propiedadFotosService;
         }
 
         public async Task <IActionResult> Index()
@@ -28,14 +41,30 @@ namespace RealEstate.Web.Controllers
 
         public async Task <IActionResult> Details(int id)
         {
-            var result = await _propiedadesService.GetByIDAsync(id);
+            PropiedadDetallesModel propiedadDetalles = new PropiedadDetallesModel();
 
-            if (result.IsSuccess)
+            var resultPropiedad = await _propiedadesService.GetByIDAsync(id);
+
+            if (resultPropiedad.IsSuccess)
             {
-                PropiedadesModel propiedades = (PropiedadesModel)result.Model;
-                return View(propiedades);
+                propiedadDetalles.PropiedadesModel = (PropiedadesModel)resultPropiedad.Model;
             }
-            return View();
+
+            var resultFotos = await _propiedadFotosService.GetPhotosByPropertyAsync(id);
+
+            if (resultFotos.IsSuccess)
+            {
+                propiedadDetalles.PropiedadFotosModel = (List<PropiedadFotosModel>)resultFotos.Model;
+            }
+
+            var resultAgente = await _propiedadesService.GetAgentByPropertyAsync(id);
+
+            if (resultAgente.IsSuccess)
+            {
+                propiedadDetalles.UsuariosModel = (UsuariosModel)resultAgente.Model;
+            }
+
+            return View(propiedadDetalles);
         }
 
         public ActionResult Create()
@@ -53,9 +82,39 @@ namespace RealEstate.Web.Controllers
 
                 if (result.IsSuccess)
                 {
+                    dto = result.Model;
+                    var saveFoto = await _imagenHelper.SavePropertyPhotos(dto);
+
+                    if (saveFoto.Any())
+                    {
+                        dto.Imagen = saveFoto.First();
+                        await _propiedadesService.UpdateAsync(dto);
+                    }
+
+                    var photosResponse = await _propiedadFotosService.AddPhotoAsEntity(dto.PropiedadID, saveFoto);
+
+                    if (!photosResponse.IsSuccess)
+                    {
+                        TempData["WarningMessage"] = "Propiedad guardada pero hubo problemas con algunas fotos";
+                    }
+
                     TempData["SuccessMessage"] = "Propiedad agregada exitosamente.";
                     return RedirectToAction(nameof(Index));
+
                 }
+                //if (dto.Imagen != null && dto.PropiedadID > 0)
+                //{
+                //    await _propiedadesService.UpdateAsync(dto);
+                //}
+
+                //if (!result.IsSuccess)
+                //{
+                //    result.IsSuccess = false;
+                //    ViewBag.Message = result.Messages;
+
+                //    return View(dto);
+                //}
+
                 else
                 {
                     TempData["ErrorMessage"] = result.Messages;

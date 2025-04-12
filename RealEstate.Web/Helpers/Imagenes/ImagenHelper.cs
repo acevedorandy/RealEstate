@@ -1,9 +1,16 @@
-﻿using RealEstate.Application.Dtos.identity.account;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using RealEstate.Application.Dtos.dbo;
 using RealEstate.Web.Helpers.Imagenes.Base;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RealEstate.Web.Helpers.Imagenes
 {
-    public class ImagenHelper : ILoadPhoto<RegisterDto, IFormFile>
+    public class ImagenHelper
     {
         private readonly IWebHostEnvironment _webHost;
         private readonly LoadPhoto _loadPhoto;
@@ -13,28 +20,34 @@ namespace RealEstate.Web.Helpers.Imagenes
             _webHost = webHostEnvironment;
             _loadPhoto = loadPhoto;
         }
-        public async Task<RegisterDto> LoadPhoto(RegisterDto dto, IFormFile Foto)
+
+        public async Task<List<string>> SavePropertyPhotos(PropiedadesDto dto)
         {
-            if (Foto != null && Foto.Length > 0)
+            var imagePaths = new List<string>();
+
+            if (dto.Files == null || !dto.Files.Any())
+                return imagePaths;
+
+            foreach (var foto in dto.Files)
             {
-                string uploadsFolder = Path.Combine(_webHost.WebRootPath, "images/propiedades");
-                if (!Directory.Exists(uploadsFolder))
+                if (foto.Length > 0 && IsValidImage(foto))
                 {
-                    Directory.CreateDirectory(uploadsFolder);
+                    var savedPath = await _loadPhoto.SaveFileAsync(foto);
+                    if (!string.IsNullOrEmpty(savedPath))
+                    {
+                        imagePaths.Add(savedPath);
+                    }
                 }
-
-                string fileExtension = Path.GetExtension(Foto.FileName);
-                string uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await Foto.CopyToAsync(fileStream);
-                }
-
-                dto.Foto = "/images/usuario/" + uniqueFileName;
             }
-            return dto;
+
+            return imagePaths;
+        }
+
+        private bool IsValidImage(IFormFile file)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var extension = Path.GetExtension(file.FileName).ToLower();
+            return allowedExtensions.Contains(extension);
         }
     }
 }

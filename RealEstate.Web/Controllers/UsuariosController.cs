@@ -1,9 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RealEstate.Application.Contracts.dbo;
 
 namespace RealEstate.Web.Controllers
 {
     public class UsuariosController : Controller
     {
+        private readonly IUsuariosService _usuariosService;
+
+        public UsuariosController(IUsuariosService usuariosService)
+        {
+            _usuariosService = usuariosService;
+        }
         public ActionResult Index()
         {
             return View();
