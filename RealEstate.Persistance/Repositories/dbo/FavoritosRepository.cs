@@ -47,7 +47,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                 favoritosToUpdate.FavoritoID = favoritos.FavoritoID;
                 favoritosToUpdate.UsuarioID = favoritos.UsuarioID;
                 favoritosToUpdate.PropiedadID = favoritos.PropiedadID;
-                favoritosToUpdate.IsFavoritos = favoritos.IsFavoritos;
+                favoritosToUpdate.IsFavorito = favoritos.IsFavorito;
 
                 result = await base.Update(favoritosToUpdate);
             }
@@ -101,7 +101,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  FavoritoID = favorito.FavoritoID,
                                  UsuarioID = usuario.Id,
                                  PropiedadID = propiedad.PropiedadID,
-                                 IsFavoritos = favorito.IsFavoritos,
+                                 IsFavorito = favorito.IsFavorito,
 
                              }).ToList();
 
@@ -142,7 +142,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  FavoritoID = favorito.FavoritoID,
                                  UsuarioID = usuario.Id,
                                  PropiedadID = propiedad.PropiedadID,
-                                 IsFavoritos = favorito.IsFavoritos,
+                                 IsFavorito = favorito.IsFavorito,
 
                              }).FirstOrDefault();
 
@@ -152,6 +152,125 @@ namespace RealEstate.Persistance.Repositories.dbo
             {
                 result.Success = false;
                 result.Message = "Ha ocurrido un error obteniendo el favorito";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        //public async Task<OperationResult> GetPropertyByID(int propiedadId)
+        //{
+        //    OperationResult result = new OperationResult();
+
+        //    try
+        //    {
+        //        var propiedades = await _realEstateContext.Propiedades
+        //            .ToListAsync();
+
+        //        var usuarios = await _identityContext.Users
+        //            .ToListAsync();
+
+        //        var datos = (from propiedad in propiedades
+        //                     join agente in usuarios on propiedad.AgenteID equals agente.Id
+
+        //                     where propiedad.PropiedadID == propiedadId
+
+        //                     select new PropiedadesModel()
+        //                     {
+        //                         PropiedadID = propiedad.PropiedadID,
+        //                         Codigo = propiedad.Codigo,
+        //                         AgenteID = agente.Id,
+        //                         Titulo = propiedad.Titulo,
+        //                         Descripcion = propiedad.Descripcion,
+        //                         Precio = propiedad.Precio,
+        //                         Direccion = propiedad.Direccion,
+        //                         Ciudad = propiedad.Ciudad,
+        //                         Sector = propiedad.Sector,
+        //                         CodigoPostal = propiedad.CodigoPostal,
+        //                         Habitaciones = propiedad.Habitaciones,
+        //                         Baños = propiedad.Baños,
+        //                         Parqueos = propiedad.Parqueos,
+        //                         TamañoTerreno = propiedad.TamañoTerreno,
+        //                         TotalNivel = propiedad.TotalNivel,
+        //                         Piso = propiedad.Piso,
+        //                         AñoConstruccion = propiedad.AñoConstruccion,
+        //                         TipoPropiedad = propiedad.TipoPropiedad,
+        //                         Disponibilidad = propiedad.Disponibilidad,
+        //                         Imagen = propiedad.Imagen
+
+        //                     }).FirstOrDefault();
+
+        //        result.Data = datos;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.Success = false;
+        //        result.Message = "Ha ocurrido un error obteniendo la propiedad";
+        //        logger.LogError(result.Message, ex.ToString());
+        //    }
+        //    return result;
+        //}
+
+        public async Task<bool> ExistsRelation(int propiedadId, string userId)
+        {
+            var relation = await _realEstateContext.Favoritos
+                .Where(f => f.PropiedadID == propiedadId && f.UsuarioID == userId)
+                .FirstOrDefaultAsync();
+
+            return relation != null;
+        }
+
+        public async Task<OperationResult> GetAllFavoritePropertyByUser(string userId)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var usuarios = await _identityContext.Users
+                    .ToListAsync();
+
+                var propiedades = await _realEstateContext.Propiedades
+                    .ToListAsync();
+
+                var favoritos = await _realEstateContext.Favoritos
+                    .ToListAsync();
+
+                var datos = (from favorito in favoritos
+                             join usuario in usuarios on favorito.UsuarioID equals usuario.Id
+                             join propiedad in propiedades on favorito.PropiedadID equals propiedad.PropiedadID
+
+                             where favorito.UsuarioID == userId
+
+                             select new PropiedadesModel
+                             {
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Codigo = propiedad.Codigo,
+                                 AgenteID = usuario.Id,
+                                 Titulo = propiedad.Titulo,
+                                 Descripcion = propiedad.Descripcion,
+                                 Precio = propiedad.Precio,
+                                 Direccion = propiedad.Direccion,
+                                 Ciudad = propiedad.Ciudad,
+                                 Sector = propiedad.Sector,
+                                 CodigoPostal = propiedad.CodigoPostal,
+                                 Habitaciones = propiedad.Habitaciones,
+                                 Baños = propiedad.Baños,
+                                 Parqueos = propiedad.Parqueos,
+                                 TamañoTerreno = propiedad.TamañoTerreno,
+                                 TotalNivel = propiedad.TotalNivel,
+                                 Piso = propiedad.Piso,
+                                 AñoConstruccion = propiedad.AñoConstruccion,
+                                 TipoPropiedad = propiedad.TipoPropiedad,
+                                 Disponibilidad = propiedad.Disponibilidad,
+                                 Imagen = propiedad.Imagen
+
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo los favoritos";
                 _logger.LogError(result.Message, ex.ToString());
             }
             return result;

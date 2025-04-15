@@ -5,6 +5,7 @@ using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Application.Responses.identity;
 using RealEstate.Identity.Shared.Entities;
 using RealEstate.Application.Helpers.web;
+using RealEstate.Web.Helpers.Otros;
 
 
 namespace RealEstate.Web.Controllers
@@ -13,12 +14,15 @@ namespace RealEstate.Web.Controllers
     {
         private readonly IUsuariosService _usuariosService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SelectRol _selectRol;
 
         public AccountController(IUsuariosService usuariosService,
-                                 UserManager<ApplicationUser> userManager)
+                                 UserManager<ApplicationUser> userManager,
+                                 SelectRol selectRol)
         {
             _usuariosService = usuariosService;
             _userManager = userManager;
+            _selectRol = selectRol;
         }
 
         public IActionResult Index()
@@ -64,13 +68,16 @@ namespace RealEstate.Web.Controllers
 
         public IActionResult Register()
         {
+            var roles = _selectRol.Roles();
+            ViewBag.Rol = roles;
+
             return View(new RegisterDto());
         }
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 return View(registerDto);
             }

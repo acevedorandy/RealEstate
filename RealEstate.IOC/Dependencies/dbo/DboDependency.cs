@@ -16,6 +16,7 @@ namespace RealEstate.IOC.Dependencies.dbo
             services.AddTransient<IContratosRepository, ContratosRepository>();
             services.AddTransient<IFavoritosRepository, FavoritosRepository>();
             services.AddTransient<IMensajesRepository, MensajesRepository>();
+            services.AddTransient<IOfertasRepository, OfertasRepository>();
             services.AddTransient<IPagosRepository, PagosRepository>();
             services.AddTransient<IPropiedadesRepository, PropiedadesRepository>();
             services.AddTransient<IPropiedadFotosRepository, PropiedadFotosRepository>();
@@ -26,6 +27,7 @@ namespace RealEstate.IOC.Dependencies.dbo
             services.AddScoped<IContratosService, ContratosService>();
             services.AddScoped<IFavoritosService, FavoritosService>();
             services.AddScoped<IMensajesService, MensajesService>();
+            services.AddScoped<IOfertasService, OfertasService>();
             services.AddScoped<IPagosService, PagosService>();
             services.AddScoped<IPropiedadFotosService, PropiedadFotosService>();
             services.AddScoped<IPropiedadesService, PropiedadesService>();

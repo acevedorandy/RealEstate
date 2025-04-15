@@ -10,15 +10,15 @@
     html, body {
         height: 100%;
         margin: 0;
-        overflow: hidden; /* Bloquea el scroll */
+        overflow: hidden;
         background-color: #f4f7fa;
     }
 </style>
 
 <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
     <div class="row justify-content-center w-100">
-        <div class="col-12 col-sm-8 col-md-6 col-lg-5">
-            <div class="card shadow-lg rounded-4 border-0">
+        <div class="col-12 col-sm-11 col-md-10 col-lg-10 col-xl-12">
+            <div class="card custom-card shadow-lg rounded-4 border-0">
                 <div class="card-body p-5">
                     <h5 class="text-center mb-4 text-black fw-bold" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">¡Bienvenido! Crea tu cuenta</h5>
 
@@ -39,8 +39,8 @@
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="Cedula" class="form-label fw-semibold text-muted">Cedula del usuario</label>
-                            <input asp-for="Cedula" class="form-control form-control-lg shadow-sm" placeholder="Ingrese la cedula" />
+                            <label asp-for="Cedula" class="form-label fw-semibold text-muted">Cédula del usuario</label>
+                            <input asp-for="Cedula" class="form-control form-control-lg shadow-sm" placeholder="Ingrese la cédula" />
                             <span asp-validation-for="Cedula" class="text-danger"></span>
                         </div>
 
@@ -75,6 +75,13 @@
                             <span asp-validation-for="Phone" class="text-danger"></span>
                         </div>
 
+                        <div class="mb-4">
+                            <label asp-for="Rol" class="form-label fw-semibold text-muted">Tipo de cuenta</label>
+                            <select name="rol" asp-items="@ViewBag.Rol" class="form-select form-select-lg" required>
+                                <option value="" selected disabled>Seleccione un tipo de cuenta</option>
+                            </select>                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg py-3 fw-semibold">Registrar</button>
                         </div>
@@ -86,22 +93,20 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }
 
-<!-- Estilos adicionales -->
 <style>
-    .card {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 1px 6px rgba(0, 0, 0, 0.08);
-        border-radius: 16px;
+    .custom-card {
+        background-color: rgba(255, 255, 255, 0.85); /* Blanco semi-transparente */
+        border-radius: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), 0 1px 6px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 8px rgba(0, 0, 0, 0.1);
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 3px 8px rgba(0, 0, 0, 0.12);
         }
 
     .btn {
@@ -115,7 +120,24 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
 
-    .input-group .form-control {
+    .form-control {
         border-radius: 10px;
+    }
+
+    body {
+        background-image: url('/images/logo/register.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+    .container-fluid {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(3px);
+        padding: 1rem;
     }
 </style>

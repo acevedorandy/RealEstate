@@ -72,6 +72,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                              join rol in roles on usuarioRol.RoleId equals rol.Id
 
                              where rol.Name == "Agente" && usuario.IsActive == true
+                             orderby usuario.Nombre
 
                              select new UsuariosModel()
                              {
@@ -93,6 +94,47 @@ namespace RealEstate.Persistance.Repositories.dbo
             {
                 result.Success = false;
                 result.Message = "Ha ocurrido un error obteniendo los usuarios.";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> GetAgentByName(string name)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var usuarios = await _identityContext.Users.ToListAsync();
+                var roles = await _identityContext.Roles.ToListAsync();
+                var usuarioRoles = await _identityContext.UserRoles.ToListAsync();
+
+                var datos = (from usuario in usuarios
+                             join usuarioRol in usuarioRoles on usuario.Id equals usuarioRol.UserId
+                             join rol in roles on usuarioRol.RoleId equals rol.Id
+
+                             where rol.Name == "Agente" && usuario.IsActive == true && usuario.Nombre.Contains(name)
+
+                             select new UsuariosModel()
+                             {
+                                 Id = usuario.Id,
+                                 Nombre = usuario.Nombre,
+                                 Apellido = usuario.Apellido,
+                                 UserName = usuario.UserName,
+                                 Cedula = usuario.Cedula,
+                                 Email = usuario.Email,
+                                 Telefono = usuario.PhoneNumber,
+                                 Rol = rol.Name,
+                                 IsActive = usuario.IsActive
+
+                             }).FirstOrDefault();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo el agente.";
                 _logger.LogError(result.Message, ex.ToString());
             }
             return result;

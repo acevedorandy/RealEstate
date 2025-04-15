@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Core;
 using RealEstate.Application.Dtos.dbo;
+using RealEstate.Application.Responses.identity;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
+using RealEstate.Application.Helpers.web;
 
 namespace RealEstate.Application.Services.dbo
 {
@@ -13,14 +16,28 @@ namespace RealEstate.Application.Services.dbo
         private readonly IFavoritosRepository _favoritosRepository;
         private readonly ILogger<FavoritosService> _logger;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AuthenticationResponse authentication;
 
         public FavoritosService(IFavoritosRepository favoritosRepository,
                                 ILogger<FavoritosService> logger,
-                                IMapper mapper)
+                                IMapper mapper,
+                                IHttpContextAccessor httpContextAccessor)
         {
             _favoritosRepository = favoritosRepository;
             _logger = logger;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
+            authentication = _httpContextAccessor.HttpContext.Session.Get<AuthenticationResponse>("usuario");
+        }
+
+        public async Task<bool> ExistsRelationAsync(int propiedadId)
+        {
+            string userId = authentication.Id;
+
+            var result = await _favoritosRepository.ExistsRelation(propiedadId, userId);
+            return result;
+
         }
 
         public async Task<ServiceResponse> GetAllAsync()
@@ -30,6 +47,33 @@ namespace RealEstate.Application.Services.dbo
             try
             {
                 var result = await _favoritosRepository.GetAll();
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo las propiedades favoritas.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> GetAllFavoritePropertyByUserAsync()
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                string userId = authentication.Id;
+                var result = await _favoritosRepository.GetAllFavoritePropertyByUser(userId);
 
                 if (!result.Success)
                 {
@@ -101,6 +145,8 @@ namespace RealEstate.Application.Services.dbo
 
             try
             {
+                dto.UsuarioID = authentication.Id;
+                dto.IsFavorito = true;
                 var favorito = _mapper.Map<Favoritos>(dto);
                 var result = await _favoritosRepository.Save(favorito);
             }

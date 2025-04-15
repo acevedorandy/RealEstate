@@ -11,5 +11,6 @@ namespace RealEstate.Persistance.Interfaces.dbo
         Task<OperationResult> GetUserByRol(string rol);
         Task<OperationResult> ActivarOrDesactivar(string userId);
         Task<OperationResult> GetAgentActive();
+        Task<OperationResult> GetAgentByName(string name);
     }
 }

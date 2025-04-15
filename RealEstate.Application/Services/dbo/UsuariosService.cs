@@ -58,6 +58,31 @@ namespace RealEstate.Application.Services.dbo
             }
             return response;
         }
+        public async Task<ServiceResponse> GetAgentByNameAsync(string name)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _usuariosRepository.GetAgentByName(name);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo el agente.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
 
         public async Task<ServiceResponse> GetIdentityUserAllAsync()
         {
@@ -138,7 +163,7 @@ namespace RealEstate.Application.Services.dbo
         public async Task<RegisterResponse> RegisterAsync(RegisterDto registerDto, string origin)
         {
             RegisterRequest register = _mapper.Map<RegisterRequest>(registerDto);
-            RegisterResponse response = await _accountService.RegisterAdminUserAsync(register, origin);
+            RegisterResponse response = await _accountService.RegisterIdentityAsync(register, origin);
             return response;
         }
 

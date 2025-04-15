@@ -57,27 +57,17 @@ namespace RealEstate.Web.Controllers
 
             return View(propiedadDetalles);
         }
+
         public async Task<IActionResult> Filter(string tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
         {
-            var result = await _propiedadesService.GetAllAsync(); // Obtener todas
-            var propiedades = ((List<PropiedadesModel>)result.Model).AsQueryable();
+            var result = await _propiedadesService.GetAllFilter(tipoPropiedad, minPrice, maxPrice, habitacion, baños);
 
-            if (!string.IsNullOrEmpty(tipoPropiedad))
-                propiedades = propiedades.Where(p => p.TipoPropiedad == tipoPropiedad);
-
-            if (minPrice.HasValue)
-                propiedades = propiedades.Where(p => p.Precio >= minPrice.Value);
-
-            if (maxPrice.HasValue)
-                propiedades = propiedades.Where(p => p.Precio <= maxPrice.Value);
-
-            if (habitacion.HasValue)
-                propiedades = propiedades.Where(p => p.Habitaciones == habitacion.Value);
-
-            if (baños.HasValue)
-                propiedades = propiedades.Where(p => p.Baños == baños.Value);
-
-            return View("Index", propiedades.ToList());
+            if (result.IsSuccess)
+            {
+                List<PropiedadesModel> propiedades = (List<PropiedadesModel>)result.Model;
+                return View("Index", propiedades.ToList());
+            }
+            return View();
         }
 
 

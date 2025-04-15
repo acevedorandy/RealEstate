@@ -11,6 +11,7 @@ using RealEstate.Application.Helpers.web;
 using RealEstate.Application.Helpers;
 using RealEstate.Domain.Result;
 using RealEstate.Application.Enum;
+using RealEstate.Persistance.Models.dbo;
 
 
 namespace RealEstate.Application.Services.dbo
@@ -41,83 +42,83 @@ namespace RealEstate.Application.Services.dbo
             _usuariosRepository = usuariosRepository;
         }
 
-        public async Task<ServiceResponse> FilterByPriceAsync(decimal? minPrice, decimal? maxPrice)
-        {
-            ServiceResponse response = new ServiceResponse();
+        //public async Task<ServiceResponse> FilterByPriceAsync(decimal? minPrice, decimal? maxPrice)
+        //{
+        //    ServiceResponse response = new ServiceResponse();
 
-            try
-            {
-                var result = await _propiedadesRepository.FilterByPrice(minPrice, maxPrice);
+        //    try
+        //    {
+        //        var result = await _propiedadesRepository.FilterByPrice(minPrice, maxPrice);
 
-                if (!result.Success)
-                {
-                    result.Success = response.IsSuccess;
-                    result.Message = response.Messages;
+        //        if (!result.Success)
+        //        {
+        //            result.Success = response.IsSuccess;
+        //            result.Message = response.Messages;
 
-                    return response;
-                }
-                response.Model = result.Data;
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Messages = "Ha ocurrido un error obteniendo las propiedades.";
-                _logger.LogError(response.Messages, ex.ToString());
-            }
-            return response;
-        }
+        //            return response;
+        //        }
+        //        response.Model = result.Data;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.IsSuccess = false;
+        //        response.Messages = "Ha ocurrido un error obteniendo las propiedades.";
+        //        _logger.LogError(response.Messages, ex.ToString());
+        //    }
+        //    return response;
+        //}
 
-        public async Task<ServiceResponse> FilterByTypeAsync(string? tipoPropiedad)
-        {
-            ServiceResponse response = new ServiceResponse();
+        //public async Task<ServiceResponse> FilterByTypeAsync(string? tipoPropiedad)
+        //{
+        //    ServiceResponse response = new ServiceResponse();
 
-            try
-            {
-                var result = await _propiedadesRepository.FilterByType(tipoPropiedad);
+        //    try
+        //    {
+        //        var result = await _propiedadesRepository.FilterByType(tipoPropiedad);
 
-                if (!result.Success)
-                {
-                    result.Success = response.IsSuccess;
-                    result.Message = response.Messages;
+        //        if (!result.Success)
+        //        {
+        //            result.Success = response.IsSuccess;
+        //            result.Message = response.Messages;
 
-                    return response;
-                }
-                response.Model = result.Data;
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Messages = "Ha ocurrido un error obteniendo las propiedades.";
-                _logger.LogError(response.Messages, ex.ToString());
-            }
-            return response;
-        }
+        //            return response;
+        //        }
+        //        response.Model = result.Data;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.IsSuccess = false;
+        //        response.Messages = "Ha ocurrido un error obteniendo las propiedades.";
+        //        _logger.LogError(response.Messages, ex.ToString());
+        //    }
+        //    return response;
+        //}
 
-        public async Task<ServiceResponse> FilterRoomAsync(int? habitacion, int? baños)
-        {
-            ServiceResponse response = new ServiceResponse();
+        //public async Task<ServiceResponse> FilterRoomAsync(int? habitacion, int? baños)
+        //{
+        //    ServiceResponse response = new ServiceResponse();
 
-            try
-            {
-                var result = await _propiedadesRepository.FilterRoom(habitacion, baños);
+        //    try
+        //    {
+        //        var result = await _propiedadesRepository.FilterRoom(habitacion, baños);
 
-                if (!result.Success)
-                {
-                    result.Success = response.IsSuccess;
-                    result.Message = response.Messages;
+        //        if (!result.Success)
+        //        {
+        //            result.Success = response.IsSuccess;
+        //            result.Message = response.Messages;
 
-                    return response;
-                }
-                response.Model = result.Data;
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccess = false;
-                response.Messages = "Ha ocurrido un error obteniendo las propiedades.";
-                _logger.LogError(response.Messages, ex.ToString());
-            }
-            return response;
-        }
+        //            return response;
+        //        }
+        //        response.Model = result.Data;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.IsSuccess = false;
+        //        response.Messages = "Ha ocurrido un error obteniendo las propiedades.";
+        //        _logger.LogError(response.Messages, ex.ToString());
+        //    }
+        //    return response;
+        //}
 
         public async Task<ServiceResponse> GetAgentByPropertyAsync(int propiedadId)
         {
@@ -170,6 +171,51 @@ namespace RealEstate.Application.Services.dbo
             }
             return response;
         }
+
+        public async Task<ServiceResponse> GetAllFilter(string tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _propiedadesRepository.GetAll();
+
+                if (!result.Success)
+                {
+                    response.IsSuccess = result.Success;
+                    response.Messages = result.Message;
+                    return response;
+                }
+
+                var propiedades = ((List<PropiedadesModel>)result.Data).AsQueryable();
+
+                if (!string.IsNullOrEmpty(tipoPropiedad))
+                    propiedades = propiedades.Where(p => p.TipoPropiedad == tipoPropiedad);
+
+                if (minPrice.HasValue)
+                    propiedades = propiedades.Where(p => p.Precio >= minPrice.Value);
+
+                if (maxPrice.HasValue)
+                    propiedades = propiedades.Where(p => p.Precio <= maxPrice.Value);
+
+                if (habitacion.HasValue)
+                    propiedades = propiedades.Where(p => p.Habitaciones == habitacion.Value);
+
+                if (baños.HasValue)
+                    propiedades = propiedades.Where(p => p.Baños == baños.Value);
+
+                response.Model = propiedades.ToList();
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo las propiedades filtradas.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+
+            return response;
+        }
+
 
         public async Task<ServiceResponse> GetByIDAsync(int id)
         {

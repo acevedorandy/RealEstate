@@ -9,7 +9,7 @@ namespace RealEstate.Application.Dtos.dbo
         public string DestinatarioID { get; set; }
         public int PropiedadID { get; set; }
         public string Mensaje { get; set; }
-        public DateTime Enviado { get; set; }
+        public DateTime Enviado { get; set; } = DateTime.Now;
         public bool Visto { get; set; }
 
     }

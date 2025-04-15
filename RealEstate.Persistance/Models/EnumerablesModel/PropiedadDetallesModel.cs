@@ -10,5 +10,6 @@ namespace RealEstate.Persistance.Models.EnumerablesModel
         public UsuariosModel UsuariosModel { get; set; }
         public List<PropiedadFotosModel> PropiedadFotosModel { get; set; }
 
+
     }
 }

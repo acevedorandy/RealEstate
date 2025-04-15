@@ -3,6 +3,7 @@
 using RealEstate.Application.Core;
 using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Application.Responses.identity;
+using RealEstate.Domain.Result;
 
 
 namespace RealEstate.Application.Contracts.dbo
@@ -23,5 +24,6 @@ namespace RealEstate.Application.Contracts.dbo
         Task<ServiceResponse> GetUserByRolAsync(string rol);
         Task<ServiceResponse> ActivarOrDesactivarAsync(string userId);
         Task<ServiceResponse> GetAgentActiveAsync();
+        Task<ServiceResponse> GetAgentByNameAsync(string name);
     }
 }

@@ -5,6 +5,7 @@ using RealEstate.IOC.Dependencies.infraestructure;
 using RealEstate.Persistance.Context;
 using RealEstate.Web.Helpers.Imagenes;
 using RealEstate.Web.Helpers.Imagenes.Base;
+using RealEstate.Web.Helpers.Otros;
 using RealEstate.Web.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,8 @@ builder.Services.AddScoped<LoginAuthorize>();
 builder.Services.AddScoped<ValidateUserSesion>();
 builder.Services.AddScoped<LoadPhoto>();
 builder.Services.AddScoped<ImagenHelper>();
+builder.Services.AddScoped<SelectRol>();
+
 
 
 // Registro para las sesiones

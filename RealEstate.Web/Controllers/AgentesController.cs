@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Persistance.Models.dbo;
 
@@ -23,6 +22,19 @@ namespace RealEstate.Web.Controllers
                 List<UsuariosModel> usuarios = (List<UsuariosModel>)result.Model;
                 return View(usuarios);
             }
+            return View();
+        }
+
+        public async Task<IActionResult> Buscar(string nombre)
+        {
+            var result = await _usuariosService.GetAgentByNameAsync(nombre);
+
+            if (result.IsSuccess)
+            {
+                UsuariosModel usuarios = (UsuariosModel)result.Model;
+                return View(usuarios);
+            }
+
             return View();
         }
 
