@@ -9,8 +9,6 @@ using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Application.Helpers.web;
 using RealEstate.Application.Helpers;
-using RealEstate.Domain.Result;
-using RealEstate.Application.Enum;
 using RealEstate.Persistance.Models.dbo;
 
 
@@ -216,6 +214,32 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
+        public async Task<ServiceResponse> GetAllPropertyByAgentAsync()
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                string userId = authenticationResponse.Id;
+                var result = await _propiedadesRepository.GetAllPropertyByAgent(userId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo las propiedades.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
 
         public async Task<ServiceResponse> GetByIDAsync(int id)
         {

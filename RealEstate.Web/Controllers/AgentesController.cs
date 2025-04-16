@@ -7,10 +7,13 @@ namespace RealEstate.Web.Controllers
     public class AgentesController : Controller
     {
         private readonly IUsuariosService _usuariosService;
+        private readonly IPropiedadesService _propiedadesService;
 
-        public AgentesController(IUsuariosService usuariosService)
+        public AgentesController(IUsuariosService usuariosService,
+                                 IPropiedadesService propiedadesService)
         {
             _usuariosService = usuariosService;
+            _propiedadesService = propiedadesService;
         }
 
         public async Task <IActionResult> Index()
@@ -43,5 +46,16 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Home()
+        {
+            var result = await _propiedadesService.GetAllPropertyByAgentAsync();
+
+            if (result.IsSuccess)
+            {
+                List<PropiedadesModel> propiedades = (List<PropiedadesModel>)result.Model;
+                return View(propiedades);
+            }
+            return View();
+        }
     }
 }

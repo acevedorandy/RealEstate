@@ -7,6 +7,7 @@ using RealEstate.Persistance.Base;
 using RealEstate.Persistance.Context;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using RealEstate.Persistance.Models.ViewModel;
 
 namespace RealEstate.Persistance.Repositories.dbo
 {
@@ -161,6 +162,59 @@ namespace RealEstate.Persistance.Repositories.dbo
                 _logger.LogError(result.Message, ex.ToString());
             }
             return result;
+        }
+
+        public async Task<OperationResult> GetPropertyOffered(string clienteId)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var clientes = await _identityContext.Users.ToListAsync();
+                var agentes = clientes;
+                var propiedades = await _realEstateContext.Propiedades.ToListAsync();
+                var ofertas = await _realEstateContext.Ofertas.ToArrayAsync();
+
+                var datos = (from oferta in ofertas
+                             join cliente in clientes on oferta.ClienteID equals cliente.Id
+                             join propiedad in propiedades on oferta.PropiedadID equals propiedad.PropiedadID
+                             join agente in agentes on propiedad.AgenteID equals agente.Id
+
+                             where oferta.ClienteID == clienteId
+
+                             select new OfertasViewModel
+                             {
+                                 OfertaID = oferta.OfertaID,
+                                 ClienteID = cliente.Id,
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Codigo = propiedad.Codigo,
+                                 Titulo = propiedad.Titulo,
+                                 TipoPropiedad = propiedad.TipoPropiedad,
+                                 Imagen = propiedad.Imagen,
+                                 NombreAgente = agente.Nombre,
+                                 Cifra = oferta.Cifra,
+                                 FechaOferta = oferta.FechaOferta,
+                                 Estado = oferta.Estado,
+                                 Aceptada = oferta.Aceptada
+
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo la oferta";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<bool> PendingBids(string clienteId)
+        {
+            return await _realEstateContext.Ofertas
+                .AnyAsync(o => o.ClienteID == clienteId &&
+               (o.Estado.ToLower() == "pendiente" || o.Estado.ToLower() == "aceptada"));
         }
     }
 }

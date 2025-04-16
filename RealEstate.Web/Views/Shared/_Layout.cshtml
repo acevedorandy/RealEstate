@@ -16,6 +16,7 @@
 <html lang="en">
 
 <head>
+    @RenderSection("Styles", required: false)
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - InternetBanking.Web</title>
@@ -159,21 +160,44 @@
                             </a>
                         </li>
 
-                        <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Clientes" asp-action="MisPropiedades">
-                                <i class="bi bi-houses"></i> Mis propiedades
+                        <li class="nav-item">
+                            <a class="nav-link text-white d-flex align-items-center" data-bs-toggle="collapse" href="#configCollapse" role="button" aria-expanded="false" aria-controls="configCollapse">
+                                <i class="bi bi-list"></i> Menú <i class="bi bi-chevron-down ms-auto"></i>
                             </a>
-                        </li>
+                            <div class="collapse" id="configCollapse">
+                                <ul class="nav flex-column ms-3">
 
-                        <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Mensajes" asp-action="Index">
-                                <i class="bi bi-chat-text-fill"></i> Mensajes
-                            </a>
-                        </li>
+                                    <li class="nav-item w-100 text-center">
+                                        <a class="nav-link text-white" asp-area="" asp-controller="Clientes" asp-action="MisPropiedades">
+                                            <i class="bi bi-houses"></i> Mis propiedades
+                                        </a>
+                                    </li>
 
+                                    <li class="nav-item w-100 text-center">
+                                        <a class="nav-link text-white" asp-area="" asp-controller="Ofertas" asp-action="Index">
+                                            <i class="bi bi-currency-dollar"></i> Ofertas realizadas
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item w-100 text-center">
+                                        <a class="nav-link text-white" asp-area="" asp-controller="Mensajes" asp-action="Index">
+                                            <i class="bi bi-chat-text-fill"></i> Mensajes
+                                        </a>
+                                    </li>
+
+                                    <li><hr class="dropdown-divider bg-white"></li>
+                                </ul>
+                            </div>
+                        </li>
                     }
                     else if (isAgent)
                     {
+                        <li class="nav-item w-100 text-center">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Agentes" asp-action="Home">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                        </li>
+
                         <li class="nav-item w-100 text-center">
                             <a class="nav-link text-white" asp-area="" asp-controller="Contratos" asp-action="Index">
                                 <i class="bi bi-people-fill"></i> Contratos

@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<RealEstate.Persistance.Models.dbo.PropiedadesModel>
 
 @{
-    ViewData["Title"] = "Propiedades Premium";
+    ViewData["Title"] = "Mis Propiedades";
 }
 
 @section Styles {
@@ -15,6 +15,9 @@
             --accent-color: #f72585;
             --light-color: #f8f9fa;
             --dark-color: #212529;
+            --sold-color: #6c757d;
+            --available-color: #4cc9f0;
+            --reserved-color: #f8961e;
         }
 
         .hero-section {
@@ -30,12 +33,28 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: relative;
         }
 
             .property-card:hover {
                 transform: translateY(-10px);
                 box-shadow: 0 15px 30px rgba(67,97,238,0.15);
             }
+
+            .property-card.sold {
+                opacity: 0.85;
+            }
+
+                .property-card.sold::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: rgba(108, 117, 125, 0.1);
+                    z-index: 1;
+                }
 
         .property-badge {
             position: absolute;
@@ -68,6 +87,13 @@
                 color: white;
             }
 
+            .property-badge.sold {
+                background-color: var(--sold-color);
+                color: white;
+                right: 15px;
+                left: auto;
+            }
+
         .img-container {
             height: 220px;
             overflow: hidden;
@@ -98,8 +124,19 @@
             z-index: 2;
         }
 
+            .price-tag.sold {
+                color: var(--sold-color);
+                text-decoration: line-through;
+            }
+
+            .price-tag.reserved {
+                color: var(--reserved-color);
+            }
+
         .card-body {
             padding: 1.5rem;
+            position: relative;
+            z-index: 2;
         }
 
         .card-title {
@@ -173,6 +210,8 @@
             background: transparent;
             border-top: none;
             padding: 0 1.5rem 1.5rem;
+            position: relative;
+            z-index: 2;
         }
 
         .btn-details {
@@ -267,14 +306,38 @@
                 transform: translateY(-2px);
                 box-shadow: 0 5px 15px rgba(67,97,238,0.3);
             }
+
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            z-index: 2;
+            color: white;
+        }
+
+            .status-badge.available {
+                background-color: var(--available-color);
+            }
+
+            .status-badge.sold {
+                background-color: var(--sold-color);
+            }
+
+            .status-badge.reserved {
+                background-color: var(--reserved-color);
+            }
     </style>
 }
 
 <div class="container my-5">
     <!-- Hero Section -->
     <div class="hero-section text-center">
-        <h1 class="display-4 fw-bold mb-3 text-dark"><i class="fas fa-home me-3"></i>Encuentra Tu Propiedad Ideal</h1>
-        <p class="lead text-muted mb-4">Explora nuestra exclusiva selección de propiedades premium en las mejores ubicaciones</p>
+        <h1 class="display-4 fw-bold mb-3 text-dark"><i class="fas fa-home me-3"></i>Mis Propiedades Registradas</h1>
+        <p class="lead text-muted mb-4">Administra todas las propiedades que has registrado, incluyendo disponibles, reservadas y vendidas</p>
     </div>
 
     <!-- Alert Messages -->
@@ -302,7 +365,7 @@
 
     <!-- Filters Section -->
     <div class="filter-card">
-        <h3 class="filter-title"><i class="fas fa-sliders-h"></i>Filtros Avanzados</h3>
+        <h3 class="filter-title"><i class="fas fa-sliders-h"></i>Filtrar Mis Propiedades</h3>
         <form asp-action="Filter" method="get">
             <div class="row g-4">
                 <div class="col-md-3">
@@ -313,6 +376,16 @@
                         <option value="Departamento">Departamento</option>
                         <option value="Terreno">Terreno</option>
                         <option value="Oficina">Oficina</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold"><i class="fas fa-tag me-2"></i>Estado</label>
+                    <select name="estado" class="form-select shadow-sm">
+                        <option value="">Todos</option>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Reservada">Reservada</option>
+                        <option value="Vendida">Vendida</option>
                     </select>
                 </div>
 
@@ -330,31 +403,16 @@
                     </div>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold"><i class="fas fa-bed me-2"></i>Habitaciones</label>
-                    <select name="habitacion" class="form-select shadow-sm">
-                        <option value="">Cualquiera</option>
-                        <option value="1">1+</option>
-                        <option value="2">2+</option>
-                        <option value="3">3+</option>
-                        <option value="4">4+</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold"><i class="fas fa-bath me-2"></i>Baños</label>
-                    <select name="baños" class="form-select shadow-sm">
-                        <option value="">Cualquiera</option>
-                        <option value="1">1+</option>
-                        <option value="2">2+</option>
-                        <option value="3">3+</option>
-                    </select>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 shadow-lg">
+                        <i class="fas fa-search me-2"></i> Filtrar
+                    </button>
                 </div>
 
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100 shadow-lg">
-                        <i class="fas fa-search me-2"></i> Buscar
-                    </button>
+                    <a asp-action="Create" class="btn btn-success w-100 shadow-lg">
+                        <i class="fas fa-plus me-2"></i> Nueva Propiedad
+                    </a>
                 </div>
             </div>
         </form>
@@ -365,10 +423,10 @@
     {
         <div class="no-properties">
             <i class="fas fa-home"></i>
-            <h3>No encontramos propiedades</h3>
-            <p>Lo sentimos, no hay propiedades disponibles que coincidan con tus criterios de búsqueda. Intenta ajustar los filtros o vuelve a intentarlo más tarde.</p>
-            <a href="#" class="btn btn-refresh">
-                <i class="fas fa-sync-alt me-2"></i>Recargar Propiedades
+            <h3>No tienes propiedades registradas</h3>
+            <p>Parece que aún no has registrado ninguna propiedad. Haz clic en el botón "Nueva Propiedad" para comenzar.</p>
+            <a asp-action="Create" class="btn btn-refresh">
+                <i class="fas fa-plus me-2"></i>Registrar Propiedad
             </a>
         </div>
     }
@@ -377,12 +435,18 @@
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var item in Model)
             {
+                var isSold = item.Vendida.HasValue && item.Vendida.Value;
+                var isAvailable = item.Disponibilidad && !isSold;
+                var statusClass = isSold ? "sold" : (item.Disponibilidad ? "available" : "reserved");
+                var statusText = isSold ? "Vendida" : (item.Disponibilidad ? "Disponible" : "Reservada");
+
                 <div class="col">
-                    <div class="property-card card h-100">
+                    <div class="property-card card h-100 @(isSold ? "sold" : "")">
                         <div class="img-container">
                             <img src="@item.Imagen" class="card-img-top" alt="@item.Titulo" />
                             <span class="property-badge @item.TipoPropiedad.ToLower()">@item.TipoPropiedad</span>
-                            <span class="price-tag">RD$ @item.Precio.ToString("N0")</span>
+                            <span class="status-badge @statusClass">@statusText</span>
+                            <span class="price-tag @(isSold ? "sold" : (!item.Disponibilidad ? "reserved" : ""))">RD$ @item.Precio.ToString("N0")</span>
                         </div>
 
                         <div class="card-body">
@@ -431,7 +495,7 @@
                                     </div>
                                     <div class="feature-text">
                                         <span class="label">Área</span>
-                                        <span class="value">@item.TamañoTerreno m²</span>
+                                        <span class="value">@item.TamañoTerreno.ToString("N2") m²</span>
                                     </div>
                                 </div>
                             </div>
@@ -442,12 +506,52 @@
                                 <a asp-action="Details" asp-route-id="@item.PropiedadID" class="btn btn-details">
                                     <i class="fas fa-eye me-2"></i>Ver Detalles
                                 </a>
-                                <form asp-action="Favorite" method="post" class="d-grid">
-                                    <input type="hidden" name="PropiedadID" value="@item.PropiedadID" />
-                                    <button type="submit" class="btn btn-favorite">
-                                        <i class="fas fa-heart me-2"></i>Guardar
+
+                                @if (!isSold)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.PropiedadID" class="btn btn-outline-primary">
+                                        <i class="fas fa-edit me-2"></i>Editar
+                                    </a>
+
+                                    if (item.Disponibilidad)
+                                    {
+                                        <form asp-action="MarkAsReserved" method="post" class="d-grid">
+                                            <input type="hidden" name="id" value="@item.PropiedadID" />
+                                            <button type="submit" class="btn btn-outline-warning">
+                                                <i class="fas fa-pause me-2"></i>Marcar como Reservada
+                                            </button>
+                                        </form>
+
+                                        <form asp-action="MarkAsSold" method="post" class="d-grid">
+                                            <input type="hidden" name="id" value="@item.PropiedadID" />
+                                            <button type="submit" class="btn btn-outline-secondary">
+                                                <i class="fas fa-tag me-2"></i>Marcar como Vendida
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="MarkAsAvailable" method="post" class="d-grid">
+                                            <input type="hidden" name="id" value="@item.PropiedadID" />
+                                            <button type="submit" class="btn btn-outline-success">
+                                                <i class="fas fa-check me-2"></i>Marcar como Disponible
+                                            </button>
+                                        </form>
+
+                                        <form asp-action="MarkAsSold" method="post" class="d-grid">
+                                            <input type="hidden" name="id" value="@item.PropiedadID" />
+                                            <button type="submit" class="btn btn-outline-secondary">
+                                                <i class="fas fa-tag me-2"></i>Marcar como Vendida
+                                            </button>
+                                        </form>
+                                    }
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary" disabled>
+                                        <i class="fas fa-check-circle me-2"></i>Propiedad Vendida
                                     </button>
-                                </form>
+                                }
                             </div>
                         </div>
                     </div>

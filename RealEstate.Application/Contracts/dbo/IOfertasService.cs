@@ -7,5 +7,8 @@ namespace RealEstate.Application.Contracts.dbo
 {
     public interface IOfertasService : IBaseService<ServiceResponse, OfertasDto>
     {
+        Task<ServiceResponse> GetPropertyOfferedAsync();
+        Task<bool> PendingBidsAsync();
+
     }
 }

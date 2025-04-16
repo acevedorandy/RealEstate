@@ -27,6 +27,7 @@ namespace RealEstate.Domain.Entities.dbo
         public string TipoPropiedad { get; set; } 
         public bool Disponibilidad { get; set; }
         public string? Imagen { get; set; }
+        public bool? Vendida { get; set; }
 
     }
 }
