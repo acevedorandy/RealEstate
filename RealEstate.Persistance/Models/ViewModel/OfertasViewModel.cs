@@ -6,6 +6,9 @@ namespace RealEstate.Persistance.Models.ViewModel
     {
         public int OfertaID { get; set; }
         public string ClienteID { get; set; }
+        public string NombreCliente { get; set; }
+        public string ApellidoCliente {get; set;}
+        public string FotoCliente { get; set; }
         public int PropiedadID { get; set; }
         public string Codigo { get; set; }
         public string Titulo { get; set; }

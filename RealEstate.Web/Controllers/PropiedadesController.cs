@@ -6,6 +6,7 @@ using RealEstate.Application.Dtos.dbo;
 using RealEstate.Application.Services.dbo;
 using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Models.EnumerablesModel;
+using RealEstate.Persistance.Models.ViewModel;
 using RealEstate.Web.Helpers.Imagenes;
 
 namespace RealEstate.Web.Controllers
@@ -14,17 +15,20 @@ namespace RealEstate.Web.Controllers
     {
         private readonly IPropiedadesService _propiedadesService;
         private readonly IPropiedadFotosService _propiedadFotosService;
+        private readonly IOfertasService _ofertasService;
         private readonly ImagenHelper _imagenHelper;
         private readonly IUsuariosService _usuariosService;
 
         public PropiedadesController(IPropiedadesService propiedadesService,
                                      ImagenHelper imagenHelper,
                                      IPropiedadFotosService propiedadFotosService,
-                                     IUsuariosService usuariosService)
+                                     IUsuariosService usuariosService,
+                                     IOfertasService ofertasService)
         {
             _propiedadesService = propiedadesService;
             _imagenHelper = imagenHelper;
             _propiedadFotosService = propiedadFotosService;
+            _ofertasService = ofertasService;
         }
 
         public async Task <IActionResult> Index()
@@ -65,6 +69,31 @@ namespace RealEstate.Web.Controllers
             }
 
             return View(propiedadDetalles);
+        }
+
+        public async Task<IActionResult> PropertyOffers(int id)
+        {
+            var result = await _ofertasService.GetOfferedByMyPropertyAsync(id);
+
+            if (result.IsSuccess)
+            {
+                List<OfertasViewModel> ofertas = (List<OfertasViewModel>)result.Model;
+                return View(ofertas);
+            }
+            return View();
+        }
+
+        // Aqui se esta trabajando
+        public async Task<IActionResult> OffersByUser(int propiedadId, string clienteId)
+        {
+            var result = await _ofertasService.GetAllOffersByClientAsync(propiedadId, clienteId);
+
+            if (result.IsSuccess)
+            {
+                List<OfertasViewModel> ofertas = (List<OfertasViewModel>)result.Model;
+                return View(ofertas);
+            }
+            return View();
         }
 
         public ActionResult Create()

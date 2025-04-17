@@ -38,7 +38,9 @@
         <div class="col">
             <div class="card border-0 shadow-sm rounded-3 h-100">
                 <div class="card-body text-center py-4">
-                    <h3 class="display-5 fw-bold text-success mb-2">@Model.Count(o => o.Aceptada)</h3>
+                    <h3 class="display-5 fw-bold text-success mb-2">
+                        @Model.Count(o => o.Aceptada == true)
+                    </h3>
                     <p class="text-uppercase text-muted mb-0">Ofertas Aceptadas</p>
                 </div>
             </div>

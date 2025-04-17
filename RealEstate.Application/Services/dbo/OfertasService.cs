@@ -9,6 +9,7 @@ using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Application.Helpers.web;
 using RealEstate.Application.Enum;
+using Microsoft.AspNetCore.Identity;
 
 namespace RealEstate.Application.Services.dbo
 {
@@ -58,6 +59,32 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
+        public async Task<ServiceResponse> GetAllOffersByClientAsync(int propiedadId, string clienteId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _ofertasRepository.GetAllOffersByClient(propiedadId, clienteId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo las ofertas realizadas a propiedades.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
         public async Task<ServiceResponse> GetByIDAsync(int id)
         {
             ServiceResponse response = new ServiceResponse();
@@ -65,6 +92,32 @@ namespace RealEstate.Application.Services.dbo
             try
             {
                 var result = await _ofertasRepository.GetById(id);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo la oferta.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> GetOfferedByMyPropertyAsync(int propiedadId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _ofertasRepository.GetOfferedByMyProperty(propiedadId);
 
                 if (!result.Success)
                 {
@@ -177,7 +230,25 @@ namespace RealEstate.Application.Services.dbo
                 }
 
                 var oferta = _mapper.Map<Ofertas>(dto);
+
+                switch (dto.Estado)
+                {
+                    case "Aceptada":
+                        dto.Aceptada = true;
+                        dto.Estado = Estado.Aceptada.ToString();
+                        break;
+
+                    case "Rechazada":
+                        dto.Estado = Estado.Rechazada.ToString();
+                        break;
+
+                    default:
+                        break;
+                }
+
                 var result = await _ofertasRepository.Update(oferta);
+
+                return response;
             }
             catch (Exception ex)
             {

@@ -123,6 +123,8 @@ namespace RealEstate.Persistance.Repositories.dbo
 
                              orderby propiedad.PropiedadID descending
 
+                             where propiedad.Vendida== false
+
                                 select new PropiedadesModel()
                                 {
                                     PropiedadID = propiedad.PropiedadID,

@@ -41,24 +41,26 @@ namespace RealEstate.Persistance.Repositories.dbo
 
             try
             {
-                Ofertas? ofertasToUpdate = await _realEstateContext.Ofertas.FindAsync(ofertas.OfertaID);
+                Ofertas? ofertaToUpdate = await _realEstateContext.Ofertas.FindAsync(ofertas.OfertaID);
 
-                ofertasToUpdate.OfertaID = ofertas.OfertaID;
-                ofertasToUpdate.ClienteID = ofertas.ClienteID;
-                ofertasToUpdate.PropiedadID = ofertas.PropiedadID;
-                ofertasToUpdate.Cifra = ofertas.Cifra;
-                ofertasToUpdate.FechaOferta = ofertas.FechaOferta;
-                ofertasToUpdate.Estado = ofertas.Estado;
-                ofertasToUpdate.Aceptada = ofertas.Aceptada;
+                if (ofertaToUpdate == null)
+                {
+                    result.Success = false;
+                    result.Message = "Oferta no encontrada.";
+                    return result;
+                }
 
-                result = await base.Update(ofertas);
+                ofertaToUpdate.Estado = ofertas.Estado;
+
+                result = await base.Update(ofertaToUpdate);
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "Ha ocurrido un error actualizando la oferta.";
+                result.Message = "Ha ocurrido un error actualizando el estado de la oferta.";
                 _logger.LogError(result.Message, ex.ToString());
             }
+
             return result;
         }
 
@@ -210,11 +212,92 @@ namespace RealEstate.Persistance.Repositories.dbo
             return result;
         }
 
+        public async Task<OperationResult> GetOfferedByMyProperty(int propiedadId)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var clientes = await _identityContext.Users.ToListAsync();
+                var propiedades = await _realEstateContext.Propiedades.ToListAsync();
+                var ofertas = await _realEstateContext.Ofertas.ToArrayAsync();
+
+                var datos = (from oferta in ofertas
+                             join cliente in clientes on oferta.ClienteID equals cliente.Id
+                             join propiedad in propiedades on oferta.PropiedadID equals propiedad.PropiedadID
+                             where propiedad.PropiedadID == propiedadId
+
+                             select new OfertasViewModel
+                             {
+                                 OfertaID = oferta.OfertaID,
+                                 ClienteID = cliente.Id,
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Codigo = propiedad.Codigo,
+                                 NombreCliente = cliente.Nombre,
+                                 ApellidoCliente = cliente.Apellido,
+                                 FotoCliente = cliente.Foto,
+                                 FechaOferta = oferta.FechaOferta,
+                                 Estado = oferta.Estado,
+                             })
+                            .GroupBy(x => x.ClienteID)
+                            .Select(g => g.First()) 
+                            .ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo las ofertas";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
         public async Task<bool> PendingBids(string clienteId)
         {
             return await _realEstateContext.Ofertas
                 .AnyAsync(o => o.ClienteID == clienteId &&
                (o.Estado.ToLower() == "pendiente" || o.Estado.ToLower() == "aceptada"));
+        }
+
+        public async Task<OperationResult> GetAllOffersByClient(int propiedadId, string clienteId)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var clientes = await _identityContext.Users.ToListAsync();
+                var propiedades = await _realEstateContext.Propiedades.ToListAsync();
+                var ofertas = await _realEstateContext.Ofertas.ToArrayAsync();
+
+                var datos = (from oferta in ofertas
+                             join cliente in clientes on oferta.ClienteID equals cliente.Id
+                             join propiedad in propiedades on oferta.PropiedadID equals propiedad.PropiedadID
+
+                             where oferta.PropiedadID == propiedadId && oferta.ClienteID == clienteId
+
+                             select new OfertasViewModel
+                             {
+                                 OfertaID = oferta.OfertaID,
+                                 ClienteID = cliente.Id,
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Codigo = propiedad.Codigo,
+                                 Cifra = oferta.Cifra,
+                                 FechaOferta = oferta.FechaOferta,
+                                 Estado = oferta.Estado,
+                                 Aceptada = oferta.Aceptada
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo las ofertas";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
     }
 }

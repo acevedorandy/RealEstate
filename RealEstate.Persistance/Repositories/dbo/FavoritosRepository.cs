@@ -238,7 +238,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                              join usuario in usuarios on favorito.UsuarioID equals usuario.Id
                              join propiedad in propiedades on favorito.PropiedadID equals propiedad.PropiedadID
 
-                             where favorito.UsuarioID == userId
+                             where favorito.UsuarioID == userId && propiedad.Vendida == false
 
                              select new PropiedadesModel
                              {

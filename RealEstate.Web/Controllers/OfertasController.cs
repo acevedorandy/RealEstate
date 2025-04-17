@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
-using RealEstate.Application.Services.dbo;
-using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Models.ViewModel;
 
 namespace RealEstate.Web.Controllers
@@ -10,10 +8,13 @@ namespace RealEstate.Web.Controllers
     public class OfertasController : Controller
     {
         private readonly IOfertasService _ofertasService;
+        private readonly IPropiedadesService _propiedadesService;
 
-        public OfertasController(IOfertasService ofertasService)
+        public OfertasController(IOfertasService ofertasService,
+                                 IPropiedadesService propiedadesService)
         {
             _ofertasService = ofertasService;
+            _propiedadesService = propiedadesService;
         }
 
         public async Task <IActionResult> Index()
@@ -25,11 +26,6 @@ namespace RealEstate.Web.Controllers
                 List<OfertasViewModel> ofertas = (List<OfertasViewModel>)result.Model;
                 return View(ofertas);
             }
-            return View();
-        }
-
-        public async Task <IActionResult> Details(int id)
-        {
             return View();
         }
 
@@ -79,18 +75,25 @@ namespace RealEstate.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> ConfirmarOrRechazarOferta(OfertasDto dto)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var result = await _ofertasService.UpdateAsync(dto);
+
+                if (result.IsSuccess)
+                {
+                    return Json(new { success = true });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "No se pudo actualizar la oferta." });
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return Json(new { success = false, message = "Error en el servidor." });
             }
         }
-
-
     }
 }
