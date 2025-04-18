@@ -11,7 +11,7 @@ namespace RealEstate.Domain.Entities.dbo
         public int PropiedadID { get; set; }
         public string ClienteID { get; set; }
         public DateTime FechaHora { get; set; }
-        public bool Estado { get; set; }
+        public string Estado { get; set; }
 
     }
 }
