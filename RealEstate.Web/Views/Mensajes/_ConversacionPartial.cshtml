@@ -1,0 +1,33 @@
+﻿@model IEnumerable<RealEstate.Persistance.Models.dbo.MensajesModel>
+@{
+    var remitenteActual = ViewBag.RemitenteID as string;
+}
+
+@foreach (var m in Model)
+{
+    var esRemitente = m.RemitenteID == remitenteActual;
+    var alineacion = esRemitente ? "text-end" : "text-start";
+    var color = esRemitente ? "bg-primary text-white" : "bg-light";
+    var estiloBurbuja = $"rounded p-2 d-inline-block {color}";
+
+    // Lógica mejorada para nombres
+    var nombreMostrar = esRemitente ?
+        "Tú" :
+        (m.DestinatarioID == remitenteActual ? m.RemitenteNombre : m.DestinatarioNombre);
+
+    <div class="mb-2 @alineacion">
+        <div class="@estiloBurbuja">
+            <strong>@nombreMostrar:</strong><br />
+            @m.Mensaje
+        </div>
+        <div class="small text-muted">
+            @m.Enviado.ToString("g") |
+            @(m.Visto ? "✓✓" : "✓")
+            <!-- Debug info -->
+            <div class="d-none">
+                RemID: @m.RemitenteID | DestID: @m.DestinatarioID |
+                RemNom: @m.RemitenteNombre | DestNom: @m.DestinatarioNombre
+            </div>
+        </div>
+    </div>
+}

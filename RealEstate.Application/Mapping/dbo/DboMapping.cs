@@ -19,11 +19,15 @@ namespace RealEstate.Application.Mapping.dbo
             CreateMap<Mensajes, MensajesDto>()
                 .ReverseMap();
 
+            CreateMap<Ofertas, OfertasDto>()
+                .ReverseMap();
+
             CreateMap<Pagos, PagosDto>()
                 .ReverseMap();
 
             CreateMap<Propiedades, PropiedadesDto>()
-                .ReverseMap();
+                .ForMember(dest => dest.Imagen, opt => opt.Ignore())
+                .ReverseMap(); 
 
             CreateMap<PropiedadFotos, PropiedadFotosDto>()
                 .ReverseMap();

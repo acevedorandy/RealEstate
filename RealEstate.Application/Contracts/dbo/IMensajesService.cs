@@ -8,5 +8,7 @@ namespace RealEstate.Application.Contracts.dbo
 {
     public interface IMensajesService : IBaseService<ServiceResponse, MensajesDto>
     {
+        Task<ServiceResponse> GetConversation(string remitenteId, string destinatarioId);
+        Task<ServiceResponse> GetDestinatarioAsync();
     }
 }

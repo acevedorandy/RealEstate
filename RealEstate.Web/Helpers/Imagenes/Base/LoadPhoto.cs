@@ -1,4 +1,11 @@
-﻿namespace RealEstate.Web.Helpers.Imagenes.Base
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using RealEstate.Domain.Entities.dbo;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace RealEstate.Web.Helpers.Imagenes.Base
 {
     public class LoadPhoto
     {
@@ -9,29 +16,26 @@
             _webHost = webHostEnvironment;
         }
 
-        public async Task<string> SaveFileAsync(IFormFile Foto)
+        public async Task<string> SaveFileAsync(IFormFile file)
         {
+            if (file == null || file.Length == 0)
+                return null;
 
-            if (Foto != null && Foto.Length > 0)
+            string uploadsFolder = Path.Combine(_webHost.WebRootPath, "images", "propiedades");
+
+            // Crear directorio si no existe (aquí se centraliza esta lógica)
+            Directory.CreateDirectory(uploadsFolder);
+
+            string fileExtension = Path.GetExtension(file.FileName);
+            string uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                string uploadsFolder = Path.Combine(_webHost.WebRootPath, "images", "usuario");
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                string fileExtension = Path.GetExtension(Foto.FileName);
-                string uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await Foto.CopyToAsync(fileStream);
-                }
-
-                return "/images/propiedades/" + uniqueFileName;
+                await file.CopyToAsync(fileStream);
             }
-            return null;
+
+            return $"/images/{"propiedades"}/{uniqueFileName}";
         }
     }
 }

@@ -1,0 +1,404 @@
+﻿@using RealEstate.Persistance.Models.ViewModel
+@model List<OfertasViewModel>
+
+<div class="offers-container">
+    <div class="hero-section text-center mb-5">
+        <div class="header-container p-4 rounded-3 shadow-sm" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+            <h1 class="display-4 fw-bold text-white mb-3">
+                <i class="fas fa-paper-plane me-3"></i>Mis Ofertas Realizadas
+            </h1>
+            <p class="lead text-white-50 mb-0">
+                Revisa el estado de todas las ofertas que has realizado
+            </p>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var offer in Model)
+            {
+                <div class="col">
+                    <div class="offer-card h-100">
+                        <div class="offer-header">
+                            <div class="client-photo placeholder bg-secondary">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="client-info">
+                                <h3 class="client-name">Propiedad #@offer.PropiedadID</h3>
+                                <span class="offer-date">@offer.FechaOferta.ToString("dd MMM yyyy")</span>
+                                <div class="offer-amount mt-2">
+                                    <span class="badge bg-primary">$@offer.Cifra.ToString("N0")</span>
+                                </div>
+                            </div>
+                            <span class="status-badge @offer.Estado.ToLower()">@offer.Estado</span>
+                        </div>
+
+                        <div class="offer-details">
+                            <div class="detail-item">
+                                <span class="detail-label">ID Oferta:</span>
+                                <span class="detail-value">@offer.OfertaID</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Estado:</span>
+                                <span class="detail-value text-@(offer.Estado.ToLower() == "aceptada" ? "success" : offer.Estado.ToLower() == "rechazada" ? "danger" : "warning")">
+                                    @offer.Estado
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Fecha:</span>
+                                <span class="detail-value">@offer.FechaOferta.ToString("g")</span>
+                            </div>
+                        </div>
+
+                        <div class="offer-actions">
+                            @if (offer.Estado.ToLower() == "pendiente")
+                            {
+                                <button class="btn btn-sm btn-success me-2"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#confirmModal"
+                                        data-bs-ofertaid="@offer.OfertaID">
+                                    Aceptar
+                                </button>
+
+                                <button class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#rejectModal"
+                                        data-bs-ofertaid="@offer.OfertaID">
+                                    <i class="fas fa-times me-1"></i>Rechazar
+                                </button>
+
+                            }
+                            else
+                            {
+                                <button class="action-button disabled" disabled>
+                                    @(offer.Estado.ToLower() == "aceptada" ? "Oferta Aceptada" : "Oferta Rechazada")
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    else
+    {
+        <div class="empty-state text-center py-5">
+            <i class="fas fa-inbox fa-4x text-muted mb-4"></i>
+            <h3 class="text-dark mb-3">No has realizado ofertas</h3>
+            <p class="text-muted">No encontramos ofertas realizadas por ti</p>
+            <a href="@Url.Action("Index", "Propiedades")" class="btn btn-primary mt-3">
+                <i class="fas fa-search me-2"></i>Buscar Propiedades
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Modal para aceptar oferta -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmar Aceptación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro que deseas aceptar esta oferta?</p>
+                <p class="fw-bold text-success">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <input type="hidden" name="OfertaID" value=""/>
+                <button type="button" class="btn btn-success" id="confirmAccept">Sí, Aceptar Oferta</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para rechazar oferta -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="rejectModalLabel">Confirmar Rechazo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro que deseas rechazar esta oferta?</p>
+                <p class="fw-bold text-danger">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <input type="hidden" name="OfertaID" />
+                <button type="button" class="btn btn-danger" id="confirmReject">Sí, Rechazar Oferta</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Usamos un objeto para manejar el estado de las ofertas
+            const offerManager = {
+                currentOfertaId: null,
+
+                init: function () {
+                    // Delegamos el evento para manejar dinámicamente los botones
+                    $(document).on('click', '[data-bs-ofertaid]', function () {
+                        offerManager.currentOfertaId = $(this).data('bs-ofertaid');
+                        console.log("Oferta ID capturada:", offerManager.currentOfertaId);
+                    });
+
+                    // Configuramos los handlers de los modales
+                    $('#confirmAccept').click(offerManager.handleAccept);
+                    $('#confirmReject').click(offerManager.handleReject);
+                },
+
+                handleAccept: function () {
+                    offerManager.processOffer('Aceptada');
+                },
+
+                handleReject: function () {
+                    offerManager.processOffer('Rechazada');
+                },
+
+                processOffer: function (estado) {
+                    if (!offerManager.currentOfertaId) {
+                        alert('No se ha seleccionado una oferta.');
+                        return;
+                    }
+
+                    console.log(`Enviando ID de oferta para ${estado}:`, offerManager.currentOfertaId);
+
+                    $.ajax({
+                        url: '@Url.Action("ConfirmarOrRechazarOferta", "Ofertas")',
+                        type: 'POST',
+                        data: {
+                            ofertaid: offerManager.currentOfertaId,
+                            estado: estado
+                        },
+                        headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                location.reload();
+                            } else {
+                                alert(`Error al ${estado.toLowerCase()} la oferta: ${response.message}`);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert(`Error al comunicarse con el servidor: ${error}`);
+                        }
+                    });
+                }
+            };
+
+            offerManager.init();
+        });
+    </script>
+}
+
+<style>
+    .offers-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .header-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .offer-card {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background: white;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+        .offer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+    .offer-header {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        position: relative;
+    }
+
+    .client-photo {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid white;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+        .client-photo.placeholder.bg-secondary {
+            background-color: #6c757d !important;
+        }
+
+    .client-info {
+        flex-grow: 1;
+    }
+
+    .client-name {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.2rem;
+    }
+
+    .offer-date {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+    }
+
+    .offer-amount .badge {
+        font-size: 0.9rem;
+        padding: 0.35em 0.65em;
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+        .status-badge.pendiente {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .status-badge.aceptada {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .status-badge.rechazada {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+    .offer-details {
+        padding: 20px;
+        border-bottom: 1px solid #ecf0f1;
+        flex-grow: 1;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #7f8c8d;
+    }
+
+    .detail-value {
+        color: #2c3e50;
+    }
+
+        .detail-value.text-success {
+            color: #2ecc71 !important;
+        }
+
+        .detail-value.text-danger {
+            color: #e74c3c !important;
+        }
+
+        .detail-value.text-warning {
+            color: #f39c12 !important;
+        }
+
+    .offer-actions {
+        display: flex;
+        padding: 15px;
+    }
+
+    .action-button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .action-button:disabled {
+            background-color: #ecf0f1;
+            color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .action-button:hover:not(:disabled) {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+    .empty-state {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 3rem;
+    }
+
+        .empty-state .btn {
+            padding: 0.5rem 1.5rem;
+        }
+
+    @@media (max-width: 768px) {
+        .header-container {
+            padding: 1.5rem;
+        }
+
+        .client-photo {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+        }
+
+        .client-name {
+            font-size: 1rem;
+        }
+
+        .offer-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+            .offer-actions .btn {
+                width: 100%;
+            }
+    }
+</style>

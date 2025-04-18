@@ -1,0 +1,349 @@
+﻿@model List<RealEstate.Persistance.Models.ViewModel.OfertasViewModel>
+@{
+    ViewData["Title"] = "Mis Ofertas";
+}
+
+<!-- Hero Section -->
+<section class="bg-gradient-primary-to-secondary py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-4 text-white mb-3 fw-bold">Mis Ofertas Realizadas</h1>
+                <p class="lead text-white-50 mb-4">Revisa el estado y detalles de todas tus ofertas en un solo lugar</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/Clientes" class="btn btn-light rounded-pill px-4">
+                        <i class="fas fa-search me-2"></i>Explorar más propiedades
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container py-5">
+    <!-- Stats Summary -->
+    <div class="row row-cols-1 row-cols-md-4 g-4 mb-5">
+        <!-- Ofertas Totales -->
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-body text-center py-4">
+                    <h3 class="display-5 fw-bold text-primary mb-2">@Model.Count</h3>
+                    <p class="text-uppercase text-muted mb-0">Ofertas Totales</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aceptadas -->
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-body text-center py-4">
+                    <h3 class="display-5 fw-bold text-success mb-2">
+                        @Model.Count(o => o.Aceptada == true)
+                    </h3>
+                    <p class="text-uppercase text-muted mb-0">Ofertas Aceptadas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pendientes -->
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-body text-center py-4">
+                    <h3 class="display-5 fw-bold text-warning mb-2">@Model.Count(o => o.Estado?.ToLower() == "pendiente")</h3>
+                    <p class="text-uppercase text-muted mb-0">Pendientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rechazadas -->
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-body text-center py-4">
+                    <h3 class="display-5 fw-bold text-danger mb-2">@Model.Count(o => o.Estado?.ToLower() == "rechazada")</h3>
+                    <p class="text-uppercase text-muted mb-0">Ofertas Rechazadas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @if (Model != null && Model.Any())
+    {
+        <!-- Filter Options -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body py-3">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 mb-2 mb-md-0">
+                                <label class="form-label text-muted small mb-1">Filtrar por estado:</label>
+                                <select class="form-select filter-select" id="estadoFilter">
+                                    <option value="all">Todos</option>
+                                    <option value="pendiente">Pendientes</option>
+                                    <option value="aceptada">Aceptadas</option>
+                                    <option value="rechazada">Rechazadas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-2 mb-md-0">
+                                <label class="form-label text-muted small mb-1">Ordenar por:</label>
+                                <select class="form-select filter-select" id="sortFilter">
+                                    <option value="fecha-desc">Más recientes primero</option>
+                                    <option value="fecha-asc">Más antiguas primero</option>
+                                    <option value="monto-desc">Mayor monto primero</option>
+                                    <option value="monto-asc">Menor monto primero</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-muted small mb-1">Buscar:</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Código o título...">
+                                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ofertas Grid -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="ofertasContainer">
+            @foreach (var oferta in Model)
+            {
+                <div class="col" data-estado="@oferta.Estado?.ToLower()" data-fecha="@oferta.FechaOferta.Ticks" data-monto="@oferta.Cifra">
+                    <div class="card shadow-sm border-0 rounded-4 h-100 hover-scale overflow-hidden">
+
+                        <!-- Imagen -->
+                        @if (!string.IsNullOrEmpty(oferta.Imagen))
+                        {
+                            <img src="@oferta.Imagen" alt="Imagen propiedad @oferta.Titulo" class="card-img-top img-fluid object-fit-cover" style="height: 200px;" />
+                        }
+
+                        <!-- Header -->
+                        <div class="card-header bg-transparent border-0 pt-4 pb-0">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="badge bg-@GetEstadoColor(oferta.Estado) rounded-pill px-3 py-2 mb-2">@oferta.Estado</span>
+                                    @if (oferta.Aceptada)
+                                    {
+                                        <span class="badge bg-success rounded-pill px-3 py-2 mb-2 ms-2">
+                                            <i class="fas fa-check-circle me-1"></i>Aceptada
+                                        </span>
+                                    }
+                                </div>
+                                <span class="text-muted small">#@oferta.Codigo</span>
+                            </div>
+                            <h5 class="card-title mt-2 mb-1">@oferta.Titulo</h5>
+                            <p class="text-muted small mb-0">@oferta.TipoPropiedad</p>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="card-body pt-3 pb-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="avatar avatar-sm bg-light-primary rounded-circle">
+                                        <i class="fas fa-user-tie text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-0">@oferta.NombreAgente @oferta.ApellidoAgente</h6>
+                                    <p class="text-muted small mb-0">Agente</p>
+                                </div>
+                            </div>
+
+                            <div class="border-top pt-3 mt-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">Monto ofertado:</span>
+                                    <span class="fw-bold text-primary">RD$ @oferta.Cifra.ToString("N2")</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">Fecha:</span>
+                                    <span>@oferta.FechaOferta.ToString("dd MMM yyyy")</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+@*                         <div class="card-footer bg-transparent border-0 rounded-bottom-4 pt-0 pb-4 px-4">
+                            <div class="d-grid">
+                                <a href="/Propiedades/Detalle/@oferta.PropiedadID" class="btn btn-primary rounded-pill">
+                                    <i class="fas fa-eye me-2"></i>Ver propiedad
+                                </a>
+                            </div>
+                        </div> *@
+                    </div>
+                </div>
+
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Empty State -->
+        <div class="text-center py-5 my-5">
+            <div class="mb-4">
+                <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No offers" style="height: 120px; opacity: 0.7;">
+            </div>
+            <h3 class="h4 mb-3">No has realizado ninguna oferta aún</h3>
+            <p class="text-muted mb-4">Explora nuestras propiedades disponibles y encuentra tu próximo hogar o inversión.</p>
+            <a href="/Propiedades" class="btn btn-primary rounded-pill px-4">
+                <i class="fas fa-search me-2"></i>Buscar propiedades
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Modal for Offer Details -->
+<div class="modal fade" id="offerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="offerModalTitle">Detalles de Oferta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="offerModalBody">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cerrar</button>
+                <a href="#" class="btn btn-primary rounded-pill" id="modalPropertyLink">Ver propiedad</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .hover-scale {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+        .avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+        .bg-gradient-primary-to-secondary {
+            background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
+        }
+        .card {
+            transition: all 0.3s ease;
+        }
+        .badge {
+            font-weight: 500;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+
+            // Filter functionality
+            $('.filter-select').change(function() {
+                filterOffers();
+            });
+
+            $('#searchButton').click(function() {
+                filterOffers();
+            });
+
+            $('#searchInput').keyup(function(e) {
+                if (e.key === 'Enter') {
+                    filterOffers();
+                }
+            });
+
+            function filterOffers() {
+                const estado = $('#estadoFilter').val();
+                const sort = $('#sortFilter').val();
+                const searchTerm = $('#searchInput').val().toLowerCase();
+
+                $('.col[data-estado]').each(function() {
+                    const cardEstado = $(this).data('estado');
+                    const cardCodigo = $(this).find('.card-title').text().toLowerCase() + ' ' + $(this).find('span.text-muted.small').text().toLowerCase();
+
+                    const estadoMatch = estado === 'all' || cardEstado === estado;
+                    const searchMatch = cardCodigo.includes(searchTerm);
+
+                    if (estadoMatch && searchMatch) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                sortOffers(sort);
+            }
+
+            function sortOffers(sortMethod) {
+                const container = $('#ofertasContainer');
+                const items = container.children('.col').get();
+
+                items.sort(function(a, b) {
+                    const aFecha = parseInt($(a).data('fecha'));
+                    const bFecha = parseInt($(b).data('fecha'));
+                    const aMonto = parseFloat($(a).data('monto'));
+                    const bMonto = parseFloat($(b).data('monto'));
+
+                    switch(sortMethod) {
+                        case 'fecha-desc':
+                            return bFecha - aFecha;
+                        case 'fecha-asc':
+                            return aFecha - bFecha;
+                        case 'monto-desc':
+                            return bMonto - aMonto;
+                        case 'monto-asc':
+                            return aMonto - bMonto;
+                        default:
+                            return 0;
+                    }
+                });
+
+                $.each(items, function(idx, itm) { container.append(itm); });
+            }
+
+            // Quick view modal
+            $('.quick-view-btn').click(function() {
+                const offerId = $(this).data('offer-id');
+                // Here you would typically make an AJAX call to get offer details
+                // For demo, we'll just show static content
+                $('#offerModalTitle').text('Detalles de Oferta #' + offerId);
+                $('#offerModalBody').html(`
+                    <div class="mb-3">
+                        <h6>Información de la Propiedad</h6>
+                        <p>Detalles completos de la propiedad y la oferta...</p>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>Esta vista puede mostrar todos los detalles de la oferta.
+                    </div>
+                `);
+                $('#modalPropertyLink').attr('href', '/Propiedades/Detalle/' + offerId);
+                $('#offerModal').modal('show');
+            });
+        });
+    </script>
+}
+
+@functions {
+    public string GetEstadoColor(string estado)
+    {
+        return estado?.ToLower() switch
+        {
+            "pendiente" => "warning",
+            "aceptada" => "success",
+            "rechazada" => "danger",
+            _ => "secondary"
+        };
+    }
+}

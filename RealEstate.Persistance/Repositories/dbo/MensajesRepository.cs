@@ -115,7 +115,9 @@ namespace RealEstate.Persistance.Repositories.dbo
                                 PropiedadID = propiedad.PropiedadID,
                                 Mensaje = mensaje.Mensaje,
                                 Enviado = mensaje.Enviado,
-                                Visto = mensaje.Visto
+                                Visto = mensaje.Visto,
+                                RemitenteNombre = remitente.Nombre,
+                                DestinatarioNombre = destinatario.Nombre
 
                             }).ToList();
 
@@ -175,5 +177,74 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
+public async Task<OperationResult> GetDestinatario(string remitenteId)
+{
+    OperationResult result = new OperationResult();
+
+    try
+    {
+        // Obtener todos los mensajes donde el usuario actual participó (como remitente o destinatario)
+        var userMessages = await _realEstateContext.Mensajes
+            .Where(m => m.RemitenteID == remitenteId || m.DestinatarioID == remitenteId)
+            .ToListAsync();
+
+        // Agrupar por el "otro usuario" en la conversación y obtener el mensaje más reciente
+        var latestMessages = userMessages
+            .GroupBy(m => 
+                m.RemitenteID == remitenteId ? m.DestinatarioID : m.RemitenteID) // Agrupa por el ID del otro usuario
+            .Select(g => g.OrderByDescending(m => m.MensajeID).First()) // Toma el más reciente de cada grupo
+            .ToList();
+
+        // Obtener IDs de usuarios y propiedades involucradas
+        var userIds = latestMessages
+            .SelectMany(m => new[] { m.RemitenteID, m.DestinatarioID })
+            .Distinct()
+            .ToList();
+
+        var propertyIds = latestMessages
+            .Select(m => m.PropiedadID)
+            .Distinct()
+            .ToList();
+
+        // Obtener datos relacionados
+        var users = await _identityContext.Users
+            .Where(u => userIds.Contains(u.Id))
+            .ToDictionaryAsync(u => u.Id);
+
+        var properties = await _realEstateContext.Propiedades
+            .Where(p => propertyIds.Contains(p.PropiedadID))
+            .ToDictionaryAsync(p => p.PropiedadID);
+
+        // Mapear al modelo de vista
+        var data = latestMessages.Select(m => new MensajesModel
+        {
+            MensajeID = m.MensajeID,
+            RemitenteID = m.RemitenteID,
+            RemitenteNombre = users.TryGetValue(m.RemitenteID, out var rem) ? rem.UserName : "Unknown",
+            DestinatarioID = m.DestinatarioID,
+            DestinatarioNombre = users.TryGetValue(m.DestinatarioID, out var des) ? des.UserName : "Unknown",
+            PropiedadID = m.PropiedadID,
+            Codigo = properties.TryGetValue(m.PropiedadID, out var prop) ? prop.Codigo : "N/A", // Aquí obtienes el código
+            PropiedadNombre = properties.TryGetValue(m.PropiedadID, out var prop1) ? prop.Titulo : "Unknown",
+            Mensaje = m.Mensaje,
+            Enviado = m.Enviado,
+            Visto = m.Visto,
+            // Agregar campo para identificar si el usuario actual es el remitente
+            EsRemitente = m.RemitenteID == remitenteId
+        }).ToList();
+
+        result.Data = data;
+    }
+    catch (Exception ex)
+    {
+        result.Success = false;
+        result.Message = "Ha ocurrido un error obteniendo los mensajes.";
+        logger.LogError(ex, result.Message);
+    }
+
+    return result;
+}
+
     }
 }

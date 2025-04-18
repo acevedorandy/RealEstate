@@ -40,6 +40,7 @@ namespace RealEstate.Application.Dtos.identity.account
         [Required(ErrorMessage = "Debe colocar su telefono.")]
         [DataType(DataType.Text)]
         public string Phone { get; set; }
+        public string Rol { get; set; }
         public string Foto { get; set; }
         public IFormFile File { get; set; }
     }

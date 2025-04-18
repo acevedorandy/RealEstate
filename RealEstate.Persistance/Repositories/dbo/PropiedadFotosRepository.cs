@@ -42,7 +42,7 @@ namespace RealEstate.Persistance.Repositories.dbo
 
                 propiedadFotosToUpdate.RelacionID = propiedadFotos.RelacionID;
                 propiedadFotosToUpdate.PropiedadID = propiedadFotos.PropiedadID;
-                propiedadFotosToUpdate.Foto = propiedadFotos.Foto;
+                propiedadFotosToUpdate.Imagen = propiedadFotos.Imagen;
 
                 result = await base.Update(propiedadFotosToUpdate);
             }
@@ -84,7 +84,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                      {
                                          RelacionID = propiedad.RelacionID,
                                          PropiedadID = propiedad.PropiedadID,
-                                         Foto = propiedad.Foto
+                                         Imagen = propiedad.Imagen
 
                                      }).AsNoTracking()
                                      .ToListAsync();
@@ -112,7 +112,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                      {
                                          RelacionID = propiedad.RelacionID,
                                          PropiedadID = propiedad.PropiedadID,
-                                         Foto = propiedad.Foto
+                                         Imagen = propiedad.Imagen
 
                                      }).FirstOrDefaultAsync();
             }
@@ -120,6 +120,34 @@ namespace RealEstate.Persistance.Repositories.dbo
             {
                 result.Success = false;
                 result.Message = "Ha ocurrido un error obteniendo la relacion.";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> GetPhotosByProperty(int propiedadId)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                result.Data = await (from propiedad in _realEstateContext.PropiedadFotos
+
+                                     where propiedad.PropiedadID == propiedadId
+
+                                     select new PropiedadFotosModel
+                                     {
+                                         RelacionID = propiedad.RelacionID,
+                                         PropiedadID = propiedad.PropiedadID,
+                                         Imagen = propiedad.Imagen
+
+                                     }).AsNoTracking()
+                                     .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo las imagenes.";
                 _logger.LogError(result.Message, ex.ToString());
             }
             return result;

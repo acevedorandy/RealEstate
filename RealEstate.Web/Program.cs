@@ -3,6 +3,9 @@ using RealEstate.Identity.Dependency;
 using RealEstate.IOC.Dependencies.dbo;
 using RealEstate.IOC.Dependencies.infraestructure;
 using RealEstate.Persistance.Context;
+using RealEstate.Web.Helpers.Imagenes;
+using RealEstate.Web.Helpers.Imagenes.Base;
+using RealEstate.Web.Helpers.Otros;
 using RealEstate.Web.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +30,11 @@ builder.Services.AddEmailDependency(builder.Configuration);
 // Registro de las dependencias de la web
 builder.Services.AddScoped<LoginAuthorize>();
 builder.Services.AddScoped<ValidateUserSesion>();
+builder.Services.AddScoped<LoadPhoto>();
+builder.Services.AddScoped<ImagenHelper>();
+builder.Services.AddScoped<SelectRol>();
+
+
 
 // Registro para las sesiones
 builder.Services.AddSession();
@@ -57,6 +65,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 await app.RunAsync();

@@ -1,7 +1,10 @@
 ﻿
 
+using RealEstate.Application.Core;
 using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Application.Responses.identity;
+using RealEstate.Domain.Result;
+
 
 namespace RealEstate.Application.Contracts.dbo
 {
@@ -13,5 +16,14 @@ namespace RealEstate.Application.Contracts.dbo
         Task<RegisterResponse> RegisterAsync(RegisterDto registerDto, string origin);
         Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordDto resetPasswordDto);
         Task SignOutAsync();
+
+
+        /* Metodos de los agentes */
+        Task<ServiceResponse> GetIdentityUserAllAsync();
+        Task<ServiceResponse> GetIdentityUserByAsync(string userId);
+        Task<ServiceResponse> GetUserByRolAsync(string rol);
+        Task<ServiceResponse> ActivarOrDesactivarAsync(string userId);
+        Task<ServiceResponse> GetAgentActiveAsync();
+        Task<ServiceResponse> GetAgentByNameAsync(string name);
     }
 }

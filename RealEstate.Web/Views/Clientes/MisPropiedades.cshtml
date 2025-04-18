@@ -1,0 +1,79 @@
+﻿@model IEnumerable<RealEstate.Persistance.Models.dbo.PropiedadesModel>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="container my-5">
+    <h1 class="text-center text-primary mb-4">Mis propiedades favoritas</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <h4 class="alert-heading">Sin propiedades</h4>
+            <p>No hay propiedades registradas aún. Agrega una nueva para comenzar.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                        @* Imagen principal *@
+                        <img src="@item.Imagen" class="card-img-top img-fluid" alt="Imagen de @item.Titulo" style="height: 220px; object-fit: cover;">
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-primary">@item.Titulo</h5>
+                            <p class="card-text text-muted mb-2">@item.Descripcion</p>
+
+                            <div class="mb-2">
+                                <span class="badge bg-success fs-6">
+                                    <i class="fas fa-dollar-sign"></i> @item.Precio.ToString("N0")
+                                </span>
+                            </div>
+
+                            <div class="mb-2 text-secondary">
+                                <i class="fas fa-map-marker-alt"></i> @item.Direccion, @item.Ciudad
+                            </div>
+
+                            <div class="d-flex justify-content-between text-muted mb-3 flex-wrap" style="gap: 10px;">
+                                <small><i class="fas fa-building"></i> Piso: @item.Piso</small>
+                                <small><i class="fas fa-layer-group"></i> Niveles: @item.TotalNivel</small>
+                                <small><i class="fas fa-building"></i> Habitaciones: @item.Habitaciones</small>
+                                <small><i class="fas fa-building"></i> Baños: @item.Baños</small>
+                                <small><i class="fas fa-building"></i> Parqueos: @item.Parqueos</small>
+                                <small><i class="fas fa-building"></i> Terreno: @item.TamañoTerreno</small>
+
+                                <small><i class="fas fa-home"></i> Tipo: @item.TipoPropiedad</small>
+                                <small><i class="fas fa-calendar-alt"></i> Año: @item.AñoConstruccion</small>
+                            </div>
+
+                            <div class="mt-auto">
+                                <div class="btn-group w-100">
+                                    <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@item.PropiedadID">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </a>
+
+                                    <form asp-action="Favorite" method="post" style="display:inline;">
+                                        <input type="hidden" name="PropiedadID" value="@item.PropiedadID" />
+
+                                        <button type="submit" class="btn btn-outline-warning btn-sm">
+                                            <i class="bi bi-house-heart"></i> Favorito
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+}

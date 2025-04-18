@@ -6,6 +6,8 @@ namespace RealEstate.Application.Enum
     {
         Pendiente,
         Confirmado,
-        Cancelado
+        Cancelado,
+        Rechazada,
+        Aceptada
     }
 }

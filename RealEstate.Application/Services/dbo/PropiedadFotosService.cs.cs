@@ -23,6 +23,42 @@ namespace RealEstate.Application.Services.dbo
             _mapper = mapper;
         }
 
+        public async Task<ServiceResponse> AddPhotoAsEntity(int propiedadId, List<string> imagePaths)
+        {
+            ServiceResponse response = new();
+
+            try
+            {
+                foreach (var imagePath in imagePaths)
+                {
+                    var fotoDto = new PropiedadFotosDto
+                    {
+                        PropiedadID = propiedadId,
+                        Imagen = imagePath
+                    };
+
+                    var fotoEntity = _mapper.Map<PropiedadFotos>(fotoDto);
+                    var result = await _propiedadFotosRepository.Save(fotoEntity);
+
+                    if (!result.Success)
+                    {
+                        response.Messages += $"Error al guardar foto {imagePath}. ";
+                        _logger.LogWarning($"Error al guardar foto {imagePath}: {result.Message}");
+                    }
+                }
+
+                response.IsSuccess = string.IsNullOrEmpty(response.Messages);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Error interno al guardar las fotos";
+                _logger.LogError(ex, response.Messages);
+            }
+
+            return response;
+        }
+
         public async Task<ServiceResponse> GetAllAsync()
         {
             ServiceResponse response = new ServiceResponse();
@@ -38,7 +74,7 @@ namespace RealEstate.Application.Services.dbo
 
                     return response;
                 }
-                result.Data = response.Model;
+                response.Model = result.Data;
             }
             catch (Exception ex)
             {
@@ -64,12 +100,38 @@ namespace RealEstate.Application.Services.dbo
 
                     return response;
                 }
-                result.Data = response.Model;
+                response.Model = result.Data;
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Messages = "Ha ocurrido un error obteniendo la relacion.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> GetPhotosByPropertyAsync(int propiedadId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _propiedadFotosRepository.GetPhotosByProperty(propiedadId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo las fotos.";
                 _logger.LogError(response.Messages, ex.ToString());
             }
             return response;

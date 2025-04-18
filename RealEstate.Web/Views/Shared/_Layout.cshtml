@@ -16,6 +16,7 @@
 <html lang="en">
 
 <head>
+    @RenderSection("Styles", required: false)
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - InternetBanking.Web</title>
@@ -23,6 +24,11 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SocialNetwork.Web.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
 
     <style>
         .main-container {
@@ -80,22 +86,31 @@
 <body class="d-flex flex-column" style="min-height: 100vh;">
     <div class="main-container">
         <nav class="d-flex flex-column justify-content-center text-white p-3">
-            @*             <div class="text-center mb-4 mt-2">
-            <a class="nav-link text-white d-block text-truncate" style="font-size: 18px;" asp-area="" asp-controller="Account" asp-action="Welcome">
-            InternetBanking.Web
-            </a>
+
+@*             <div class="text-center mb-4 mt-2">
+                <a class="nav-link text-white d-block text-truncate" style="font-size: 18px;" asp-area="" asp-controller="Account" asp-action="Welcome">
+                    RealEstate.Web
+                </a>
             </div> *@
 
+
             <ul class="nav flex-column align-items-center w-100">
-                <img src="~/images/logo/banco.png" alt="Logo" style="max-width: 150px;" />
+                <img src="~/images/logo/realEstate.png" alt="Logo" style="max-width: 150px;" />
+                
+                <li class="nav-item">
+                    <span class="nav-link text-white">
+                        RealEstate.Web
+                    </span>
+                </li>
+
 
                 @if (usuarios != null)
                 {
-                    <div class="text-center mb-4 mt-2">
+@*                     <div class="text-center mb-4 mt-2">
                         <a class="nav-link text-white d-block text-truncate" style="font-size: 18px;" asp-area="" asp-controller="Account" asp-action="Welcome">
-                            InternetBanking.Web
+                            RealEstate.Web
                         </a>
-                    </div>
+                    </div> *@
 
                     @if (isAdmin)
                     {
@@ -134,39 +149,56 @@
                     else if (isClient)
                     {
                         <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Contratos" asp-action="Index">
-                                <i class="bi bi-people-fill"></i> Contratos
+                            <a class="nav-link text-white" asp-area="" asp-controller="Clientes" asp-action="Index">
+                                <i class="bi bi-house"></i> Home
                             </a>
                         </li>
+
                         <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Mensajes" asp-action="Index">
-                                <i class="bi bi-piggy-bank"></i> Mensajes
+                            <a class="nav-link text-white" asp-area="" asp-controller="Agentes" asp-action="Index">
+                                <i class="bi bi-person-badge"></i> Agentes
                             </a>
                         </li>
-                        <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Pagos" asp-action="Index">
-                                <i class="bi bi-currency-dollar"></i> Pagos
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white d-flex align-items-center" data-bs-toggle="collapse" href="#configCollapse" role="button" aria-expanded="false" aria-controls="configCollapse">
+                                <i class="bi bi-list"></i> Menú <i class="bi bi-chevron-down ms-auto"></i>
                             </a>
-                        </li>
-                        <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Propiedades" asp-action="Index">
-                                <i class="bi bi-credit-card"></i> Propiedades
-                            </a>
-                        </li>
-                        <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Reservas" asp-action="Index">
-                                <i class="bi bi-cash-stack"></i> Reservas
-                            </a>
-                        </li>
-                        <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="Index">
-                                <i class="bi bi-cash-stack"></i> Usuarios
-                            </a>
+                            <div class="collapse" id="configCollapse">
+                                <ul class="nav flex-column ms-3">
+
+                                    <li class="nav-item w-100 text-center">
+                                        <a class="nav-link text-white" asp-area="" asp-controller="Clientes" asp-action="MisPropiedades">
+                                            <i class="bi bi-houses"></i> Mis propiedades
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item w-100 text-center">
+                                        <a class="nav-link text-white" asp-area="" asp-controller="Ofertas" asp-action="Index">
+                                            <i class="bi bi-currency-dollar"></i> Ofertas realizadas
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item w-100 text-center">
+                                        <a class="nav-link text-white" asp-area="" asp-controller="Mensajes" asp-action="Index">
+                                            <i class="bi bi-chat-text-fill"></i> Mensajes
+                                        </a>
+                                    </li>
+
+                                    <li><hr class="dropdown-divider bg-white"></li>
+                                </ul>
+                            </div>
                         </li>
                     }
                     else if (isAgent)
                     {
                         <li class="nav-item w-100 text-center">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Agentes" asp-action="Home">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                        </li>
+
+                        <li class="nav-item w-100 text-center">
                             <a class="nav-link text-white" asp-area="" asp-controller="Contratos" asp-action="Index">
                                 <i class="bi bi-people-fill"></i> Contratos
                             </a>
@@ -176,6 +208,13 @@
                                 <i class="bi bi-piggy-bank"></i> Mensajes
                             </a>
                         </li>
+
+                        <li class="nav-item w-100 text-center">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Ofertas" asp-action="Index">
+                                <i class="bi bi-currency-dollar"></i> Ofertas recibidas
+                            </a>
+                        </li>
+
                         <li class="nav-item w-100 text-center">
                             <a class="nav-link text-white" asp-area="" asp-controller="Pagos" asp-action="Index">
                                 <i class="bi bi-currency-dollar"></i> Pagos
@@ -184,6 +223,16 @@
                         <li class="nav-item w-100 text-center">
                             <a class="nav-link text-white" asp-area="" asp-controller="Propiedades" asp-action="Index">
                                 <i class="bi bi-credit-card"></i> Propiedades
+                            </a>
+                        </li>
+                        <li class="nav-item w-100 text-center">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Mensajes" asp-action="Index">
+                                <i class="bi bi-chat-text-fill"></i> Mensajes
+                            </a>
+                        </li>
+                        <li class="nav-item w-100 text-center">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Ofertas" asp-action="Index">
+                                <i class="bi bi-currency-dollar"></i> Ofertas
                             </a>
                         </li>
                         <li class="nav-item w-100 text-center">
@@ -237,9 +286,27 @@
                 }
                 else
                 {
-                    @*                     <li class="nav-item w-100 text-center">
-                <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="Home"></a>
-                </li> *@
+                    <li class="nav-item w-100 text-center">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item w-100 text-center">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Agentes" asp-action="Index">
+                            <i class="bi bi-person-badge"></i> Agentes
+                        </a>
+                    </li>
+
+                    <li class="nav-item w-100 text-center">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Register">
+                            <i class="bi bi-people-fill"></i> Únete a la app
+                        </a>
+                    </li>
+                    <li class="nav-item w-100 text-center">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Index">
+                            <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+                        </a>
+                    </li>
                 }
 
             </ul>
@@ -300,3 +367,44 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+@section Styles {
+    <style>
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .bg-gray-100 {
+            background-color: #f8f9fa !important;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 1rem;
+            word-wrap: break-word;
+        }
+
+        .message-in {
+            background: #e9ecef;
+            border-top-left-radius: 0.25rem !important;
+            margin-right: auto;
+        }
+
+        .message-out {
+            background: #007bff;
+            color: white;
+            border-top-right-radius: 0.25rem !important;
+            margin-left: auto;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
+    </style>
+}

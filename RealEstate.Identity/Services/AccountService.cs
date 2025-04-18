@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.WebUtilities;
 using RealEstate.Application.Contracts.identity;
 using RealEstate.Application.Dtos.identity;
+using RealEstate.Application.Enum;
 using RealEstate.Application.Responses.identity;
 using RealEstate.Identity.Helpers;
 using RealEstate.Identity.Shared.Entities;
@@ -100,10 +101,66 @@ namespace RealEstate.Identity.Services
             return response;
         }
 
-        public Task<RegisterResponse> RegisterAdminUserAsync(RegisterRequest request, string origin)
+        public async Task<RegisterResponse> RegisterIdentityAsync(RegisterRequest request, string origin)
         {
-            throw new NotImplementedException();
+            RegisterResponse response = new();
+
+            RegisterResponse SetError(string errorMessage)
+            {
+                response.HasError = true;
+                response.Error = errorMessage;
+                return response;
+            }
+
+            // Validaciones previas
+            if (await _userManager.FindByNameAsync(request.UserName) != null)
+                return SetError($"El nombre de usuario {request.UserName} ya existe, por favor elija otro.");
+
+            if (await _userManager.FindByEmailAsync(request.Email) != null)
+                return SetError($"El correo {request.Email} ya existe.");
+
+            if (await _userManager.FindByNameAsync(request.Cedula) != null)
+                return SetError($"Ya existe un usuario con la cédula {request.Cedula}.");
+
+            var usuario = new ApplicationUser
+            {
+                UserName = request.UserName,
+                Nombre = request.Nombre,
+                Apellido = request.Apellido,
+                Foto = request.Foto,
+                Cedula = request.Cedula,
+                Email = request.Email,
+                PhoneNumber = request.Phone,
+                IsActive = false,
+            };
+
+            var result = await _userManager.CreateAsync(usuario, request.Password);
+            if (!result.Succeeded)
+                return SetError(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            switch (request.Rol)
+            {
+                case "Agente":
+                    await _userManager.AddToRoleAsync(usuario, ClienteAgente.Agente.ToString());
+                    break;
+
+                case "Cliente":
+                    await _userManager.AddToRoleAsync(usuario, ClienteAgente.Cliente.ToString());
+                    var verificacionURL = await _emailHelper.VerificationEmailURL(usuario, origin);
+                    await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
+                    {
+                        To = usuario.Email,
+                        Body = $"Por favor, confirme su cuenta ingresando a esta URL: {verificacionURL}",
+                        Subject = "Registro de confirmación"
+                    });
+                    break;
+
+                default:
+                    return SetError("Rol no válido.");
+            }
+            return response;
         }
+
 
         public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request)
         {

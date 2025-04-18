@@ -14,12 +14,18 @@ namespace RealEstate.Persistance.Models.dbo
         public string Ciudad { get; set; }
         public string Sector { get; set; }
         public string CodigoPostal { get; set; }
+        public int Habitaciones { get; set; }
+        public int Baños { get; set; }
+        public int Parqueos { get; set; }
+        public decimal TamañoTerreno { get; set; }
         public int TotalNivel { get; set; }
         public int Piso { get; set; }
         public DateTime AñoConstruccion { get; set; }
         public string TipoPropiedad { get; set; }
         public bool Disponibilidad { get; set; }
         public string Imagen { get; set; }
+        public bool? Vendida { get; set; }
+
 
     }
 }

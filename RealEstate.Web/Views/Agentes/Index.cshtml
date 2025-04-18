@@ -1,0 +1,106 @@
+﻿@model List<RealEstate.Persistance.Models.dbo.UsuariosModel>
+
+@{
+    ViewData["Title"] = "Listado de Agentes";
+
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<!-- Portada con imagen y título -->
+<div class="mb-4 position-relative text-white">
+    <img src="~/images/program/portada.jpg" alt="Portada" class="img-fluid w-100"
+         style="max-height: 300px; object-fit: cover; filter: brightness(60%);" />
+    <h1 class="position-absolute top-50 start-50 translate-middle text-center fw-bold display-5">
+        Listado de Agentes
+    </h1>
+</div>
+
+<!-- Buscador por nombre -->
+<div class="container mb-4">
+    <form method="get" asp-controller="Agentes" asp-action="Buscar">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="input-group shadow-sm">
+                    <input name="nombre" id="filtroNombre" type="text" class="form-control" placeholder="Buscar por nombre o apellido..." />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> <!-- Si usas Font Awesome -->
+                        <!-- <i class="bi bi-search"></i>  Bootstrap Icons alternativa -->
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!-- Cards de usuarios -->
+<div class="container">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            No hay agentes disponibles por el momento.
+        </div>
+    }
+    else
+    {
+        <div class="row justify-content-center g-4" id="usuariosContainer">
+            @foreach (var usuario in Model)
+            {
+                <div class="col-sm-12 col-md-6 col-lg-4 d-flex justify-content-center usuario-card"
+                     data-nombre="@($"{usuario.Nombre} {usuario.Apellido}".ToLower())">
+                    <div class="card shadow-sm border-0 w-100" style="max-width: 330px;">
+                        <div class="card-body text-center">
+                            <div class="mb-3 d-flex justify-content-center">
+                                @if (!string.IsNullOrEmpty(usuario.Foto))
+                                {
+                                    <img src="@usuario.Foto" alt="Foto de @usuario.Nombre"
+                                         class="rounded-circle shadow border"
+                                         style="width: 120px; height: 120px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white"
+                                         style="width: 120px; height: 120px;">
+                                        Sin foto
+                                    </div>
+                                }
+                            </div>
+                            <h5 class="card-title">@usuario.Nombre @usuario.Apellido</h5>
+@*                             <p class="card-text mb-1"><strong>Usuario:</strong> @usuario.UserName</p>
+                            <p class="card-text mb-1"><strong>Email:</strong> @usuario.Email</p>
+                            <p class="card-text mb-1"><strong>Teléfono:</strong> @usuario.Telefono</p>
+                            <p class="card-text mb-1"><strong>Cédula:</strong> @usuario.Cedula</p>
+                            <p class="card-text mb-1"><strong>Rol:</strong> @usuario.Rol</p>
+                            <p class="card-text">
+                                <strong>Activo:</strong>
+                                @if (usuario.IsActive)
+                                {
+                                    <span class="badge bg-success">Sí</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">No</span>
+                                }
+                            </p> *@
+                            <a href="@Url.Action("Index", "Propiedades", new { agenteId = usuario.Id })"
+                               class="btn btn-outline-primary mt-3">
+                                <i class="bi bi-house-door"></i> Ver propiedades
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- JS para filtrar por nombre -->
+<script>
+    document.getElementById('filtroNombre').addEventListener('input', function () {
+        const filtro = this.value.toLowerCase();
+        document.querySelectorAll('.usuario-card').forEach(card => {
+            const nombre = card.getAttribute('data-nombre');
+            card.style.display = nombre.includes(filtro) ? 'flex' : 'none';
+        });
+    });
+</script>

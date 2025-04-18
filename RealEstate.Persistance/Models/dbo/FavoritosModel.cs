@@ -7,7 +7,7 @@ namespace RealEstate.Persistance.Models.dbo
         public int FavoritoID { get; set; }
         public string UsuarioID { get; set; }
         public int PropiedadID { get; set; }
-        public bool IsFavoritos { get; set; }
+        public bool IsFavorito { get; set; }
 
     }
 }

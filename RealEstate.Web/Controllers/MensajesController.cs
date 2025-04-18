@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
+using RealEstate.Persistance.Context;
 using RealEstate.Persistance.Models.dbo;
 
 namespace RealEstate.Web.Controllers
@@ -8,15 +9,17 @@ namespace RealEstate.Web.Controllers
     public class MensajesController : Controller
     {
         private readonly IMensajesService _mensajesService;
+        private readonly RealEstateContext _realEstateContext;
 
-        public MensajesController(IMensajesService mensajesService)
-        {
+        public MensajesController(IMensajesService mensajesService, RealEstateContext realEstateContext)
+        { 
             _mensajesService = mensajesService;
+            _realEstateContext = realEstateContext;
         }
 
         public async Task <IActionResult> Index()
         {
-            var result = await _mensajesService.GetAllAsync();
+            var result = await _mensajesService.GetDestinatarioAsync();
 
             if (result.IsSuccess)
             {
@@ -66,6 +69,13 @@ namespace RealEstate.Web.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Conversacion(string remitenteId, string destinatarioId)
+        {
+            var mensaje = await _mensajesService.GetConversation(remitenteId, destinatarioId);
+            return PartialView("_ConversacionPartial", mensaje.Model);
         }
 
         public async Task <IActionResult> Edit(int id)
