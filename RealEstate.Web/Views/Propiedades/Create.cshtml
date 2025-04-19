@@ -1,97 +1,319 @@
 ﻿@model RealEstate.Application.Dtos.dbo.PropiedadesDto
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Nueva Propiedad";
 }
 
-<h1>Create</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white py-3 rounded-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="h4 mb-0"><i class="fas fa-home me-2"></i>Nueva Propiedad</h2>
+                        <a asp-action="Index" class="btn btn-light btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i> Volver al listado
+                        </a>
+                    </div>
+                </div>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Titulo" class="control-label"></label>
-                <input asp-for="Titulo" class="form-control" />
-                <span asp-validation-for="Titulo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Precio" class="control-label"></label>
-                <input asp-for="Precio" class="form-control" />
-                <span asp-validation-for="Precio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Direccion" class="control-label"></label>
-                <input asp-for="Direccion" class="form-control" />
-                <span asp-validation-for="Direccion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ciudad" class="control-label"></label>
-                <input asp-for="Ciudad" class="form-control" />
-                <span asp-validation-for="Ciudad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sector" class="control-label"></label>
-                <input asp-for="Sector" class="form-control" />
-                <span asp-validation-for="Sector" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CodigoPostal" class="control-label"></label>
-                <input asp-for="CodigoPostal" class="form-control" />
-                <span asp-validation-for="CodigoPostal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalNivel" class="control-label"></label>
-                <input asp-for="TotalNivel" class="form-control" />
-                <span asp-validation-for="TotalNivel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Piso" class="control-label"></label>
-                <input asp-for="Piso" class="form-control" />
-                <span asp-validation-for="Piso" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AñoConstruccion" class="control-label"></label>
-                <input asp-for="AñoConstruccion" class="form-control" />
-                <span asp-validation-for="AñoConstruccion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipoPropiedad" class="control-label"></label>
-                <input asp-for="TipoPropiedad" class="form-control" />
-                <span asp-validation-for="TipoPropiedad" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Disponibilidad" /> @Html.DisplayNameFor(model => model.Disponibilidad)
-                </label>
-            </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            <!-- Cambiar el campo Imagen para aceptar múltiples archivos -->
-            <div class="form-group">
-                <label asp-for="Files" class="control-label"></label>
-                <input asp-for="Files" type="file" class="form-control" multiple />
-                <span asp-validation-for="Files" class="text-danger"></span>
-            </div>
+                        <!-- Sección 1: Información Básica -->
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Información Básica</h4>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="Titulo" class="form-label fw-semibold"></label>
+                                    <input asp-for="Titulo" class="form-control form-control-lg" placeholder="Ej: Acogedora casa en zona residencial" />
+                                    <span asp-validation-for="Titulo" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Precio" class="form-label fw-semibold"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input asp-for="Precio" class="form-control form-control-lg" placeholder="Ej: 250000" />
+                                    </div>
+                                    <span asp-validation-for="Precio" class="text-danger small"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="Descripcion" class="form-label fw-semibold"></label>
+                                    <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Describa la propiedad en detalle..."></textarea>
+                                    <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                        <!-- Sección 2: Ubicación -->
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3"><i class="fas fa-map-marker-alt me-2"></i>Ubicación</h4>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="Direccion" class="form-label fw-semibold"></label>
+                                    <input asp-for="Direccion" class="form-control" placeholder="Ej: Calle Principal #123" />
+                                    <span asp-validation-for="Direccion" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="Ciudad" class="form-label fw-semibold"></label>
+                                    <input asp-for="Ciudad" class="form-control" placeholder="Ej: Ciudad Ejemplo" />
+                                    <span asp-validation-for="Ciudad" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="Sector" class="form-label fw-semibold"></label>
+                                    <input asp-for="Sector" class="form-control" placeholder="Ej: Zona Norte" />
+                                    <span asp-validation-for="Sector" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label asp-for="CodigoPostal" class="form-label fw-semibold"></label>
+                                    <input asp-for="CodigoPostal" class="form-control" placeholder="Ej: 12345" />
+                                    <span asp-validation-for="CodigoPostal" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 3: Características Principales -->
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3"><i class="fas fa-ruler-combined me-2"></i>Características Principales</h4>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label asp-for="TipoPropiedad" class="form-label fw-semibold">Tipo de Propiedad</label>
+                                    <select asp-for="TipoPropiedad" asp-items="@ViewBag.TiposPropiedad" class="form-select" required>
+                                        <option value="" selected disabled>Seleccione un tipo</option>
+                                    </select>
+                                    <span asp-validation-for="TipoPropiedad" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="TotalNivel" class="form-label fw-semibold">Niveles</label>
+                                    <input asp-for="TotalNivel" class="form-control" placeholder="Ej: 2" />
+                                    <span asp-validation-for="TotalNivel" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Piso" class="form-label fw-semibold">Piso</label>
+                                    <input asp-for="Piso" class="form-control" placeholder="Ej: 3 (para apartamentos)" />
+                                    <span asp-validation-for="Piso" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="AñoConstruccion" class="form-label fw-semibold">Año de Construcción</label>
+                                    <input asp-for="AñoConstruccion" class="form-control" placeholder="Ej: 2015" />
+                                    <span asp-validation-for="AñoConstruccion" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-center">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" asp-for="Disponibilidad" checked />
+                                        <label class="form-check-label fw-semibold" asp-for="Disponibilidad">Disponible</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 4: Habitaciones y Espacios -->
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3"><i class="fas fa-bed me-2"></i>Habitaciones y Espacios</h4>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label asp-for="Habitaciones" class="form-label fw-semibold">N° de Habitaciones</label>
+                                    <input asp-for="Habitaciones" class="form-control" placeholder="Ej: 3" min="0" />
+                                    <span asp-validation-for="Habitaciones" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Baños" class="form-label fw-semibold">N° de Baños</label>
+                                    <input asp-for="Baños" class="form-control" placeholder="Ej: 2" min="0" step="0.5" />
+                                    <span asp-validation-for="Baños" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Parqueos" class="form-label fw-semibold">Espacios de Parqueo</label>
+                                    <input asp-for="Parqueos" class="form-control" placeholder="Ej: 1" min="0" />
+                                    <span asp-validation-for="Parqueos" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="TamañoTerreno" class="form-label fw-semibold">Área Construida (m²)</label>
+                                    <input asp-for="TamañoTerreno" class="form-control" placeholder="Ej: 120" min="0" />
+                                    <span asp-validation-for="TamañoTerreno" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+@*                         <!-- Sección 5: Amenidades -->
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3"><i class="fas fa-star me-2"></i>Amenidades</h4>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" asp-for="TienePiscina" />
+                                        <label class="form-check-label fw-semibold" asp-for="TienePiscina">Piscina</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" asp-for="TieneGimnasio" />
+                                        <label class="form-check-label fw-semibold" asp-for="TieneGimnasio">Gimnasio</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" asp-for="TieneAreaJuegosInfantiles" />
+                                        <label class="form-check-label fw-semibold" asp-for="TieneAreaJuegosInfantiles">Área de juegos infantiles</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" asp-for="TieneParqueoVisitas" />
+                                        <label class="form-check-label fw-semibold" asp-for="TieneParqueoVisitas">Parqueo para visitas</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" asp-for="TieneSeguridadPrivada" />
+                                        <label class="form-check-label fw-semibold" asp-for="TieneSeguridadPrivada">Seguridad privada</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> *@
+
+                        <!-- Sección 6: Imágenes -->
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3"><i class="fas fa-images me-2"></i>Imágenes de la Propiedad</h4>
+                            <div class="border rounded-3 p-3 bg-light">
+                                <label asp-for="Files" class="form-label fw-semibold">Seleccione imágenes (múltiples)</label>
+                                <input asp-for="Files" type="file" class="form-control" multiple accept="image/*" />
+                                <div class="form-text">Suba fotos de alta calidad que muestren la propiedad (máx. 10MB cada una)</div>
+                                <span asp-validation-for="Files" class="text-danger small"></span>
+
+                                <div class="mt-3" id="imagePreviewContainer" style="display: none;">
+                                    <h6 class="text-muted">Vista previa:</h6>
+                                    <div class="d-flex flex-wrap gap-2" id="imagePreviews"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón de envío -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg px-4 me-md-2">
+                                <i class="fas fa-save me-2"></i>Guardar Propiedad
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="fas fa-eraser me-2"></i>Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        // Vista previa de imágenes antes de subir
+        document.getElementById('Files').addEventListener('change', function (event) {
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const previewsContainer = document.getElementById('imagePreviews');
+
+            previewsContainer.innerHTML = '';
+
+            if (this.files.length > 0) {
+                previewContainer.style.display = 'block';
+
+                for (let file of this.files) {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.maxWidth = '120px';
+                            img.style.maxHeight = '90px';
+                            img.className = 'img-thumbnail';
+                            previewsContainer.appendChild(img);
+                        }
+
+                        reader.readAsDataURL(file);
+                    }
+                }
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+
+        // Validación para campos numéricos
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('change', function () {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            transition: transform 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+        .card-header {
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ced4da;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #86b7fe;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+            .btn-primary:hover {
+                background-color: #0b5ed7;
+            }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .text-primary {
+            color: #0d6efd !important;
+        }
+
+        #imagePreviews img {
+            transition: transform 0.2s;
+        }
+
+            #imagePreviews img:hover {
+                transform: scale(1.05);
+            }
+
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .form-switch .form-check-input {
+            width: 2.5em;
+            height: 1.5em;
+        }
+    </style>
 }

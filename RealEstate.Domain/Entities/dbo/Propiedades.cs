@@ -24,7 +24,7 @@ namespace RealEstate.Domain.Entities.dbo
         public int TotalNivel { get; set; }
         public int Piso { get; set; }
         public DateTime AñoConstruccion { get; set; }
-        public string TipoPropiedad { get; set; } 
+        public int TipoPropiedad { get; set; }
         public bool Disponibilidad { get; set; }
         public string? Imagen { get; set; }
         public bool? Vendida { get; set; }

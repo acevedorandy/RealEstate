@@ -188,7 +188,12 @@ namespace RealEstate.Application.Services.dbo
                 var propiedades = ((List<PropiedadesModel>)result.Data).AsQueryable();
 
                 if (!string.IsNullOrEmpty(tipoPropiedad))
-                    propiedades = propiedades.Where(p => p.TipoPropiedad == tipoPropiedad);
+                {
+                    if (int.TryParse(tipoPropiedad, out int tipoPropiedadId))
+                    {
+                        propiedades = propiedades.Where(p => p.TipoPropiedad == tipoPropiedadId);
+                    }
+                }
 
                 if (minPrice.HasValue)
                     propiedades = propiedades.Where(p => p.Precio >= minPrice.Value);

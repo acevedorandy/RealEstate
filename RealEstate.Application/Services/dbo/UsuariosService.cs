@@ -7,17 +7,21 @@ using RealEstate.Application.Dtos.identity;
 using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Application.Responses.identity;
 using RealEstate.Persistance.Interfaces.dbo;
+using RealEstate.Persistance.Models.dbo;
+using RealEstate.Persistance.Models.ViewModel;
 
 namespace RealEstate.Application.Services.dbo
 {
     public class UsuariosService : IUsuariosService
     {
         private readonly IAccountService _accountService;
+        private readonly IPropiedadesRepository _propiedadesRepository;
         private readonly IMapper _mapper;
         private readonly IUsuariosRepository _usuariosRepository;
         private readonly ILogger<UsuariosService> _logger;
 
         public UsuariosService(IAccountService accountService,
+                               IPropiedadesRepository propiedadesRepository,
                                IMapper mapper,
                                IUsuariosRepository usuariosRepository,
                                ILogger<UsuariosService> logger)
@@ -26,6 +30,7 @@ namespace RealEstate.Application.Services.dbo
             _mapper = mapper;
             _usuariosRepository = usuariosRepository;
             _logger = logger;
+            _propiedadesRepository = propiedadesRepository;
         }
 
         public Task<ServiceResponse> ActivarOrDesactivarAsync(string userId)
@@ -131,6 +136,49 @@ namespace RealEstate.Application.Services.dbo
             {
                 response.IsSuccess = false;
                 response.Messages = "Ha ocurrido un error obteniendo el usuario.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+        public async Task<ServiceResponse> LoadHomeView()
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            ServiceResponse SetError(string errorMessage)
+            {
+                response.IsSuccess = false;
+                response.Messages = errorMessage;
+                return response;
+            }
+
+            try
+            {
+                var propiedades = await _propiedadesRepository.GetAll();
+
+                if (!propiedades.Success)
+                    return SetError($"Ha ocurrido un error.");
+
+                var propiedadesData = propiedades.Data as List<PropiedadesModel>;
+
+                var usuarios = await _usuariosRepository.GetIdentityUserAll();
+
+                if (!usuarios.Success)
+                    return SetError($"Ha ocurrido un error.");
+
+                var usuariosData = usuarios.Data as List<UsuariosModel>;
+
+                HomeAdmin homeAdmin = new HomeAdmin
+                {
+                    UsuariosModelView = usuariosData,
+                    PropiedadesModelView = propiedadesData
+                };
+
+                response.Model = homeAdmin;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un procesando la solicitud.";
                 _logger.LogError(response.Messages, ex.ToString());
             }
             return response;
