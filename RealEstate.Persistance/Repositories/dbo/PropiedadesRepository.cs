@@ -123,7 +123,7 @@ namespace RealEstate.Persistance.Repositories.dbo
 
                              orderby propiedad.PropiedadID descending
 
-                             where propiedad.Vendida == false || propiedad.Vendida == null
+                             //where propiedad.Vendida == false || propiedad.Vendida == null
 
                              select new PropiedadesModel()
                                 {
@@ -146,7 +146,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                                     AñoConstruccion = propiedad.AñoConstruccion,
                                     TipoPropiedad = propiedad.TipoPropiedad,
                                     Disponibilidad = propiedad.Disponibilidad,
-                                    Imagen = propiedad != null ? propiedad.Imagen : (string?)null
+                                    Imagen = propiedad != null ? propiedad.Imagen : (string?)null,
+                                    Vendida = propiedad.Vendida
 
                                 }).ToList();
 
@@ -269,8 +270,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                              
                              orderby propiedad.PropiedadID descending
 
-                             where propiedad.AgenteID == agenteId &&
-                                   (propiedad.Vendida == false || propiedad.Vendida == null)
+                             where propiedad.AgenteID == agenteId /*&&
+                                   (propiedad.Vendida == false || propiedad.Vendida == null)*/
 
                              select new PropiedadesModel()
                              {

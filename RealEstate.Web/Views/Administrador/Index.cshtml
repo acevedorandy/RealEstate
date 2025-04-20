@@ -38,7 +38,9 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Propiedades Vendidas
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PropiedadesModelView.Count(p => p.Vendida == true)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @Model.PropiedadesModelView.Count(p => p.Vendida == true)
+                            </div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-handshake fa-2x text-gray-300"></i>

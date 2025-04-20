@@ -7,6 +7,7 @@ using RealEstate.Identity.Shared.Entities;
 using RealEstate.Persistance.Context;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using RealEstate.Persistance.Models.ViewModel;
 
 namespace RealEstate.Persistance.Repositories.dbo
 {
@@ -43,11 +44,11 @@ namespace RealEstate.Persistance.Repositories.dbo
                     return result;
                 }
 
+                usuario.EmailConfirmed = !usuario.EmailConfirmed;
                 usuario.IsActive = !usuario.IsActive;
 
                 _identityContext.Update(usuario);
                 await _identityContext.SaveChangesAsync();
-
             }
             catch (Exception ex)
             {
@@ -139,6 +140,52 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
+        public async Task<OperationResult> GetAllAgent()
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var usuarios = await _identityContext.Users.ToListAsync();
+                var roles = await _identityContext.Roles.ToListAsync();
+                var usuarioRoles = await _identityContext.UserRoles.ToListAsync();
+                var propiedades = await _realEstateContext.Propiedades.ToListAsync();
+
+                var propiedadesPorAgente = propiedades
+                    .GroupBy(p => p.AgenteID)
+                    .ToDictionary(g => g.Key, g => g.Count());
+
+                var datos = (from usuario in usuarios
+                             join usuarioRol in usuarioRoles on usuario.Id equals usuarioRol.UserId
+                             join rol in roles on usuarioRol.RoleId equals rol.Id
+
+                             where rol.Name == "Agente" 
+
+                             orderby usuario.Nombre
+                             select new AgentesModel()
+                             {
+                                 Id = usuario.Id,
+                                 Nombre = usuario.Nombre,
+                                 Apellido = usuario.Apellido,
+                                 Correo = usuario.Email,
+                                 PropiedadID = propiedadesPorAgente.ContainsKey(usuario.Id) ? propiedadesPorAgente[usuario.Id] : 0,
+                                 IsActive = usuario.IsActive
+
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo los usuarios.";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+
+            return result;
+        }
+
 
         public async Task<OperationResult> GetIdentityUserAll()
         {
@@ -259,5 +306,71 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
+        public async Task<OperationResult> RemoveAgentWithProperty(string userId)
+        {
+            OperationResult result = new OperationResult();
+
+            OperationResult SetError(string errorMessage)
+            {
+                result.Success = false;
+                result.Message = errorMessage;
+                return result;
+            }
+
+            using var transaction = await _realEstateContext.Database.BeginTransactionAsync();
+            try
+            {
+                var propiedades = await _realEstateContext.Propiedades
+                    .Where(p => p.AgenteID == userId)
+                    .ToListAsync();
+
+                var propiedadIds = propiedades.Select(p => p.PropiedadID).ToList();
+
+                if (propiedadIds.Any())
+                {
+                    var ofertas = await _realEstateContext.Ofertas
+                        .Where(o => propiedadIds.Contains(o.PropiedadID))
+                        .ToListAsync();
+                    _realEstateContext.Ofertas.RemoveRange(ofertas);
+
+                    var fotos = await _realEstateContext.PropiedadFotos
+                        .Where(pf => propiedadIds.Contains(pf.PropiedadID))
+                        .ToListAsync();
+                    _realEstateContext.PropiedadFotos.RemoveRange(fotos);
+
+                    var mejoras = await _realEstateContext.PropiedadMejoras
+                        .Where(m => propiedadIds.Contains(m.PropiedadID))
+                        .ToListAsync();
+                    _realEstateContext.PropiedadMejoras.RemoveRange(mejoras);
+
+                    _realEstateContext.Propiedades.RemoveRange(propiedades);
+                    await _realEstateContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+
+                var usuario = await _userManager.FindByIdAsync(userId);
+                if (usuario == null)
+                    return SetError("Usuario no encontrado.");
+
+                var identityResult = await _userManager.DeleteAsync(usuario);
+
+                if (!identityResult.Succeeded)
+                {
+                    var errorMsg = string.Join(", ", identityResult.Errors.Select(e => e.Description));
+                    return SetError($"Error al eliminar el usuario: {errorMsg}");
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                result.Success = false;
+                result.Message = "Ha ocurrido un error eliminando el usuario.";
+                _logger.LogError(ex, result.Message);
+            }
+            return result;
+        }
+
     }
 }
+

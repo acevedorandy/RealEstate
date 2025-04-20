@@ -12,5 +12,7 @@ namespace RealEstate.Persistance.Interfaces.dbo
         Task<OperationResult> ActivarOrDesactivar(string userId);
         Task<OperationResult> GetAgentActive();
         Task<OperationResult> GetAgentByName(string name);
+        Task<OperationResult> GetAllAgent();
+        Task<OperationResult> RemoveAgentWithProperty(string userId);    
     }
 }

@@ -20,7 +20,7 @@ namespace RealEstate.Web.Controllers
 
         public async Task <IActionResult> Index()
         {
-            var result = await _propiedadesService.GetAllAsync();
+            var result = await _propiedadesService.GetAllPropertyNotSold();
 
             if (result.IsSuccess)
             {

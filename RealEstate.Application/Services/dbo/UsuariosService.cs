@@ -33,9 +33,30 @@ namespace RealEstate.Application.Services.dbo
             _propiedadesRepository = propiedadesRepository;
         }
 
-        public Task<ServiceResponse> ActivarOrDesactivarAsync(string userId)
+        public async Task<ServiceResponse> ActivarOrDesactivarAsync(string userId)
         {
-            throw new NotImplementedException();
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _usuariosRepository.ActivarOrDesactivar(userId);
+
+                if (!result.Success)
+                {
+                    response.IsSuccess = result.Success;
+                    response.Messages = response.Messages;
+                    return response;
+                }
+
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error actualiando el estado del usuario.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
         }
 
         public async Task<ServiceResponse> GetAgentActiveAsync()
@@ -179,6 +200,57 @@ namespace RealEstate.Application.Services.dbo
             {
                 response.IsSuccess = false;
                 response.Messages = "Ha ocurrido un procesando la solicitud.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+        public async Task<ServiceResponse> GetAllAgentAsync()
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _usuariosRepository.GetAllAgent();
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo los agentes.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> RemoveAgentWithPropertyAsync(string userId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _usuariosRepository.RemoveAgentWithProperty(userId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error procesando la solicitud.";
                 _logger.LogError(response.Messages, ex.ToString());
             }
             return response;

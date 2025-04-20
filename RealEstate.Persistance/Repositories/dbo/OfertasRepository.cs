@@ -257,7 +257,7 @@ namespace RealEstate.Persistance.Repositories.dbo
         {
             return await _realEstateContext.Ofertas
                 .AnyAsync(o => o.ClienteID == clienteId &&
-               (o.Estado.ToLower() == "pendiente" || o.Estado.ToLower() == "aceptada"));
+               (o.Estado.ToLower() == "pendiente"));
         }
 
         public async Task<OperationResult> GetAllOffersByClient(int propiedadId, string clienteId)

@@ -32,9 +32,9 @@ namespace RealEstate.Web.Controllers
             _selectListHelper = selectListHelper;
         }
 
-        public async Task <IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
-            var result = await _propiedadesService.GetAllPropertyByAgentAsync();
+            var result = await _propiedadesService.GetAllPropertyByAgentLogged();
 
             if (result.IsSuccess)
             {
@@ -135,7 +135,6 @@ namespace RealEstate.Web.Controllers
 
                     TempData["SuccessMessage"] = "Propiedad agregada exitosamente.";
                     return RedirectToAction(nameof(Index));
-
                 }
                 else
                 {

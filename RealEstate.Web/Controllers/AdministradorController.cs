@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
-using RealEstate.Persistance.Models.dbo;
+using RealEstate.Application.Dtos.dbo;
 using RealEstate.Persistance.Models.ViewModel;
 
 namespace RealEstate.Web.Controllers
@@ -26,71 +26,57 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
-        //public async Task<IActionResult> ObtenerAgentes()
-        //{
-        //    var result = await _usuariosService.GetIdentityUserAllAsync();
-
-        //    if (result.IsSuccess)
-        //    {
-        //        List<AgentesM>
-        //    }
-        //}
-
-        public ActionResult Details(int id)
+        public async Task<IActionResult> ListaAgentes()
         {
-            return View();
-        }
+            var result = await _usuariosService.GetAllAgentAsync();
 
-        public ActionResult Create()
-        {
+            if (result.IsSuccess)
+            {
+                List<AgentesModel> agentes = (List<AgentesModel>)result.Model;
+                return View(agentes);
+            }
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> ActivarOrDesactivar(string id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                var result = await _usuariosService.ActivarOrDesactivarAsync(id);
 
-        public ActionResult Edit(int id)
-        {
-            return View();
+                if (result.IsSuccess)
+                {
+                    return Json(new { success = true });
+                }
+
+                return Json(new { success = false, message = result.Messages });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task <IActionResult> Delete(UsuariosDto dto)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                var result = await _usuariosService.RemoveAgentWithPropertyAsync(dto.Id);
 
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
+                if (result.IsSuccess)
+                {
+                    TempData["SuccessMessage"] = "El agente y todas sus propiedades fueron eliminado.";
+                    return RedirectToAction("ListaAgentes", "Administrador");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = result.Messages;
+                    return RedirectToAction("ListaAgentes", "Administrador");
+                }
             }
             catch
             {
