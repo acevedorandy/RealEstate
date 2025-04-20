@@ -123,9 +123,9 @@ namespace RealEstate.Persistance.Repositories.dbo
 
                              orderby propiedad.PropiedadID descending
 
-                             where propiedad.Vendida== false
+                             //where propiedad.Vendida == false || propiedad.Vendida == null
 
-                                select new PropiedadesModel()
+                             select new PropiedadesModel()
                                 {
                                     PropiedadID = propiedad.PropiedadID,
                                     Codigo = propiedad.Codigo,
@@ -146,7 +146,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                                     AñoConstruccion = propiedad.AñoConstruccion,
                                     TipoPropiedad = propiedad.TipoPropiedad,
                                     Disponibilidad = propiedad.Disponibilidad,
-                                    Imagen = propiedad != null ? propiedad.Imagen : (string?)null
+                                    Imagen = propiedad != null ? propiedad.Imagen : (string?)null,
+                                    Vendida = propiedad.Vendida
 
                                 }).ToList();
 
@@ -252,171 +253,6 @@ namespace RealEstate.Persistance.Repositories.dbo
             return result;
         }
 
-        //public async Task<OperationResult> FilterByType(string? tipoPropiedad)
-        //{
-        //    OperationResult result = new OperationResult();
-
-        //    try
-        //    {
-        //        var propiedades = await _realEstateContext.Propiedades
-        //            .ToListAsync();
-
-        //        var usuarios = await _identityContext.Users
-        //            .ToListAsync();
-
-        //        var datos = (from propiedad in propiedades
-        //                     join agente in usuarios on propiedad.AgenteID equals agente.Id
-
-        //                     where propiedad.TipoPropiedad == tipoPropiedad 
-
-        //                     orderby propiedad.PropiedadID descending
-
-        //                     select new PropiedadesModel()
-        //                     {
-        //                         PropiedadID = propiedad.PropiedadID,
-        //                         Codigo = propiedad.Codigo,
-        //                         AgenteID = agente.Id,
-        //                         Titulo = propiedad.Titulo,
-        //                         Descripcion = propiedad.Descripcion,
-        //                         Precio = propiedad.Precio,
-        //                         Direccion = propiedad.Direccion,
-        //                         Ciudad = propiedad.Ciudad,
-        //                         Sector = propiedad.Sector,
-        //                         CodigoPostal = propiedad.CodigoPostal,
-        //                         Habitaciones = propiedad.Habitaciones,
-        //                         Baños = propiedad.Baños,
-        //                         Parqueos = propiedad.Parqueos,
-        //                         TamañoTerreno = propiedad.TamañoTerreno,
-        //                         TotalNivel = propiedad.TotalNivel,
-        //                         Piso = propiedad.Piso,
-        //                         AñoConstruccion = propiedad.AñoConstruccion,
-        //                         TipoPropiedad = propiedad.TipoPropiedad,
-        //                         Disponibilidad = propiedad.Disponibilidad,
-        //                         Imagen = propiedad != null ? propiedad.Imagen : (string?)null
-
-        //                     }).ToList();
-
-        //        result.Data = datos;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result.Success = false;
-        //        result.Message = "Ha ocurrido un error obteniendo las propiedades";
-        //        logger.LogError(result.Message, ex.ToString());
-        //    }
-        //    return result;
-        //}
-
-        //public async Task<OperationResult> FilterByPrice(decimal? minPrice, decimal? maxPrice)
-        //{
-        //    OperationResult result = new OperationResult();
-
-        //    try
-        //    {
-        //        var propiedades = await _realEstateContext.Propiedades
-        //            .ToListAsync();
-
-        //        var usuarios = await _identityContext.Users
-        //            .ToListAsync();
-
-        //        var datos = (from propiedad in propiedades
-        //                     join agente in usuarios on propiedad.AgenteID equals agente.Id
-
-        //                     where propiedad.Precio >= minPrice && propiedad.Precio <= maxPrice
-
-        //                     orderby propiedad.PropiedadID descending
-
-        //                     select new PropiedadesModel()
-        //                     {
-        //                         PropiedadID = propiedad.PropiedadID,
-        //                         Codigo = propiedad.Codigo,
-        //                         AgenteID = agente.Id,
-        //                         Titulo = propiedad.Titulo,
-        //                         Descripcion = propiedad.Descripcion,
-        //                         Precio = propiedad.Precio,
-        //                         Direccion = propiedad.Direccion,
-        //                         Ciudad = propiedad.Ciudad,
-        //                         Sector = propiedad.Sector,
-        //                         CodigoPostal = propiedad.CodigoPostal,
-        //                         Habitaciones = propiedad.Habitaciones,
-        //                         Baños = propiedad.Baños,
-        //                         Parqueos = propiedad.Parqueos,
-        //                         TamañoTerreno = propiedad.TamañoTerreno,
-        //                         TotalNivel = propiedad.TotalNivel,
-        //                         Piso = propiedad.Piso,
-        //                         AñoConstruccion = propiedad.AñoConstruccion,
-        //                         TipoPropiedad = propiedad.TipoPropiedad,
-        //                         Disponibilidad = propiedad.Disponibilidad,
-        //                         Imagen = propiedad != null ? propiedad.Imagen : (string?)null
-
-        //                     }).ToList();
-
-        //        result.Data = datos;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result.Success = false;
-        //        result.Message = "Ha ocurrido un error obteniendo las propiedades";
-        //        logger.LogError(result.Message, ex.ToString());
-        //    }
-        //    return result;
-        //}
-
-        //public async Task<OperationResult> FilterRoom(int? habitacion, int? baños)
-        //{
-        //    OperationResult result = new OperationResult();
-
-        //    try
-        //    {
-        //        var propiedades = await _realEstateContext.Propiedades
-        //            .ToListAsync();
-
-        //        var usuarios = await _identityContext.Users
-        //            .ToListAsync();
-
-        //        var datos = (from propiedad in propiedades
-        //                     join agente in usuarios on propiedad.AgenteID equals agente.Id
-
-        //                     where propiedad.Habitaciones == habitacion && propiedad.Baños == baños
-
-        //                     orderby propiedad.PropiedadID descending
-
-        //                     select new PropiedadesModel()
-        //                     {
-        //                         PropiedadID = propiedad.PropiedadID,
-        //                         Codigo = propiedad.Codigo,
-        //                         AgenteID = agente.Id,
-        //                         Titulo = propiedad.Titulo,
-        //                         Descripcion = propiedad.Descripcion,
-        //                         Precio = propiedad.Precio,
-        //                         Direccion = propiedad.Direccion,
-        //                         Ciudad = propiedad.Ciudad,
-        //                         Sector = propiedad.Sector,
-        //                         CodigoPostal = propiedad.CodigoPostal,
-        //                         Habitaciones = propiedad.Habitaciones,
-        //                         Baños = propiedad.Baños,
-        //                         Parqueos = propiedad.Parqueos,
-        //                         TamañoTerreno = propiedad.TamañoTerreno,
-        //                         TotalNivel = propiedad.TotalNivel,
-        //                         Piso = propiedad.Piso,
-        //                         AñoConstruccion = propiedad.AñoConstruccion,
-        //                         TipoPropiedad = propiedad.TipoPropiedad,
-        //                         Disponibilidad = propiedad.Disponibilidad,
-        //                         Imagen = propiedad != null ? propiedad.Imagen : (string?)null
-
-        //                     }).ToList();
-
-        //        result.Data = datos;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result.Success = false;
-        //        result.Message = "Ha ocurrido un error obteniendo las propiedades";
-        //        logger.LogError(result.Message, ex.ToString());
-        //    }
-        //    return result;
-        //}
-
         public async Task<OperationResult> GetAllPropertyByAgent(string agenteId)
         {
             OperationResult result = new OperationResult();
@@ -433,7 +269,9 @@ namespace RealEstate.Persistance.Repositories.dbo
                              join agente in usuarios on propiedad.AgenteID equals agente.Id
                              
                              orderby propiedad.PropiedadID descending
-                             where propiedad.AgenteID == agenteId
+
+                             where propiedad.AgenteID == agenteId /*&&
+                                   (propiedad.Vendida == false || propiedad.Vendida == null)*/
 
                              select new PropiedadesModel()
                              {
@@ -467,6 +305,28 @@ namespace RealEstate.Persistance.Repositories.dbo
             {
                 result.Success = false;
                 result.Message = "Ha ocurrido un error obteniendo la propiedad";
+                logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> MarkAsSold(int propiedadId)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                Propiedades? propiedadAsSold = await _realEstateContext.Propiedades.FindAsync(propiedadId);
+
+                propiedadAsSold.Disponibilidad = false;
+                propiedadAsSold.Vendida = true;
+
+                result = await base.Update(propiedadAsSold);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error marcando la propiedad como vendida";
                 logger.LogError(result.Message, ex.ToString());
             }
             return result;

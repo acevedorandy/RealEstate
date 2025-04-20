@@ -3,13 +3,13 @@
 using RealEstate.Application.Core;
 using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Application.Responses.identity;
-using RealEstate.Domain.Result;
 
 
 namespace RealEstate.Application.Contracts.dbo
 {
     public interface IUsuariosService
     {
+        /* Metodos De Las Cuentas */
         Task<string> ConfirmEmailAsync(string userId, string token);
         Task<ForgotPasswordResponse> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto, string origin);
         Task<AuthenticationResponse> LoginAsync(LoginDto loginDto);
@@ -25,5 +25,8 @@ namespace RealEstate.Application.Contracts.dbo
         Task<ServiceResponse> ActivarOrDesactivarAsync(string userId);
         Task<ServiceResponse> GetAgentActiveAsync();
         Task<ServiceResponse> GetAgentByNameAsync(string name);
+        Task<ServiceResponse> LoadHomeView();
+        Task<ServiceResponse> GetAllAgentAsync();
+        Task<ServiceResponse> RemoveAgentWithPropertyAsync(string userId);
     }
 }

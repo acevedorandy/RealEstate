@@ -16,11 +16,15 @@ namespace RealEstate.Persistance.Context
         
         public DbSet<Contratos> Contratos { get; set; }
         public DbSet<Favoritos> Favoritos { get; set; }
+        public DbSet<Mejoras> Mejoras { get; set; }
         public DbSet<Mensajes> Mensajes { get; set; }
         public DbSet<Ofertas> Ofertas { get; set; }
         public DbSet<Pagos> Pagos { get; set; }
         public DbSet<Propiedades> Propiedades { get; set; }
         public DbSet<PropiedadFotos> PropiedadFotos { get; set; }
+        public DbSet<PropiedadMejoras> PropiedadMejoras { get; set; }
+        public DbSet<TiposPropiedad> TiposPropiedad { get; set; }
+        public DbSet<TiposVenta> TiposVenta { get; set; }
         public DbSet<Reservas> Reservas { get; set; }
         public DbSet<Usuarios> Usuarios { get; set; }
 

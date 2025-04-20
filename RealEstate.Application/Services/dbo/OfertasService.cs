@@ -10,12 +10,14 @@ using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Application.Helpers.web;
 using RealEstate.Application.Enum;
 using Microsoft.AspNetCore.Identity;
+using RealEstate.Persistance.Models.dbo;
 
 namespace RealEstate.Application.Services.dbo
 {
     public class OfertasService : IOfertasService
     {
         private readonly IOfertasRepository _ofertasRepository;
+        private readonly IPropiedadesRepository _propiedadesRepository;
         private readonly ILogger<OfertasService> _logger;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -24,13 +26,15 @@ namespace RealEstate.Application.Services.dbo
         public OfertasService(IOfertasRepository ofertasRepository,
                               ILogger<OfertasService> logger,
                               IMapper mapper,
-                              IHttpContextAccessor httpContextAccessor)
+                              IHttpContextAccessor httpContextAccessor,
+                              IPropiedadesRepository propiedadesRepository)
         {
             _ofertasRepository = ofertasRepository;
             _logger = logger;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             authentication = _httpContextAccessor.HttpContext.Session.Get<AuthenticationResponse>("usuario");
+            _propiedadesRepository = propiedadesRepository;
         }
 
         public async Task<ServiceResponse> GetAllAsync()
@@ -236,6 +240,19 @@ namespace RealEstate.Application.Services.dbo
                     case "Aceptada":
                         dto.Aceptada = true;
                         dto.Estado = Estado.Aceptada.ToString();
+
+                        var otrasOfertas = await _ofertasRepository.GetAllExceptId(dto.OfertaID);
+                        var otrasOfertasData = otrasOfertas.Data as List<OfertasModel>;
+
+                        foreach (var otra in otrasOfertasData)
+                        {
+                            var ofertaCanceladas = _mapper.Map<Ofertas>(otra);
+                            ofertaCanceladas.Estado = Estado.Rechazada.ToString();
+                            await _ofertasRepository.Update(ofertaCanceladas);
+                        }
+
+                        await _propiedadesRepository.MarkAsSold(dto.PropiedadID);
+
                         break;
 
                     case "Rechazada":

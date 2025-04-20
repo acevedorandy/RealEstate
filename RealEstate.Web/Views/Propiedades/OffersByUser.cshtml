@@ -59,14 +59,16 @@
                                 <button class="btn btn-sm btn-success me-2"
                                         data-bs-toggle="modal"
                                         data-bs-target="#confirmModal"
-                                        data-bs-ofertaid="@offer.OfertaID">
+                                        data-bs-ofertaid="@offer.OfertaID"
+                                        data-bs-propiedadid="@offer.PropiedadID">
                                     Aceptar
                                 </button>
 
                                 <button class="btn btn-sm btn-danger"
                                         data-bs-toggle="modal"
                                         data-bs-target="#rejectModal"
-                                        data-bs-ofertaid="@offer.OfertaID">
+                                        data-bs-ofertaid="@offer.OfertaID"
+                                        data-bs-propiedadid="@offer.PropiedadID">
                                     <i class="fas fa-times me-1"></i>Rechazar
                                 </button>
 
@@ -145,15 +147,16 @@
             // Usamos un objeto para manejar el estado de las ofertas
             const offerManager = {
                 currentOfertaId: null,
+                currentPropiedadId: null,
 
                 init: function () {
-                    // Delegamos el evento para manejar dinámicamente los botones
                     $(document).on('click', '[data-bs-ofertaid]', function () {
                         offerManager.currentOfertaId = $(this).data('bs-ofertaid');
+                        offerManager.currentPropiedadId = $(this).data('bs-propiedadid'); // <- NUEVO
                         console.log("Oferta ID capturada:", offerManager.currentOfertaId);
+                        console.log("Propiedad ID capturada:", offerManager.currentPropiedadId); // <- NUEVO
                     });
 
-                    // Configuramos los handlers de los modales
                     $('#confirmAccept').click(offerManager.handleAccept);
                     $('#confirmReject').click(offerManager.handleReject);
                 },
@@ -173,12 +176,14 @@
                     }
 
                     console.log(`Enviando ID de oferta para ${estado}:`, offerManager.currentOfertaId);
+                    console.log(`Propiedad ID:`, offerManager.currentPropiedadId);
 
                     $.ajax({
                         url: '@Url.Action("ConfirmarOrRechazarOferta", "Ofertas")',
                         type: 'POST',
                         data: {
                             ofertaid: offerManager.currentOfertaId,
+                            propiedadid: offerManager.currentPropiedadId, 
                             estado: estado
                         },
                         headers: {
@@ -197,9 +202,9 @@
                     });
                 }
             };
-
+            // ⬇️ Esto faltaba
             offerManager.init();
-        });
+        }); // 
     </script>
 }
 

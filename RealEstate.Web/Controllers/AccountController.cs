@@ -14,11 +14,11 @@ namespace RealEstate.Web.Controllers
     {
         private readonly IUsuariosService _usuariosService;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SelectRol _selectRol;
+        private readonly SelectListHelper _selectRol;
 
         public AccountController(IUsuariosService usuariosService,
                                  UserManager<ApplicationUser> userManager,
-                                 SelectRol selectRol)
+                                 SelectListHelper selectRol)
         {
             _usuariosService = usuariosService;
             _userManager = userManager;

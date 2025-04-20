@@ -32,7 +32,7 @@ builder.Services.AddScoped<LoginAuthorize>();
 builder.Services.AddScoped<ValidateUserSesion>();
 builder.Services.AddScoped<LoadPhoto>();
 builder.Services.AddScoped<ImagenHelper>();
-builder.Services.AddScoped<SelectRol>();
+builder.Services.AddScoped<SelectListHelper>();
 
 
 

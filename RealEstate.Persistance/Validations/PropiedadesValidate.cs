@@ -38,7 +38,7 @@ namespace RealEstate.Persistance.Validations
                 SetError("El nivel total es requerido");
             if (propiedades.Piso <= 0)
                 SetError("El piso es requerido");
-            if (string.IsNullOrEmpty(propiedades.TipoPropiedad))
+            if (propiedades.TipoPropiedad <= 0)
                 SetError("El tipo de propiedad es requerido");
             //if (string.IsNullOrEmpty(propiedades.Imagen))
             //    SetError("La imagen es requerida");

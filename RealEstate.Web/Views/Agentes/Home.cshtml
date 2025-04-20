@@ -444,8 +444,18 @@
                     <div class="property-card card h-100 @(isSold ? "sold" : "")">
                         <div class="img-container">
                             <img src="@item.Imagen" class="card-img-top" alt="@item.Titulo" />
-                            <span class="property-badge @item.TipoPropiedad.ToLower()">@item.TipoPropiedad</span>
-                            <span class="status-badge @statusClass">@statusText</span>
+                            @{
+                                var tipoPropiedadMap = new Dictionary<int, string>
+                    {
+                    {1, "Casa"},
+                    {2, "Apartamento"},
+                    {3, "Terreno"},
+                    };
+                            }
+
+                            <span class="property-badge @(tipoPropiedadMap.ContainsKey(item.TipoPropiedad) ? tipoPropiedadMap[item.TipoPropiedad].ToLower() : "desconocido")">
+                                @(tipoPropiedadMap.ContainsKey(item.TipoPropiedad) ? tipoPropiedadMap[item.TipoPropiedad] : "Desconocido")
+                            </span>                            <span class="status-badge @statusClass">@statusText</span>
                             <span class="price-tag @(isSold ? "sold" : (!item.Disponibilidad ? "reserved" : ""))">RD$ @item.Precio.ToString("N0")</span>
                         </div>
 

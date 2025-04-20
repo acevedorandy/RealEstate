@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
-using RealEstate.Application.Services.dbo;
 using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Models.EnumerablesModel;
 using RealEstate.Persistance.Models.ViewModel;
 using RealEstate.Web.Helpers.Imagenes;
+using RealEstate.Web.Helpers.Otros;
 
 namespace RealEstate.Web.Controllers
 {
@@ -17,23 +16,25 @@ namespace RealEstate.Web.Controllers
         private readonly IPropiedadFotosService _propiedadFotosService;
         private readonly IOfertasService _ofertasService;
         private readonly ImagenHelper _imagenHelper;
-        private readonly IUsuariosService _usuariosService;
+        private readonly SelectListHelper _selectListHelper;
 
         public PropiedadesController(IPropiedadesService propiedadesService,
                                      ImagenHelper imagenHelper,
                                      IPropiedadFotosService propiedadFotosService,
                                      IUsuariosService usuariosService,
-                                     IOfertasService ofertasService)
+                                     IOfertasService ofertasService,
+                                     SelectListHelper selectListHelper)
         {
             _propiedadesService = propiedadesService;
             _imagenHelper = imagenHelper;
             _propiedadFotosService = propiedadFotosService;
             _ofertasService = ofertasService;
+            _selectListHelper = selectListHelper;
         }
 
-        public async Task <IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
-            var result = await _propiedadesService.GetAllAsync();
+            var result = await _propiedadesService.GetAllPropertyByAgentLogged();
 
             if (result.IsSuccess)
             {
@@ -83,7 +84,6 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
-        // Aqui se esta trabajando
         public async Task<IActionResult> OffersByUser(int propiedadId, string clienteId)
         {
             var result = await _ofertasService.GetAllOffersByClientAsync(propiedadId, clienteId);
@@ -96,8 +96,14 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
-        public ActionResult Create()
+        public async Task <ActionResult> Create()
         {
+            var tiposPropiedad = await _selectListHelper.GetPropertyTypes();
+            var tipoVenta = await _selectListHelper.GetSellingTypes();
+
+            ViewBag.TiposPropiedad = tiposPropiedad;
+            ViewBag.TiposVenta = tipoVenta;
+
             return View();
         }
 
@@ -129,24 +135,15 @@ namespace RealEstate.Web.Controllers
 
                     TempData["SuccessMessage"] = "Propiedad agregada exitosamente.";
                     return RedirectToAction(nameof(Index));
-
                 }
-                //if (dto.Imagen != null && dto.PropiedadID > 0)
-                //{
-                //    await _propiedadesService.UpdateAsync(dto);
-                //}
-
-                //if (!result.IsSuccess)
-                //{
-                //    result.IsSuccess = false;
-                //    ViewBag.Message = result.Messages;
-
-                //    return View(dto);
-                //}
-
                 else
                 {
                     TempData["ErrorMessage"] = result.Messages;
+                    var tiposPropiedad = await _selectListHelper.GetPropertyTypes();
+                    var tipoVenta = await _selectListHelper.GetSellingTypes();
+
+                    ViewBag.TiposPropiedad = tiposPropiedad;
+                    ViewBag.TiposVenta = tipoVenta;
                     return View(dto);
                 }
             }

@@ -159,7 +159,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  FechaHora = reserva.FechaHora,
                                  Estado = reserva.Estado
 
-                             }).ToList();
+                             }).FirstOrDefault();
 
                 result.Data = datos;
             }

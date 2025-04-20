@@ -65,24 +65,13 @@
                                     </div>
                                 }
                             </div>
+
                             <h5 class="card-title">@usuario.Nombre @usuario.Apellido</h5>
-@*                             <p class="card-text mb-1"><strong>Usuario:</strong> @usuario.UserName</p>
-                            <p class="card-text mb-1"><strong>Email:</strong> @usuario.Email</p>
-                            <p class="card-text mb-1"><strong>Teléfono:</strong> @usuario.Telefono</p>
-                            <p class="card-text mb-1"><strong>Cédula:</strong> @usuario.Cedula</p>
-                            <p class="card-text mb-1"><strong>Rol:</strong> @usuario.Rol</p>
-                            <p class="card-text">
-                                <strong>Activo:</strong>
-                                @if (usuario.IsActive)
-                                {
-                                    <span class="badge bg-success">Sí</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">No</span>
-                                }
-                            </p> *@
-                            <a href="@Url.Action("Index", "Propiedades", new { agenteId = usuario.Id })"
+
+                            <!-- Campo hidden para usuario.Id -->
+                            <input type="hidden" name="usuarioId" value="@usuario.Id" />
+
+                            <a href="@Url.Action("PropiedadesAgente", "Agentes", new { agenteId = usuario.Id })"
                                class="btn btn-outline-primary mt-3">
                                 <i class="bi bi-house-door"></i> Ver propiedades
                             </a>
@@ -96,11 +85,23 @@
 
 <!-- JS para filtrar por nombre -->
 <script>
-    document.getElementById('filtroNombre').addEventListener('input', function () {
-        const filtro = this.value.toLowerCase();
-        document.querySelectorAll('.usuario-card').forEach(card => {
-            const nombre = card.getAttribute('data-nombre');
-            card.style.display = nombre.includes(filtro) ? 'flex' : 'none';
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+        const filtroInput = document.getElementById('filtroNombre');
+
+        if (filtroInput) {
+            filtroInput.addEventListener('input', function () {
+                const filtro = this.value.trim().toLowerCase();
+                const cards = document.querySelectorAll('.usuario-card');
+
+                cards.forEach(card => {
+                    const nombreCompleto = card.getAttribute('data-nombre');
+                    if (nombreCompleto.includes(filtro)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
     });
 </script>

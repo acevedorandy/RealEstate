@@ -28,6 +28,18 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
+        public async Task<IActionResult> PropiedadesAgente(string agenteId)
+        {
+            var result = await _propiedadesService.GetAllPropertyByAgentAsync(agenteId);
+
+            if (result.IsSuccess)
+            {
+                List<PropiedadesModel> propiedades = (List<PropiedadesModel>)result.Model;
+                return View(propiedades);
+            }
+            return View();
+        }
+
         public async Task<IActionResult> Buscar(string nombre)
         {
             var result = await _usuariosService.GetAgentByNameAsync(nombre);
@@ -48,7 +60,7 @@ namespace RealEstate.Web.Controllers
 
         public async Task<IActionResult> Home()
         {
-            var result = await _propiedadesService.GetAllPropertyByAgentAsync();
+            var result = await _propiedadesService.GetAllPropertyByAgentIncludeSold();
 
             if (result.IsSuccess)
             {

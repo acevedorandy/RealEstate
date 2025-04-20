@@ -60,7 +60,6 @@ namespace RealEstate.Persistance.Repositories.dbo
                 result.Message = "Ha ocurrido un error actualizando el estado de la oferta.";
                 _logger.LogError(result.Message, ex.ToString());
             }
-
             return result;
         }
 
@@ -258,7 +257,7 @@ namespace RealEstate.Persistance.Repositories.dbo
         {
             return await _realEstateContext.Ofertas
                 .AnyAsync(o => o.ClienteID == clienteId &&
-               (o.Estado.ToLower() == "pendiente" || o.Estado.ToLower() == "aceptada"));
+               (o.Estado.ToLower() == "pendiente"));
         }
 
         public async Task<OperationResult> GetAllOffersByClient(int propiedadId, string clienteId)
@@ -287,6 +286,50 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  FechaOferta = oferta.FechaOferta,
                                  Estado = oferta.Estado,
                                  Aceptada = oferta.Aceptada
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo las ofertas";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> GetAllExceptId(int ofertaId)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var clientes = await _identityContext.Users
+                    .ToListAsync();
+
+                var propiedades = await _realEstateContext.Propiedades
+                    .ToListAsync();
+
+                var ofertas = await _realEstateContext.Ofertas
+                    .ToArrayAsync();
+
+                var datos = (from oferta in ofertas
+                             join cliente in clientes on oferta.ClienteID equals cliente.Id
+                             join propiedad in propiedades on oferta.PropiedadID equals propiedad.PropiedadID
+
+                             where oferta.OfertaID != ofertaId
+
+                             select new OfertasModel
+                             {
+                                 OfertaID = oferta.OfertaID,
+                                 ClienteID = cliente.Id,
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Cifra = oferta.Cifra,
+                                 FechaOferta = oferta.FechaOferta,
+                                 Estado = oferta.Estado,
+                                 Aceptada = oferta.Aceptada
+
                              }).ToList();
 
                 result.Data = datos;
