@@ -112,7 +112,6 @@ namespace RealEstate.Identity.Services
                 return response;
             }
 
-            // Validaciones previas
             if (await _userManager.FindByNameAsync(request.UserName) != null)
                 return SetError($"El nombre de usuario {request.UserName} ya existe, por favor elija otro.");
 
@@ -121,6 +120,12 @@ namespace RealEstate.Identity.Services
 
             if (await _userManager.FindByNameAsync(request.Cedula) != null)
                 return SetError($"Ya existe un usuario con la cédula {request.Cedula}.");
+
+            var activeByDefaultRoles = new List<string>
+            {
+                Roles.Desarrollador.ToString(),
+                Roles.Administrador.ToString()
+            };
 
             var usuario = new ApplicationUser
             {
@@ -131,7 +136,7 @@ namespace RealEstate.Identity.Services
                 Cedula = request.Cedula,
                 Email = request.Email,
                 PhoneNumber = request.Phone,
-                IsActive = false,
+                IsActive = activeByDefaultRoles.Contains(request.Rol),
             };
 
             var result = await _userManager.CreateAsync(usuario, request.Password);
@@ -140,8 +145,38 @@ namespace RealEstate.Identity.Services
 
             switch (request.Rol)
             {
+                case "Administrador":
+                    await _userManager.AddToRoleAsync(usuario, Roles.Administrador.ToString());
+
+                    // Opcional: Enviar email de bienvenida a desarrolladores
+                    await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
+                    {
+                        To = usuario.Email,
+                        Body = $"Bienvenido {usuario.Nombre} como Administrador. Su cuenta ha sido activada automáticamente.",
+                        Subject = "Registro de Administrador"
+                    });
+                    break;
+
+                case "Desarrollador":
+                    await _userManager.AddToRoleAsync(usuario, Roles.Desarrollador.ToString());
+
+                    // Opcional: Enviar email de bienvenida a desarrolladores
+                    await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
+                    {
+                        To = usuario.Email,
+                        Body = $"Bienvenido {usuario.Nombre} como Desarrollador. Su cuenta ha sido activada automáticamente.",
+                        Subject = "Registro de Desarrollador"
+                    });
+                    break;
+
                 case "Agente":
                     await _userManager.AddToRoleAsync(usuario, ClienteAgente.Agente.ToString());
+                    await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
+                    {
+                        To = usuario.Email,
+                        Body = $"Bienvenido {usuario.Nombre} como Agente Inmobiliario. Su cuenta necesita la activacion. Por favor, contactar con un administrador.",
+                        Subject = "Registro de Agente"
+                    });
                     break;
 
                 case "Cliente":
@@ -158,9 +193,9 @@ namespace RealEstate.Identity.Services
                 default:
                     return SetError("Rol no válido.");
             }
+
             return response;
         }
-
 
         public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request)
         {
@@ -189,10 +224,10 @@ namespace RealEstate.Identity.Services
             var result = await _userManager.ResetPasswordAsync(usuario, request.Token, request.Password);
             if (!result.Succeeded)
                 return SetError("Ha ocurrido un error al restablecer la contraseña.");
-
+            
             return response;
         }
-
+        
         public async Task SignOutAsync()
         {
             await _signInManager.SignOutAsync();

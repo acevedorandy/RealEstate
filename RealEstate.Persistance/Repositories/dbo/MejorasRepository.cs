@@ -42,6 +42,7 @@ namespace RealEstate.Persistance.Repositories.dbo
 
                 mejorasToUpdate.MejoraID = mejoras.MejoraID;
                 mejorasToUpdate.Nombre = mejoras.Nombre;
+                mejorasToUpdate.Descripcion = mejoras.Descripcion;
 
                 result = await base.Update(mejorasToUpdate);
             }
@@ -82,6 +83,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                      {
                                          MejoraID = mejora.MejoraID,
                                          Nombre = mejora.Nombre,
+                                         Descripcion = mejora.Descripcion,
 
                                      }).AsNoTracking()
                                      .ToListAsync();
@@ -109,6 +111,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                      {
                                          MejoraID = mejora.MejoraID,
                                          Nombre = mejora.Nombre,
+                                         Descripcion = mejora.Descripcion,
 
                                      }).FirstOrDefaultAsync();
             }

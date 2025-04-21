@@ -2,11 +2,11 @@
 
 namespace RealEstate.Persistance.Models.dbo
 {
-    public class TiposVentaModel
+    public class PropiedadTiposVentaModel
     {
+        public int PropiedadTipoVentaID { get; set; }
+        public int PropiedadID { get; set; }
         public int TipoVentaID { get; set; }
-        public string Nombre { get; set; }
-        public string Descripcion { get; set; }
         public int PropiedadesAsociadas { get; set; }
     }
 }

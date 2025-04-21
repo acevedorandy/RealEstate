@@ -1,6 +1,7 @@
 ﻿
 
 using RealEstate.Domain.Result;
+using RealEstate.Identity.Shared.Entities;
 
 namespace RealEstate.Persistance.Interfaces.dbo
 {
@@ -13,6 +14,9 @@ namespace RealEstate.Persistance.Interfaces.dbo
         Task<OperationResult> GetAgentActive();
         Task<OperationResult> GetAgentByName(string name);
         Task<OperationResult> GetAllAgent();
-        Task<OperationResult> RemoveAgentWithProperty(string userId);    
+        Task<OperationResult> GetAllDeveloper();
+        Task<OperationResult> GetAllAdmins();
+        Task<OperationResult> RemoveAgentWithProperty(string userId);
+        Task<OperationResult> UpdateIdentityUser(ApplicationUser user);
     }
 }
