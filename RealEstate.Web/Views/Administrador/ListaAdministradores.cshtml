@@ -1,0 +1,772 @@
+﻿@model List<RealEstate.Persistance.Models.ViewModel.AdministradorModel>
+@{
+    ViewData["Title"] = "Gestión de Agentes Inmobiliarios";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+
+        .btn-green {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-red {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #1a252f;
+            --success: #2ecc71;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+
+            .logo i {
+                color: var(--accent);
+                margin-right: 0.5rem;
+            }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background-color: #2980b9;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+
+            .btn-outline:hover {
+                background-color: var(--secondary);
+                color: white;
+            }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 300px;
+        }
+
+            .search-bar input {
+                width: 100%;
+                padding: 0.7rem 1rem 0.7rem 2.5rem;
+                border-radius: 30px;
+                border: none;
+                background-color: rgba(255, 255, 255, 0.2);
+                color: white;
+                transition: all 0.3s ease;
+            }
+
+                .search-bar input::placeholder {
+                    color: rgba(255, 255, 255, 0.7);
+                }
+
+                .search-bar input:focus {
+                    outline: none;
+                    background-color: rgba(255, 255, 255, 0.3);
+                }
+
+            .search-bar i {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: white;
+            }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: var(--light);
+        }
+
+        th, td {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: #7f8c8d;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+            tbody tr:hover {
+                background-color: #f8f9fa;
+            }
+
+        .status {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--accent);
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 0.7rem;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: var(--secondary);
+        }
+
+        .delete-btn {
+            background-color: var(--accent);
+        }
+
+        .view-btn {
+            background-color: #7f8c8d;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+            .page-btn.active {
+                background-color: var(--secondary);
+                color: white;
+                border-color: var(--secondary);
+            }
+
+            .page-btn:hover:not(.active) {
+                background-color: #f1f1f1;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+                color: var(--dark);
+            }
+
+            .form-control:focus {
+                outline: none;
+                border-color: var(--secondary);
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            }
+
+        @@media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+
+            th, td {
+                padding: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-building"></i>
+                <span>RealEstate</span>
+            </div>
+        </header>
+
+        <!-- Alert Messages -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle me-3 fs-4"></i>
+                    <div>@TempData["SuccessMessage"]</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                    <div>@TempData["ErrorMessage"]</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearAdminModal">
+            <i class="fas fa-user-plus me-2"></i>Crear Administrador
+        </button>
+
+        <div class="card" style="width: 120%; margin-left: -10%;">
+            <div class="card-header">
+                <h2 class="card-title">Lista De Administradores</h2>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar administrador..." id="searchInput">
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Usuario</th>
+                            <th>Cedula</th>
+                            <th>Correo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var desarrollador in Model)
+                            {
+                                var isActive = desarrollador.IsActive;
+                                var actionTitle = isActive ? "Desactivar" : "Activar";
+                                var iconClass = isActive ? "fa-user-slash" : "fa-user-check";
+                                var buttonColorClass = isActive ? "btn-red" : "btn-green";
+
+                                <tr>
+                                    <td>@desarrollador.Nombre</td>
+                                    <td>@desarrollador.Apellido</td>
+                                    <td>@desarrollador.UserName</td>
+                                    <td>@desarrollador.Cedula</td>
+                                    <td>@desarrollador.Correo</td>
+                                    <td>
+                                        <span class="status @(isActive ? "status-active" : "status-inactive")">
+                                            @(isActive ? "Activo" : "Inactivo")
+                                        </span>
+                                    </td>
+                                    <td class="actions-cell">
+                                        <button class="action-btn toggle-btn @buttonColorClass"
+                                                title="@actionTitle"
+                                                onclick="toggleActivation('@desarrollador.Id')">
+                                            <i class="fas @iconClass"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn" title="Eliminar" onclick="confirmarEliminacion(event, '@desarrollador.Id')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <a href="@Url.Action("EditarUsuario", new { id = desarrollador.Id })" class="action-btn edit-btn" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 2rem;">
+                                    <i class="fas fa-info-circle" style="color: var(--secondary); font-size: 1.5rem;"></i>
+                                    <p style="margin-top: 1rem;">No se encontraron agentes registrados</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="crearAdminModal" tabindex="-1" aria-labelledby="crearAdminModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="crearAdminModalLabel">
+                        <i class="fas fa-user-shield me-2"></i>Nuevo Desarrollador
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                @using (Html.BeginForm("CrearDesarrolladores", "Administrador", FormMethod.Post, new { id = "formCrearAdmin" }))
+                {
+                    <div class="modal-body">
+                        @Html.Hidden("Rol", "Administrador")
+                        <div class="row g-3">
+                            <!-- Nombre -->
+                            <div class="col-md-6">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    @Html.TextBox("Nombre", null, new { @class = "form-control", placeholder = "Nombre", required = "required" })
+                                </div>
+                            </div>
+
+                            <!-- Apellido -->
+                            <div class="col-md-6">
+                                <label for="apellido" class="form-label">Apellido</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    @Html.TextBox("Apellido", null, new { @class = "form-control", placeholder = "Apellido", required = "required" })
+                                </div>
+                            </div>
+
+                            <!-- Cédula -->
+                            <div class="col-md-6">
+                                <label for="cedula" class="form-label">Cédula</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                    @Html.TextBox("Cedula", null, new { @class = "form-control", placeholder = "Número de cédula", required = "required" })
+                                </div>
+                            </div>
+
+                            <!-- Correo -->
+                            <div class="col-md-6">
+                                <label for="correo" class="form-label">Correo Electrónico</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    @Html.TextBox("Email", null, new { @class = "form-control", type = "email", placeholder = "correo@ejemplo.com", required = "required" })
+                                </div>
+                            </div>
+
+                            <!-- Usuario -->
+                            <div class="col-md-6">
+                                <label for="usuario" class="form-label">Usuario</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                    @Html.TextBox("UserName", null, new { @class = "form-control", placeholder = "Nombre de usuario", required = "required" })
+                                </div>
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="col-md-6">
+                                <label for="contrasena" class="form-label">Contraseña</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    @Html.Password("Password", null, new { @class = "form-control", placeholder = "Contraseña", required = "required", id = "contrasena" })
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength mt-1">
+                                    <div class="progress" style="height: 5px;">
+                                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <small class="text-muted">Seguridad: <span class="strength-text">Débil</span></small>
+                                </div>
+                            </div>
+
+                            <!-- Confirmar Contraseña -->
+                            <div class="col-md-6">
+                                <label for="confirmarContrasena" class="form-label">Confirmar Contraseña</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    @Html.Password("ConfirmPassword", null, new { @class = "form-control", placeholder = "Confirmar contraseña", required = "required", id = "confirmarContrasena" })
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" id="password-match-feedback">
+                                    Las contraseñas no coinciden
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-arrow-left me-2"></i>Volver al listado
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="btnCrearAdmin">
+                            <i class="fas fa-save me-2"></i>Crear Administrador
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        $(document).ready(function () {
+            // Toggle para mostrar/ocultar contraseña
+            $('.toggle-password').click(function () {
+                const input = $(this).parent().find('input');
+                const icon = $(this).find('i');
+
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            // Validación de fortaleza de contraseña
+            $('#contrasena').on('input', function () {
+                const password = $(this).val();
+                const progressBar = $(this).closest('.col-md-6').find('.progress-bar');
+                const strengthText = $(this).closest('.col-md-6').find('.strength-text');
+
+                // Calcular fortaleza
+                let strength = 0;
+                if (password.length > 0) strength += 1;
+                if (password.length >= 8) strength += 1;
+                if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 1;
+                if (password.match(/\d/)) strength += 1;
+                if (password.match(/[^a-zA-Z\d]/)) strength += 1;
+
+                // Actualizar barra y texto
+                const width = strength * 20;
+                progressBar.css('width', width + '%');
+
+                if (strength <= 2) {
+                    progressBar.removeClass('bg-warning bg-success').addClass('bg-danger');
+                    strengthText.text('Débil').removeClass('text-warning text-success').addClass('text-danger');
+                } else if (strength <= 4) {
+                    progressBar.removeClass('bg-danger bg-success').addClass('bg-warning');
+                    strengthText.text('Moderada').removeClass('text-danger text-success').addClass('text-warning');
+                } else {
+                    progressBar.removeClass('bg-danger bg-warning').addClass('bg-success');
+                    strengthText.text('Fuerte').removeClass('text-danger text-warning').addClass('text-success');
+                }
+            });
+
+            // Validación de coincidencia de contraseñas
+            $('#confirmarContrasena').on('input', function () {
+                const confirmPassword = $(this).val();
+                const password = $('#contrasena').val();
+
+                if (confirmPassword !== password && confirmPassword.length > 0) {
+                    $(this).addClass('is-invalid');
+                    $('#password-match-feedback').show();
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $('#password-match-feedback').hide();
+                }
+            });
+
+            // Validación del formulario antes de enviar
+            $('#formCrearAdmin').submit(function (e) {
+                const password = $('#contrasena').val();
+                const confirmPassword = $('#confirmarContrasena').val();
+
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    $('#confirmarContrasena').addClass('is-invalid');
+                    $('#password-match-feedback').show();
+                    return false;
+                }
+
+                // Mostrar spinner en el botón de enviar
+                $('#btnCrearAdmin').html('<i class="fas fa-spinner fa-spin me-2"></i>Creando...');
+                return true;
+            });
+
+            // Resetear el formulario cuando se cierra el modal
+            $('#crearAdminModal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+                $(this).find('.is-invalid').removeClass('is-invalid');
+                $(this).find('.progress-bar').css('width', '0%').removeClass('bg-warning bg-success').addClass('bg-danger');
+                $(this).find('.strength-text').text('Débil').removeClass('text-warning text-success').addClass('text-danger');
+                $('#btnCrearAdmin').html('<i class="fas fa-save me-2"></i>Crear Administrador');
+            });
+        });
+
+        function toggleActivation(id) {
+            // Obtener el token antiforgery
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            // Crear form data para enviar correctamente el token
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('__RequestVerificationToken', token);
+
+            fetch('/Administrador/ActivarOrDesactivar', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Asume que el servidor devuelve JSON
+                    }
+                    throw new Error('Error en la respuesta del servidor');
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Recargar la página o actualizar solo la fila afectada
+                        location.reload();
+                    } else {
+                        alert(data.message || "Error al cambiar el estado");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Ocurrió un error al procesar la solicitud");
+                });
+        }
+
+        // Control del modal
+        const addAgentBtn = document.getElementById('addAgentBtn');
+        const agentModal = document.getElementById('agentModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        addAgentBtn.addEventListener('click', () => {
+            document.getElementById('modalTitle').textContent = 'Nuevo Agente';
+            document.getElementById('agentForm').reset();
+            document.getElementById('agentForm').action = '/Agentes/GuardarAgente';
+            agentModal.classList.add('active');
+        });
+
+        closeModal.addEventListener('click', () => {
+            agentModal.classList.remove('active');
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            agentModal.classList.remove('active');
+        });
+
+        // Cerrar modal al hacer clic fuera del contenido
+        agentModal.addEventListener('click', (e) => {
+            if (e.target === agentModal) {
+                agentModal.classList.remove('active');
+            }
+        });
+
+        // Funciones para acciones
+        function viewAgent(id) {
+            // Implementar lógica para ver detalles
+            window.location.href = `/Agentes/Detalles/${id}`;
+        }
+
+        function editAgent(id) {
+            // Implementar lógica para cargar datos en el modal
+            document.getElementById('modalTitle').textContent = 'Editar Agente';
+            document.getElementById('agentForm').action = `/Agentes/Editar/${id}`;
+
+            // Aquí deberías hacer una llamada AJAX para obtener los datos del agente
+            // y llenar el formulario, por ejemplo:
+            /*
+            fetch(`/Agentes/ObtenerAgente/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('agentId').value = data.id;
+                    document.getElementById('firstName').value = data.nombre;
+                    // ... llenar otros campos
+                });
+            */
+
+            agentModal.classList.add('active');
+        }
+
+        function confirmarEliminacion(event, id) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "Esta acción no se puede deshacer.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Crear formulario dinámico
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/Administrador/Delete';
+
+                    const idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.name = 'Id';
+                    idInput.value = id;
+                    form.appendChild(idInput);
+
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').cloneNode();
+                    form.appendChild(token);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+
+        // Búsqueda en tiempo real
+        document.getElementById('searchInput').addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

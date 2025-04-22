@@ -9,5 +9,6 @@ namespace RealEstate.Persistance.Interfaces.dbo
         Task<OperationResult> GetAgentByProperty(int propiedadId);
         Task<OperationResult> GetAllPropertyByAgent(string agenteId);
         Task<OperationResult> MarkAsSold(int propiedadId);
+        Task<OperationResult> RemovePropertyWithAll(int propiedadId);
     }
 }

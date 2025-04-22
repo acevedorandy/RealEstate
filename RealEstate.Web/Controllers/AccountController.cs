@@ -6,6 +6,12 @@ using RealEstate.Application.Responses.identity;
 using RealEstate.Identity.Shared.Entities;
 using RealEstate.Application.Helpers.web;
 using RealEstate.Web.Helpers.Otros;
+using RealEstate.Application.Dtos.dbo;
+using RealEstate.Persistance.Models.dbo;
+using System.Security.Claims;
+using RealEstate.Web.Helpers.Imagenes;
+using RealEstate.Persistance.Models.ViewModel;
+using RealEstate.Application.Models;
 
 
 namespace RealEstate.Web.Controllers
@@ -15,14 +21,17 @@ namespace RealEstate.Web.Controllers
         private readonly IUsuariosService _usuariosService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SelectListHelper _selectRol;
+        private readonly ImagenHelper _imagenHelper;
 
         public AccountController(IUsuariosService usuariosService,
                                  UserManager<ApplicationUser> userManager,
-                                 SelectListHelper selectRol)
+                                 SelectListHelper selectRol,
+                                 ImagenHelper imagenHelper)
         {
             _usuariosService = usuariosService;
             _userManager = userManager;
             _selectRol = selectRol;
+            _imagenHelper = imagenHelper;
         }
 
         public IActionResult Index()
@@ -40,22 +49,25 @@ namespace RealEstate.Web.Controllers
 
             AuthenticationResponse authentication = await _usuariosService.LoginAsync(loginDto);
 
-            if (authentication != null && authentication.HasError != true)
+            if (authentication != null && !authentication.HasError)
             {
-                // Guardar el usuario en la sesión
-                HttpContext.Session.Set<AuthenticationResponse>("usuario", authentication);
+                HttpContext.Session.Set("usuario", authentication);
 
-                // Obtener el usuario autenticado
-                //var user = await _userManager.FindByEmailAsync(loginDto.Email);
+                // Verifica los roles
+                if (authentication.Roles.Contains("Administrador"))
+                {
+                    return RedirectToAction("Index", "Administrador");
+                }
+                else if (authentication.Roles.Contains("Agente"))
+                {
+                    return RedirectToAction("Home", "Agentes");
+                }
+                else if (authentication.Roles.Contains("Cliente"))
+                {
+                    return RedirectToAction("Index", "Clientes");
+                }
 
-                //if (await _userManager.IsInRoleAsync(user, "Admin"))
-                //{
-                //    return RedirectToAction("Welcome", "Account");
-                //}
-                //else if (await _userManager.IsInRoleAsync(user, "Basic"))
-                //{
-                //    return RedirectToAction("Welcome", "Account"); 
-                //}
+                // Por defecto si no tiene ninguno de los roles
                 return RedirectToAction("Welcome", "Account");
             }
             else
@@ -65,6 +77,9 @@ namespace RealEstate.Web.Controllers
                 return View(loginDto);
             }
         }
+
+
+
 
         public IActionResult Register()
         {
@@ -166,6 +181,69 @@ namespace RealEstate.Web.Controllers
         public IActionResult Welcome()
         {
             return View();
+        }
+
+        public async Task<IActionResult> MiPerfil()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _usuariosService.GetIdentityUserByAsync(userId);
+
+            if (result.IsSuccess)
+            {
+                UsuariosModel usuarios = (UsuariosModel)result.Model;
+                return View(usuarios);
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditarPerfil(string id)
+        {
+            var result = await _usuariosService.GetPerfilInformation(id);
+
+            if (result.IsSuccess)
+            {
+                PerfilModel usuarios = (PerfilModel)result.Model;
+                return View(usuarios);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarPerfil(UsuariosDto dto, IFormFile foto)
+        {
+            try
+            {
+                var result = await _usuariosService.UpdateIdentityUserAsync(dto);
+
+                if (result.IsSuccess)
+                {
+                    dto = result.Model;
+                    dto = await _imagenHelper.UpdatePerfilPhoto(dto, foto);
+                    var updateResult = await _usuariosService.UpdateIdentityUserAsync(dto);
+
+                    if (!updateResult.IsSuccess)
+                    {
+                        TempData["ErrorMessage"] = result.Messages;
+                        return RedirectToRoute(new { controller = "Account", action = "MiPerfil" });
+                    }
+
+                    TempData["SuccessMessage"] = "Informacion actualizada exitosamente.";
+                    return RedirectToRoute(new { controller = "Account", action = "MiPerfil" });
+                    //TempData["SuccessMessage"] = "Informacion actualizada exitosamente.";
+                    //return RedirectToRoute(new { controller = "Account", action = "MiPerfil" });
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = result.Messages;
+                    return RedirectToRoute(new { controller = "Account", action = "MiPerfil" });
+                }
+            }
+            catch
+            {
+                return View();
+            }
         }
     }
 }

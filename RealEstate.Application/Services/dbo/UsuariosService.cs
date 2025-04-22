@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Contracts.identity;
@@ -9,6 +10,11 @@ using RealEstate.Application.Responses.identity;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Models.ViewModel;
+using RealEstate.Application.Helpers.web;
+using RealEstate.Application.Dtos.dbo;
+using Microsoft.AspNetCore.Identity;
+using RealEstate.Identity.Shared.Entities;
+using RealEstate.Application.Models;
 
 namespace RealEstate.Application.Services.dbo
 {
@@ -19,18 +25,26 @@ namespace RealEstate.Application.Services.dbo
         private readonly IMapper _mapper;
         private readonly IUsuariosRepository _usuariosRepository;
         private readonly ILogger<UsuariosService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AuthenticationResponse authentication;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public UsuariosService(IAccountService accountService,
                                IPropiedadesRepository propiedadesRepository,
                                IMapper mapper,
                                IUsuariosRepository usuariosRepository,
-                               ILogger<UsuariosService> logger)
+                               ILogger<UsuariosService> logger,
+                               IHttpContextAccessor httpContextAccessor,
+                               UserManager<ApplicationUser> userManager)
         {
             _accountService = accountService;
             _mapper = mapper;
             _usuariosRepository = usuariosRepository;
             _logger = logger;
             _propiedadesRepository = propiedadesRepository;
+            _httpContextAccessor = httpContextAccessor;
+            authentication = _httpContextAccessor.HttpContext.Session.Get<AuthenticationResponse>("usuario");
+            _userManager = userManager;
         }
 
         public async Task<ServiceResponse> ActivarOrDesactivarAsync(string userId)
@@ -39,6 +53,12 @@ namespace RealEstate.Application.Services.dbo
 
             try
             {
+                if (userId == authentication.Id)
+                {
+                    response.IsSuccess = false;
+                    response.Messages = "Usted no puede activar o desactivar su propio usuario.";
+                    return response;
+                }
                 var result = await _usuariosRepository.ActivarOrDesactivar(userId);
 
                 if (!result.Success)
@@ -230,6 +250,58 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
+        public async Task<ServiceResponse> GetAllDeveloperAsync()
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _usuariosRepository.GetAllDeveloper();
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo los desarrolladores.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> GetAllAdminsAsync()
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _usuariosRepository.GetAllAdmins();
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo los desarrolladores.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
         public async Task<ServiceResponse> RemoveAgentWithPropertyAsync(string userId)
         {
             ServiceResponse response = new ServiceResponse();
@@ -256,10 +328,90 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
+        public async Task<ServiceResponse> UpdateIdentityUserAsync(UsuariosDto user)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var resultGetBy = await _usuariosRepository.GetIdentityUserBy(user.Id);
+
+                if (!resultGetBy.Success)
+                {
+                    resultGetBy.Success = response.IsSuccess;
+                    resultGetBy.Message = response.Messages;
+
+                    return response;
+                }
+
+                var usuario = _mapper.Map<ApplicationUser>(user);
+                var result = await _usuariosRepository.UpdateIdentityUser(usuario);
+
+                if (result.Success)
+                {
+                    response.Model = _mapper.Map<UsuariosDto>(result.Data); 
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Messages = result.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error actualizando el usuario.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> GetPerfilInformation(string id)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _usuariosRepository.GetIdentityUserBy(id);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+
+                var data = result.Data as UsuariosModel;
+
+                PerfilModel modelo = new PerfilModel
+                {
+                    Id = data.Id,
+                    Nombre = data.Nombre,
+                    Apellido = data.Apellido,
+                    PhoneNumber = data.Telefono,
+                    Cedula = data.Cedula,
+                    Foto = data.Foto,
+                    Email = data.Email,
+                };
+
+                response.Model = modelo;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo el usuario.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
         public Task<ServiceResponse> GetUserByRolAsync(string rol)
         {
             throw new NotImplementedException();
         }
+
 
         /* Metodos de las cuentas */
         public async Task<string> ConfirmEmailAsync(string userId, string token)

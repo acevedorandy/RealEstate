@@ -6,6 +6,7 @@ using RealEstate.Persistance.Base;
 using RealEstate.Persistance.Context;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using RealEstate.Persistance.Models.ViewModel;
 
 namespace RealEstate.Persistance.Repositories.dbo
 {
@@ -42,6 +43,7 @@ namespace RealEstate.Persistance.Repositories.dbo
 
                 mejorasToUpdate.MejoraID = mejoras.MejoraID;
                 mejorasToUpdate.Nombre = mejoras.Nombre;
+                mejorasToUpdate.Descripcion = mejoras.Descripcion;
 
                 result = await base.Update(mejorasToUpdate);
             }
@@ -82,6 +84,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                      {
                                          MejoraID = mejora.MejoraID,
                                          Nombre = mejora.Nombre,
+                                         Descripcion = mejora.Descripcion,
 
                                      }).AsNoTracking()
                                      .ToListAsync();
@@ -109,6 +112,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                      {
                                          MejoraID = mejora.MejoraID,
                                          Nombre = mejora.Nombre,
+                                         Descripcion = mejora.Descripcion,
 
                                      }).FirstOrDefaultAsync();
             }
@@ -120,5 +124,37 @@ namespace RealEstate.Persistance.Repositories.dbo
             }
             return result;
         }
+
+        public async Task<OperationResult> GetMejorasByProperty(int propiedadId)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                result.Data = await (from propiedadMejora in _realEstateContext.PropiedadMejoras
+                                     join mejora in _realEstateContext.Mejoras on propiedadMejora.MejoraID equals mejora.MejoraID
+                                     join propiedad in _realEstateContext.Propiedades on propiedadMejora.PropiedadID equals propiedad.PropiedadID
+
+                                     where propiedad.PropiedadID == propiedadId  
+
+                                     select new PropiedadMejorasModelViewModel
+                                     {
+                                         PropiedadMejoraID = propiedadMejora.PropiedadMejoraID,
+                                         PropiedadID = propiedad.PropiedadID,
+                                         MejoraID = mejora.MejoraID,
+                                         Nombre = mejora.Nombre  
+
+                                     }).AsNoTracking()
+                                     .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo las mejoras.";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
     }
 }

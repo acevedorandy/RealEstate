@@ -84,10 +84,11 @@ namespace RealEstate.Persistance.Repositories.dbo
                                      {
                                          TipoVentaID = tipoVenta.TipoVentaID,
                                          Nombre = tipoVenta.Nombre,
-                                         Descripcion = tipoVenta.Descripcion
-
+                                         Descripcion = tipoVenta.Descripcion,
+                                         PropiedadesAsociadas = _realEstateContext.Propiedades
+                                                                .Count(p => p.TipoVenta == tipoVenta.TipoVentaID)
                                      }).AsNoTracking()
-                                     .ToListAsync();
+                                       .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -123,6 +124,61 @@ namespace RealEstate.Persistance.Repositories.dbo
                 _logger.LogError(result.Message, ex.ToString());
             }
             return result;
+        }
+
+        public async Task<OperationResult> RemoveTypeSalesWithProperty(int tipoId)
+        {
+            OperationResult result = new OperationResult();
+
+            using (var transaction = await _realEstateContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var propiedadIDs = await _realEstateContext.Propiedades
+                        .Where(p => p.TipoPropiedad == tipoId)
+                        .Select(p => p.PropiedadID)
+                        .ToListAsync();
+
+                    if (propiedadIDs.Any())
+                    {
+                        _realEstateContext.Favoritos.RemoveRange(
+                            await _realEstateContext.Favoritos.Where(f => propiedadIDs.Contains(f.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.Mensajes.RemoveRange(
+                            await _realEstateContext.Mensajes.Where(m => propiedadIDs.Contains(m.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.Ofertas.RemoveRange(
+                            await _realEstateContext.Ofertas.Where(o => propiedadIDs.Contains(o.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.PropiedadFotos.RemoveRange(
+                            await _realEstateContext.PropiedadFotos.Where(f => propiedadIDs.Contains(f.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.PropiedadMejoras.RemoveRange(
+                            await _realEstateContext.PropiedadMejoras.Where(m => propiedadIDs.Contains(m.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.Propiedades.RemoveRange(
+                            await _realEstateContext.Propiedades.Where(p => propiedadIDs.Contains(p.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.PropiedadTiposVenta.RemoveRange(
+                            await _realEstateContext.PropiedadTiposVenta.Where(v => propiedadIDs.Contains(v.TipoVentaID)).ToListAsync());
+                    }
+
+                    var tipoVenta = await _realEstateContext.TiposVenta.FindAsync(tipoId);
+                    if (tipoVenta != null)
+                        _realEstateContext.TiposVenta.Remove(tipoVenta);
+
+                    await _realEstateContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    result.Success = false;
+                    result.Message = "Ha ocurrido un error eliminando el tipo de venta.";
+                    _logger.LogError(ex, result.Message);
+                }
+                return result;
+            }
         }
     }
 }

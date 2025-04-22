@@ -81,8 +81,8 @@
                 <h3 class="mb-1">@Model.PropiedadesModel.Titulo</h3>
                 <p class="mb-0"><i class="bi bi-geo-alt-fill"></i> @Model.PropiedadesModel.Sector, @Model.PropiedadesModel.Ciudad</p>
             </div>
-            <div class="mt-2">
-                <span class="badge bg-danger price-badge">@Model.PropiedadesModel.Precio.ToString("C0")</span>
+            <div class="price-badge d-inline-block">
+                RD$@Model.PropiedadesModel.Precio.ToString("N0")
             </div>
         </div>
         

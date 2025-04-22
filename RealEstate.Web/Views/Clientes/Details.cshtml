@@ -7,131 +7,134 @@
 <!-- CSS de Bootstrap y Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 
-<!-- Estilos personalizados -->
 <style>
     :root {
         --primary-color: #2c3e50;
-        --secondary-color: #3498db;
-        --accent-color: #e74c3c;
+        --secondary-color: #e74c3c;
+        --accent-color: #3498db;
+        --light-bg: #f8f9fa;
+        --dark-text: #2c3e50;
+        --light-text: #7f8c8d;
     }
 
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
+        font-family: 'Montserrat', sans-serif;
+        color: var(--dark-text);
+    }
+
+    h1, h2, h3, h4, h5 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 600;
     }
 
     .property-header {
-        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('@Url.Content(Model.PropiedadFotosModel.FirstOrDefault()?.Imagen ?? "")');
+        background-size: cover;
+        background-position: center;
         color: white;
-        padding: 2rem 0;
+        padding: 3rem 0;
         margin-bottom: 2rem;
-        border-radius: 0 0 10px 10px;
-    }
-
-    .property-title {
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-
-    .property-location {
-        font-size: 1.1rem;
+        border-radius: 0.5rem;
     }
 
     .carousel-item img {
         height: 500px;
         object-fit: cover;
-        border-radius: 8px;
+        border-radius: 0.5rem;
     }
 
     .thumbnail-container {
         display: flex;
-        gap: 10px;
-        margin-top: 15px;
-        overflow-x: auto;
-        padding-bottom: 10px;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
     }
 
-    .thumbnail-img {
+    .thumbnail {
         width: 80px;
         height: 60px;
         object-fit: cover;
-        border-radius: 4px;
         cursor: pointer;
-        transition: transform 0.2s;
+        border-radius: 0.3rem;
+        transition: transform 0.2s, box-shadow 0.2s;
         border: 2px solid transparent;
     }
 
-        .thumbnail-img:hover {
+        .thumbnail:hover {
             transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border-color: var(--secondary-color);
         }
 
-    .property-features {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin: 2rem 0;
+    .feature-card {
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+        margin-bottom: 1.5rem;
     }
 
-    .feature-item {
-        text-align: center;
-        padding: 0.5rem;
-    }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
 
     .feature-icon {
         font-size: 1.5rem;
-        color: var(--secondary-color);
         margin-bottom: 0.5rem;
-    }
-
-    .feature-value {
-        font-weight: 600;
-        color: var(--primary-color);
-    }
-
-    .feature-label {
-        font-size: 0.85rem;
-        color: #6c757d;
+        color: var(--secondary-color);
     }
 
     .agent-card {
         border: none;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         overflow: hidden;
-        margin-bottom: 1.5rem;
     }
 
-    .agent-avatar {
+    .agent-img {
         width: 100px;
         height: 100px;
         object-fit: cover;
         border: 3px solid white;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-    .social-btn {
-        width: 35px;
-        height: 35px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
+    .price-badge {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background-color: var(--secondary-color);
+        padding: 0.5rem 1.5rem;
+        border-radius: 2rem;
     }
 
-    .offer-btn {
-        background-color: var(--accent-color);
-        border: none;
-        font-weight: 600;
-        padding: 0.75rem;
-        transition: all 0.3s;
+    .section-title {
+        position: relative;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
     }
 
-        .offer-btn:hover {
-            background-color: #c0392b;
-            transform: translateY(-2px);
+        .section-title:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--secondary-color);
         }
+
+    .feature-item {
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        background-color: rgba(233, 236, 239, 0.3);
+    }
+
+    .highlight-text {
+        color: var(--secondary-color);
+        font-weight: 600;
+    }
 
     .chat-popup {
         position: fixed;
@@ -141,7 +144,7 @@
         background-color: white;
         z-index: 1050;
         border-radius: 10px;
-        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 5px 25px rgba(0,0,0,0.2);
         overflow: hidden;
         transform: translateY(20px);
         opacity: 0;
@@ -160,33 +163,25 @@
         font-weight: 600;
     }
 
-    .chat-body {
-        max-height: 350px;
-        overflow-y: auto;
-        padding: 1rem;
-    }
-
-    .price-badge {
-        background-color: var(--accent-color);
-        color: white;
-        font-size: 1.2rem;
-        padding: 0.5rem 1rem;
-        border-radius: 50px;
-        display: inline-block;
-        margin-bottom: 1rem;
-    }
-
-    .section-title {
-        color: var(--primary-color);
+    .offer-btn {
+        background-color: var(--secondary-color);
+        border: none;
         font-weight: 600;
-        border-bottom: 2px solid var(--secondary-color);
-        padding-bottom: 0.5rem;
-        margin-bottom: 1.5rem;
+        transition: all 0.3s;
     }
 
-    .property-description {
-        line-height: 1.8;
-        white-space: pre-line;
+        .offer-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+    .social-btn {
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
     }
 
     @@media (max-width: 768px) {
@@ -200,191 +195,219 @@
     }
 </style>
 
-<div class="property-header">
-    <div class="container">
-        <h1 class="property-title">@Model.PropiedadesModel.Titulo</h1>
-        <p class="property-location">
-            <i class="bi bi-geo-alt-fill"></i> @Model.PropiedadesModel.Sector, @Model.PropiedadesModel.Ciudad
-        </p>
-        <div class="price-badge">
-            <i class="bi bi-tag-fill"></i> RD$ @Model.PropiedadesModel.Precio.ToString("N0")
-        </div>
+<div class="property-header text-center mb-4">
+    <h1 class="display-5 fw-bold">@Model.PropiedadesModel.Titulo</h1>
+    <p class="lead">
+        <i class="bi bi-geo-alt-fill"></i> @Model.PropiedadesModel.Sector, @Model.PropiedadesModel.Ciudad
+    </p>
+    <div class="price-badge d-inline-block">
+        RD$ @Model.PropiedadesModel.Precio.ToString("N0")
     </div>
 </div>
 
 <div class="container py-4">
     <div class="row">
-        <!-- Sección principal (Galería + Detalles) -->
+        <!-- Columna principal (Galería + Detalles) -->
         <div class="col-lg-8">
             <!-- Galería de imágenes -->
             @if (Model.PropiedadFotosModel != null && Model.PropiedadFotosModel.Any())
             {
-                <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @for (int i = 0; i < Model.PropiedadFotosModel.Count; i++)
-                        {
-                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                <img src="@Url.Content(Model.PropiedadFotosModel[i].Imagen)" class="d-block w-100" alt="Imagen de la propiedad">
+                <div class="card feature-card mb-4">
+                    <div class="card-body p-0">
+                        <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                @for (int i = 0; i < Model.PropiedadFotosModel.Count; i++)
+                                {
+                                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                                        <img src="@Url.Content(Model.PropiedadFotosModel[i].Imagen)" class="d-block w-100" alt="Imagen de la propiedad @(i+1)" />
+                                    </div>
+                                }
                             </div>
-                        }
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Siguiente</span>
-                    </button>
-                </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Anterior</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Siguiente</span>
+                            </button>
+                        </div>
 
-                <div class="thumbnail-container">
-                    @for (int i = 0; i < Model.PropiedadFotosModel.Count; i++)
-                    {
-                        <img src="@Url.Content(Model.PropiedadFotosModel[i].Imagen)" class="thumbnail-img"
-                             onclick="$('#propertyCarousel').carousel(@i)" alt="Miniatura">
-                    }
+                        <!-- Miniaturas -->
+                        <div class="p-3">
+                            <div class="thumbnail-container">
+                                @for (int i = 0; i < Model.PropiedadFotosModel.Count; i++)
+                                {
+                                    <img src="@Url.Content(Model.PropiedadFotosModel[i].Imagen)" class="thumbnail" onclick="document.querySelector('#propertyCarousel').carousel.to(@i)" />
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             }
 
-            <!-- Descripción de la propiedad -->
-            <div class="mt-5">
-                <h3 class="section-title">Descripción</h3>
-                <p class="property-description">@Model.PropiedadesModel.Descripcion</p>
+            <!-- Descripción -->
+            <div class="card feature-card mb-4">
+                <div class="card-body">
+                    <h3 class="section-title">Descripción</h3>
+                    <p class="lead">@Model.PropiedadesModel.Descripcion</p>
+                </div>
             </div>
 
             <!-- Características principales -->
-            <div class="property-features mt-4">
-                <h3 class="section-title">Detalles de la Propiedad</h3>
-                <div class="row">
-                    <div class="col-6 col-md-4 col-lg-3 feature-item">
-                        <div class="feature-icon"><i class="bi bi-house-door-fill"></i></div>
-                        <div class="feature-value">@Model.PropiedadesModel.TipoPropiedad</div>
-                        <div class="feature-label">Tipo de propiedad</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-3 feature-item">
-                        <div class="feature-icon"><i class="bi bi-upc-scan"></i></div>
-                        <div class="feature-value">@Model.PropiedadesModel.Codigo</div>
-                        <div class="feature-label">Código</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-3 feature-item">
-                        <div class="feature-icon"><i class="bi bi-rulers"></i></div>
-                        <div class="feature-value">@Model.PropiedadesModel.TamañoTerreno m²</div>
-                        <div class="feature-label">Área construida</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-3 feature-item">
-                        <div class="feature-icon"><i class="bi bi-calendar-event"></i></div>
-                        <div class="feature-value">@Model.PropiedadesModel.AñoConstruccion.ToString("yyyy")</div>
-                        <div class="feature-label">Año construcción</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-3 feature-item">
-                        <div class="feature-icon"><i class="bi bi-door-open"></i></div>
-                        <div class="feature-value">@Model.PropiedadesModel.Habitaciones</div>
-                        <div class="feature-label">Habitaciones</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-3 feature-item">
-                        <div class="feature-icon"><i class="bi bi-badge-wc-fill"></i></div>
-                        <div class="feature-value">@Model.PropiedadesModel.Baños</div>
-                        <div class="feature-label">Baños</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-3 feature-item">
-                        <div class="feature-icon"><i class="bi bi-car-front-fill"></i></div>
-                        <div class="feature-value">@Model.PropiedadesModel.Parqueos</div>
-                        <div class="feature-label">Parqueos</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-3 feature-item">
-                        <div class="feature-icon"><i class="bi bi-building"></i></div>
-                        <div class="feature-value">@Model.PropiedadesModel.TotalNivel</div>
-                        <div class="feature-label">Niveles edificio</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-3 feature-item">
-                        <div class="feature-icon"><i class="bi bi-arrow-up-circle-fill"></i></div>
-                        <div class="feature-value">@Model.PropiedadesModel.Piso</div>
-                        <div class="feature-label">Piso/Nivel</div>
+            <div class="card feature-card mb-4">
+                <div class="card-body">
+                    <h3 class="section-title">Detalles de la Propiedad</h3>
+                    <div class="row">
+                        <div class="col-6 col-md-4 mb-3 text-center">
+                            <div class="feature-icon"><i class="bi bi-house-door-fill"></i></div>
+                            <div class="feature-value">@Model.PropiedadesModel.TipoPropiedad</div>
+                            <small class="text-muted">Tipo</small>
+                        </div>
+
+                        <div class="col-6 col-md-4 mb-3 text-center">
+                            <div class="feature-icon"><i class="bi bi-aspect-ratio-fill"></i></div>
+                            <div class="feature-value">@Model.PropiedadesModel.TamañoTerreno m²</div>
+                            <small class="text-muted">Área construida</small>
+                        </div>
+
+                        <div class="col-6 col-md-4 mb-3 text-center">
+                            <div class="feature-icon"><i class="bi bi-calendar-event"></i></div>
+                            <div class="feature-value">@Model.PropiedadesModel.AñoConstruccion.ToString("yyyy")</div>
+                            <small class="text-muted">Año construcción</small>
+                        </div>
+
+                        <div class="col-6 col-md-4 mb-3 text-center">
+                            <div class="feature-icon"><i class="bi bi-bed-fill"></i></div>
+                            <div class="feature-value">@Model.PropiedadesModel.Habitaciones</div>
+                            <small class="text-muted">Habitaciones</small>
+                        </div>
+
+                        <div class="col-6 col-md-4 mb-3 text-center">
+                            <div class="feature-icon"><i class="bi bi-badge-wc-fill"></i></div>
+                            <div class="feature-value">@Model.PropiedadesModel.Baños</div>
+                            <small class="text-muted">Baños</small>
+                        </div>
+
+                        <div class="col-6 col-md-4 mb-3 text-center">
+                            <div class="feature-icon"><i class="bi bi-car-front-fill"></i></div>
+                            <div class="feature-value">@Model.PropiedadesModel.Parqueos</div>
+                            <small class="text-muted">Parqueos</small>
+                        </div>
+
+                        <div class="col-6 col-md-4 mb-3 text-center">
+                            <div class="feature-icon"><i class="bi bi-building"></i></div>
+                            <div class="feature-value">@Model.PropiedadesModel.TotalNivel</div>
+                            <small class="text-muted">Niveles edificio</small>
+                        </div>
+
+                        <div class="col-6 col-md-4 mb-3 text-center">
+                            <div class="feature-icon"><i class="bi bi-arrow-bar-up"></i></div>
+                            <div class="feature-value">@Model.PropiedadesModel.Piso</div>
+                            <small class="text-muted">Piso/Nivel</small>
+                        </div>
+
+                        <div class="col-6 col-md-4 mb-3 text-center">
+                            <div class="feature-icon"><i class="bi bi-upc-scan"></i></div>
+                            <div class="feature-value highlight-text">@Model.PropiedadesModel.Codigo</div>
+                            <small class="text-muted">Código</small>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Amenidades -->
-@*             @if (!string.IsNullOrEmpty(Model.PropiedadesModel.Amenidades))
+            <!-- Mejoras de la propiedad -->
+            @if (Model.MejorasModels != null && Model.MejorasModels.Any())
             {
-                <div class="mt-5">
-                    <h3 class="section-title">Amenidades</h3>
-                    <div class="row">
-                        @foreach (var amenidad in Model.PropiedadesModel.Amenidades.Split(','))
-                        {
-                            <div class="col-6 col-md-4 mb-2">
-                                <i class="bi bi-check-circle-fill text-success"></i> @amenidad.Trim()
-                            </div>
-                        }
+                <div class="card feature-card">
+                    <div class="card-body">
+                        <h3 class="section-title">Características y Amenidades</h3>
+                        <div class="row">
+                            @foreach (var mejora in Model.MejorasModels)
+                            {
+                                <div class="col-6 col-md-4 mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        <span>@mejora.Nombre.Replace("G/", "")</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
-            } *@
+            }
         </div>
 
-        <!-- Sidebar - Agente y acciones -->
+        <!-- Columna lateral (Agente + Contacto) -->
         <div class="col-lg-4">
             <!-- Tarjeta del agente -->
-            <div class="agent-card">
+            <div class="card agent-card mb-4">
                 <div class="card-body text-center p-4">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="agent-avatar mb-3" alt="Agente">
-                    <h5 class="mb-1">@Model.UsuariosModel.Nombre @Model.UsuariosModel.Apellido</h5>
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="agent-img rounded-circle mb-3" alt="Agente @Model.UsuariosModel.Nombre" />
+                    <h4 class="mb-2">@Model.UsuariosModel.Nombre @Model.UsuariosModel.Apellido</h4>
                     <p class="text-muted mb-3">Agente Inmobiliario</p>
 
                     <div class="d-flex justify-content-center gap-2 mb-3">
-                        <a href="tel:@Model.UsuariosModel.Telefono" class="social-btn bg-primary text-white">
-                            <i class="bi bi-telephone-fill"></i>
+                        <a href="tel:@Model.UsuariosModel.Telefono" class="btn btn-outline-primary btn-sm rounded-pill">
+                            <i class="bi bi-telephone me-1"></i> @Model.UsuariosModel.Telefono
                         </a>
-                        <a href="https://wa.me/Model.UsuariosModel.Celular" target="_blank" class="social-btn bg-success text-white">
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="https://wa.me/Model.UsuariosModel.Celular" target="_blank" class="btn btn-success btn-sm rounded-circle">
                             <i class="bi bi-whatsapp"></i>
                         </a>
-                        <a href="mailto:@Model.UsuariosModel.Email" class="social-btn bg-dark text-white">
+                        <a href="mailto:@Model.UsuariosModel.Email" class="btn btn-primary btn-sm rounded-circle">
                             <i class="bi bi-envelope-fill"></i>
                         </a>
                     </div>
 
-                    <button class="btn btn-outline-primary btn-sm w-100 mb-2" onclick="abrirChat()">
+                    <button class="btn btn-outline-dark btn-sm w-100 mt-3" onclick="abrirChat()">
                         <i class="bi bi-chat-left-text-fill"></i> Enviar mensaje
                     </button>
 
-                    <button class="btn offer-btn text-white w-100" data-bs-toggle="modal" data-bs-target="#offerModal">
+                    <button class="btn offer-btn text-white w-100 mt-2" data-bs-toggle="modal" data-bs-target="#offerModal">
                         <i class="bi bi-cash-stack"></i> Hacer una oferta
                     </button>
                 </div>
             </div>
 
             <!-- Formulario de contacto rápido -->
-            <div class="card shadow-sm mb-4">
+            <div class="card feature-card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title mb-3">Contacto Rápido</h5>
+                    <h4 class="section-title">¿Interesado en esta propiedad?</h4>
+                    <p class="text-muted mb-3">Complete el formulario y nos pondremos en contacto con usted</p>
+
                     <form>
                         <div class="mb-3">
-                            <input type="text" class="form-control" placeholder="Tu nombre" required>
+                            <input type="text" class="form-control" placeholder="Nombre completo" required>
                         </div>
                         <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="Tu email" required>
+                            <input type="email" class="form-control" placeholder="Correo electrónico" required>
                         </div>
                         <div class="mb-3">
-                            <input type="tel" class="form-control" placeholder="Tu teléfono">
+                            <input type="tel" class="form-control" placeholder="Teléfono">
                         </div>
                         <div class="mb-3">
-                            <textarea class="form-control" rows="3" placeholder="Tu mensaje"></textarea>
+                            <textarea class="form-control" rows="3" placeholder="Mensaje"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Enviar consulta</button>
+                        <button type="submit" class="btn btn-danger w-100">Enviar Consulta</button>
                     </form>
                 </div>
             </div>
 
-            <!-- Mapa de ubicación (placeholder) -->
-            <div class="card shadow-sm">
+            <!-- Mapa de ubicación -->
+            <div class="card feature-card">
                 <div class="card-body">
-                    <h5 class="card-title mb-3">Ubicación</h5>
-                    <div class="ratio ratio-16x9">
-                        <div class="bg-light d-flex align-items-center justify-content-center">
+                    <h4 class="section-title">Ubicación</h4>
+                    <div class="ratio ratio-16x9 bg-light rounded">
+                        <div class="d-flex align-items-center justify-content-center">
                             <i class="bi bi-map-fill text-muted" style="font-size: 2rem;"></i>
                         </div>
                     </div>
-                    <p class="mt-2 text-muted small">@Model.PropiedadesModel.Sector, @Model.PropiedadesModel.Ciudad</p>
+                    <p class="mt-2 small text-muted">
+                        <i class="bi bi-geo-alt-fill"></i> @Model.PropiedadesModel.Sector, @Model.PropiedadesModel.Ciudad
+                    </p>
                 </div>
             </div>
         </div>
@@ -410,7 +433,6 @@
                             <input type="number" class="form-control" id="offerAmount" name="Cifra"
                                    min="1" required placeholder="Ej: 2500000" />
                         </div>
-
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -418,7 +440,6 @@
                     <button type="submit" class="btn btn-primary">Enviar oferta</button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
@@ -468,11 +489,11 @@
                 this.value = this.value.replace(/,/g, '');
             });
 
+            // Elimina el formateo al hacer blur
             offerInput.addEventListener('blur', function () {
-                if (this.value) {
-                    this.value = parseFloat(this.value).toLocaleString('en-US');
-                }
+                // No hagas nada aquí
             });
+
         }
     });
 </script>

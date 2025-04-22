@@ -10,6 +10,8 @@ using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Application.Helpers.web;
 using RealEstate.Application.Helpers;
 using RealEstate.Persistance.Models.dbo;
+using RealEstate.Application.Models;
+
 
 
 namespace RealEstate.Application.Services.dbo
@@ -92,7 +94,7 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
-        public async Task<ServiceResponse> GetAllFilter(string tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
+        public async Task<ServiceResponse> GetAllFilter(int? tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
         {
             ServiceResponse response = new ServiceResponse();
 
@@ -109,12 +111,9 @@ namespace RealEstate.Application.Services.dbo
 
                 var propiedades = ((List<PropiedadesModel>)result.Data).AsQueryable();
 
-                if (!string.IsNullOrEmpty(tipoPropiedad))
+                if (tipoPropiedad.HasValue)
                 {
-                    if (int.TryParse(tipoPropiedad, out int tipoPropiedadId))
-                    {
-                        propiedades = propiedades.Where(p => p.TipoPropiedad == tipoPropiedadId);
-                    }
+                    propiedades = propiedades.Where(p => p.TipoPropiedad == tipoPropiedad.Value);
                 }
 
                 if (minPrice.HasValue)
@@ -137,7 +136,6 @@ namespace RealEstate.Application.Services.dbo
                 response.Messages = "Ha ocurrido un error obteniendo las propiedades filtradas.";
                 _logger.LogError(response.Messages, ex.ToString());
             }
-
             return response;
         }
 
@@ -183,17 +181,10 @@ namespace RealEstate.Application.Services.dbo
                     return response;
                 }
 
-                var propiedades = ((IEnumerable<dynamic>)result.Data)
-                    .Select(p => new PropiedadesModel
-                    {
-                        PropiedadID = p.Id,
-                        Titulo = p.Titulo,
-                        Descripcion = p.Descripcion,
-                        Disponibilidad = p.Disponibilidad,
-                        Vendida = p.Vendida,
-                        Precio = p.Precio,
-                    })
-                    .Where(p => p.Disponibilidad == true && p.Vendida == false) 
+                var propiedades = result.Data as List<PropiedadesModel>;
+
+                response.Model = propiedades
+                    .Where(p => p.Disponibilidad == true && p.Vendida == false)
                     .ToList();
 
                 response.Model = propiedades;
@@ -267,10 +258,15 @@ namespace RealEstate.Application.Services.dbo
 
             try
             {
-                Propiedades propiedades = new Propiedades();
+                var result = await _propiedadesRepository.RemovePropertyWithAll(dto.PropiedadID);
 
-                propiedades.PropiedadID = dto.PropiedadID;
-                var result = await _propiedadesRepository.Remove(propiedades);
+                if (!result.Success)
+                {
+                    response.IsSuccess = result.Success;
+                    response.Messages = result.Message;
+                    
+                    return response;
+                }
             }
             catch (Exception ex)
             {
@@ -287,6 +283,13 @@ namespace RealEstate.Application.Services.dbo
 
             try
             {
+                if (dto.Files.Count > 4)
+                {
+                    response.IsSuccess = false;
+                    response.Messages = "El limite de imagenes por propiedad es 4. Por favor, Intentelo de nuevo.";
+                    return response;
+                }
+
                 dto.AgenteID = authenticationResponse.Id;
                 dto.Codigo = NumberGenerator.CodeGenerator();
 
@@ -312,6 +315,13 @@ namespace RealEstate.Application.Services.dbo
 
             try
             {
+                if (dto.Files.Count > 4)
+                {
+                    response.IsSuccess = false;
+                    response.Messages = "El limite de imagenes por propiedad es 4. Por favor, Intentelo de nuevo.";
+                    return response;
+                }
+
                 var resultGetBy = await _propiedadesRepository.GetById(dto.PropiedadID);
 
                 if (!resultGetBy.Success)
@@ -324,6 +334,9 @@ namespace RealEstate.Application.Services.dbo
 
                 var propiedad = _mapper.Map<Propiedades>(dto);
                 var result = await _propiedadesRepository.Update(propiedad);
+
+                var dtoConvertion = _mapper.Map<PropiedadesDto>(propiedad);
+                response.Model = dtoConvertion;
             }
             catch (Exception ex)
             {
@@ -359,6 +372,34 @@ namespace RealEstate.Application.Services.dbo
             {
                 response.IsSuccess = false;
                 response.Messages = "Ha ocurrido un error obteniendo las propiedades del agente logueado.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> LoadPropertyAsync(int propiedadId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _propiedadesRepository.GetById(propiedadId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+
+                var modelo = result.Data as PropiedadesModel;
+                response.Model = _mapper.Map<PropiedadesViewModel>(modelo);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo la propiedad.";
                 _logger.LogError(response.Messages, ex.ToString());
             }
             return response;

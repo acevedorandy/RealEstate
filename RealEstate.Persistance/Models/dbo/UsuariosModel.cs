@@ -1,5 +1,7 @@
 ﻿
 
+using System.ComponentModel.DataAnnotations;
+
 namespace RealEstate.Persistance.Models.dbo
 {
     public class UsuariosModel
@@ -14,6 +16,5 @@ namespace RealEstate.Persistance.Models.dbo
         public string Foto { get; set; }
         public string Rol { get; set; }
         public bool IsActive { get; set; }
-       
     }
 }

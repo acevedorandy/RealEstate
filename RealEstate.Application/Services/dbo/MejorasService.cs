@@ -75,6 +75,32 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
+        public async Task<ServiceResponse> GetMejorasByPropertyAsync(int propiedadId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _mejorasRepository.GetMejorasByProperty(propiedadId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo la mejora.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
         public async Task<ServiceResponse> RemoveAsync(MejorasDto dto)
         {
             ServiceResponse response = new ServiceResponse();

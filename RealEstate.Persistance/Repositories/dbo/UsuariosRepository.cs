@@ -182,10 +182,88 @@ namespace RealEstate.Persistance.Repositories.dbo
                 result.Message = "Ha ocurrido un error obteniendo los usuarios.";
                 _logger.LogError(result.Message, ex.ToString());
             }
-
             return result;
         }
 
+        public async Task<OperationResult> GetAllDeveloper()
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var usuarios = await _identityContext.Users.ToListAsync();
+                var roles = await _identityContext.Roles.ToListAsync();
+                var usuarioRoles = await _identityContext.UserRoles.ToListAsync();
+
+                var datos = (from usuario in usuarios
+                             join usuarioRol in usuarioRoles on usuario.Id equals usuarioRol.UserId
+                             join rol in roles on usuarioRol.RoleId equals rol.Id
+
+                             where rol.Name == "Desarrollador"
+
+                             orderby usuario.Nombre
+                             select new DesarrolladorModel()
+                             {
+                                 Id = usuario.Id,
+                                 Nombre = usuario.Nombre,
+                                 Apellido = usuario.Apellido,
+                                 UserName = usuario.UserName,
+                                 Cedula = usuario.Cedula,
+                                 Correo = usuario.Email,
+                                 IsActive = usuario.IsActive,
+
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo los usuarios desarrolladores.";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> GetAllAdmins()
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var usuarios = await _identityContext.Users.ToListAsync();
+                var roles = await _identityContext.Roles.ToListAsync();
+                var usuarioRoles = await _identityContext.UserRoles.ToListAsync();
+
+                var datos = (from usuario in usuarios
+                             join usuarioRol in usuarioRoles on usuario.Id equals usuarioRol.UserId
+                             join rol in roles on usuarioRol.RoleId equals rol.Id
+
+                             where rol.Name == "Administrador"
+
+                             orderby usuario.Nombre
+                             select new AdministradorModel()
+                             {
+                                 Id = usuario.Id,
+                                 Nombre = usuario.Nombre,
+                                 Apellido = usuario.Apellido,
+                                 UserName = usuario.UserName,
+                                 Cedula = usuario.Cedula,
+                                 Correo = usuario.Email,
+                                 IsActive = usuario.IsActive,
+
+                             }).ToList();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo los usuarios administradores.";
+                _logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
 
         public async Task<OperationResult> GetIdentityUserAll()
         {
@@ -248,6 +326,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  Nombre = usuario.Nombre,
                                  Apellido = usuario.Apellido,
                                  UserName = usuario.UserName,
+                                 Foto = usuario.Foto,
                                  Cedula = usuario.Cedula,
                                  Email = usuario.Email,
                                  Telefono = usuario.PhoneNumber,
@@ -371,6 +450,57 @@ namespace RealEstate.Persistance.Repositories.dbo
             return result;
         }
 
+        public async Task<OperationResult> UpdateIdentityUser(ApplicationUser user)
+        {
+            OperationResult result = new OperationResult();
+
+            OperationResult SetError(string message)
+            {
+                result.Success = false;
+                result.Message = message;
+                return result;
+            }
+
+            try
+            {
+                var userToUpdate = await _identityContext.Users.FindAsync(user.Id);
+
+                if (userToUpdate == null)
+                    return SetError("Usuario no encontrado.");
+
+                userToUpdate.Nombre = user.Nombre;
+                userToUpdate.Apellido = user.Apellido;
+                userToUpdate.PhoneNumber = user.PhoneNumber;
+
+                if (user.Foto != null)
+                {
+                    userToUpdate.Foto = user.Foto;
+                }
+
+                if (!string.IsNullOrWhiteSpace(user.PasswordHash))
+                {
+                    userToUpdate.PasswordHash = _userManager.PasswordHasher.HashPassword(userToUpdate, user.PasswordHash);
+                }
+
+                var updateResult = await _userManager.UpdateAsync(userToUpdate);
+
+                if (!updateResult.Succeeded)
+                {
+                    var errors = string.Join("; ", updateResult.Errors.Select(e => e.Description));
+                    return SetError("Error actualizando usuario: " + errors);
+                }
+
+                user.Foto = userToUpdate.Foto;
+                result.Data = userToUpdate;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error actualizando el usuario.";
+                _logger.LogError(ex, result.Message);
+            }
+            return result;
+        }
     }
 }
 

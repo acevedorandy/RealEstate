@@ -11,7 +11,7 @@ namespace RealEstate.Application.Contracts.dbo
         Task<ServiceResponse> GetAllPropertyByAgentLogged();
         Task<ServiceResponse> GetAllPropertyByAgentIncludeSold();
         Task<ServiceResponse> GetAllPropertyNotSold();
-        
-        Task<ServiceResponse> GetAllFilter(string tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños);
+        Task<ServiceResponse > LoadPropertyAsync(int propiedadId);
+        Task<ServiceResponse> GetAllFilter(int? tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños);
     }
 }

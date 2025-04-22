@@ -95,6 +95,33 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
+        public async Task<ServiceResponse> RemoveTypeWithPropertyAsync(int tipoId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _tiposPropiedadRepository.RemoveTypeWithProperty(tipoId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error eliminando el tipo de propiedad y sus propiedades.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
         public async Task<ServiceResponse> SaveAsync(TiposPropiedadDto dto)
         {
             ServiceResponse response = new ServiceResponse();

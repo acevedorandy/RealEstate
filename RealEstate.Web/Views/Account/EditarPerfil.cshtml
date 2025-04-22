@@ -1,0 +1,368 @@
+﻿@model RealEstate.Application.Models.PerfilModel
+@{
+    ViewData["Title"] = "Editar Perfil";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gold: #d4af37;
+            --cream: #f5f0e6;
+            --dark-blue: #1a2a3a;
+        }
+
+        body {
+            background-color: var(--cream);
+            color: var(--dark-blue);
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+        }
+
+        .edit-container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+            .edit-header h1 {
+                font-family: 'Playfair Display', serif;
+                font-weight: 600;
+                color: var(--dark-blue);
+                position: relative;
+                display: inline-block;
+            }
+
+                .edit-header h1:after {
+                    content: '';
+                    position: absolute;
+                    width: 50%;
+                    height: 3px;
+                    background: linear-gradient(90deg, var(--gold), transparent);
+                    bottom: -10px;
+                    left: 25%;
+                    border-radius: 3px;
+                }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: var(--secondary);
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            }
+
+        .photo-upload {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .photo-upload:hover {
+                transform: scale(1.05);
+            }
+
+            .photo-upload img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .photo-upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            color: white;
+        }
+
+        .photo-upload:hover .photo-upload-overlay {
+            opacity: 1;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--secondary), #2980b9);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 2.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .btn-save:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+                color: white;
+            }
+
+        .btn-cancel {
+            background: white;
+            color: var(--dark-blue);
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-cancel:hover {
+                background: #f8f9fa;
+                border-color: #d0d0d0;
+            }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .form-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--dark-blue);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+            .form-section-title:before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0.3rem;
+                width: 4px;
+                height: 1.3rem;
+                background: var(--gold);
+                border-radius: 2px;
+            }
+
+        .file-info {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #6c757d;
+            display: none;
+        }
+
+        @@media (max-width: 768px) {
+            .edit-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-container">
+        <div class="edit-header">
+            <h1>Editar Perfil</h1>
+            <p class="text-muted">Actualiza tu información personal</p>
+        </div>
+
+        @using (Html.BeginForm("EditarPerfil", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.Email)
+            @Html.HiddenFor(m => m.Foto)
+
+            <div class="text-center">
+                <label for="FotoFile" class="photo-upload">
+                    <img src="@(string.IsNullOrEmpty(Model.Foto) ? "https://ui-avatars.com/api/?name=@Model.Nombre+@Model.Apellido&background=random" : Model.Foto)"
+                         alt="Foto de perfil" id="profileImage">
+                    <div class="photo-upload-overlay">
+                        <i class="fas fa-camera fa-2x"></i>
+                    </div>
+                </label>
+                <input type="file" id="FotoFile" name="foto" accept="image/*" style="display: none;"
+                       onchange="previewImage(this)">
+                <div id="fileInfo" class="file-info">
+                    <i class="fas fa-file-image me-2"></i>
+                    <span id="fileName"></span>
+                    <span id="fileSize" class="ms-2"></span>
+                </div>
+                <p class="text-muted small">Haz clic para cambiar tu foto (Max. 25MB)</p>
+            </div>
+
+            <div class="form-section">
+                <h3 class="form-section-title">Información Básica</h3>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nombre</label>
+                        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Ingresa tu nombre" })
+                        @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger small" })
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Apellido</label>
+                        @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control", placeholder = "Ingresa tu apellido" })
+                        @Html.ValidationMessageFor(m => m.Apellido, "", new { @class = "text-danger small" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Cédula</label>
+                        @Html.TextBoxFor(m => m.Cedula, new { @class = "form-control", placeholder = "Ingresa tu cédula", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(m => m.Cedula, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Teléfono</label>
+                        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Ingresa tu teléfono" })
+                        @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="form-section-title">Información de Contacto</h3>
+                <div class="mb-3">
+                    <label class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-control" value="@Model.Email" disabled>
+                    <small class="text-muted">Para cambiar tu correo electrónico, contacta al administrador.</small>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="@Url.Action("MiPerfil")" class="btn btn-cancel">
+                    <i class="fas fa-times me-2"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-save" id="submitButton">
+                    <i class="fas fa-save me-2"></i> Guardar Cambios
+                </button>
+            </div>
+        }
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Efecto de carga suave
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Transición suave al cargar
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.5s ease';
+
+        // Vista previa de la imagen y validación
+        function previewImage(input) {
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const maxSize = 25 * 1024 * 1024; // 5MB
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+
+                // Validar tamaño
+                if (file.size > maxSize) {
+                    Swal.fire({
+                        title: 'Archivo demasiado grande',
+                        text: 'La imagen no debe exceder los 25MB',
+                        icon: 'error',
+                        confirmButtonText: 'Entendido'
+                    });
+                    input.value = '';
+                    return;
+                }
+
+                // Validar tipo de archivo
+                if (!file.type.match('image.*')) {
+                    Swal.fire({
+                        title: 'Tipo de archivo no válido',
+                        text: 'Por favor selecciona una imagen (JPEG, PNG, etc.)',
+                        icon: 'error',
+                        confirmButtonText: 'Entendido'
+                    });
+                    input.value = '';
+                    return;
+                }
+
+                // Mostrar vista previa
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+
+                // Mostrar información del archivo
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileInfo.style.display = 'block';
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Validación antes de enviar el formulario
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const submitButton = document.getElementById('submitButton');
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Guardando...';
+            submitButton.disabled = true;
+
+            // Aquí puedes agregar más validaciones si es necesario
+            return true;
+        });
+    </script>
+</body>
+</html>

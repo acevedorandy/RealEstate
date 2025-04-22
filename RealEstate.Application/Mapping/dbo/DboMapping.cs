@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using RealEstate.Application.Dtos;
 using RealEstate.Application.Dtos.dbo;
+using RealEstate.Application.Models;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Models.dbo;
 
@@ -40,6 +42,9 @@ namespace RealEstate.Application.Mapping.dbo
             CreateMap<PropiedadMejoras, PropiedadMejorasDto>()
                 .ReverseMap();
 
+            CreateMap<PropiedadTiposVenta, PropiedadTiposVentaDto>()
+                .ReverseMap();
+
             CreateMap<Reservas, ReservasDto>()
                 .ReverseMap();
 
@@ -47,6 +52,10 @@ namespace RealEstate.Application.Mapping.dbo
                 .ReverseMap();
 
             CreateMap<TiposVenta, TiposVentaDto>()
+                .ReverseMap();
+
+            /* Modelado Mapping*/
+            CreateMap<PropiedadesModel, PropiedadesViewModel>()
                 .ReverseMap();
 
         }

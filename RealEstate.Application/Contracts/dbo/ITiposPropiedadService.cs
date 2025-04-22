@@ -8,5 +8,7 @@ namespace RealEstate.Application.Contracts.dbo
 {
     public interface ITiposPropiedadService : IBaseService<ServiceResponse, TiposPropiedadDto>
     {
+        Task<ServiceResponse> RemoveTypeWithPropertyAsync(int tipoId);
+
     }
 }

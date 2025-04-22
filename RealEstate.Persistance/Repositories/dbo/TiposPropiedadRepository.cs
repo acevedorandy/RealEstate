@@ -79,16 +79,18 @@ namespace RealEstate.Persistance.Repositories.dbo
 
             try
             {
-                result.Data = await (from tipo in _realEstateContext.TiposPropiedad
-                                     
+                result.Data = await (from tipoPropiedad in _realEstateContext.TiposPropiedad
                                      select new TiposPropiedadModel
                                      {
-                                         TipoPropiedadID = tipo.TipoPropiedadID,
-                                         Nombre = tipo.Nombre,
-                                         Descripcion = tipo.Descripcion
+                                         TipoPropiedadID = tipoPropiedad.TipoPropiedadID,
+                                         Nombre = tipoPropiedad.Nombre,
+                                         Descripcion = tipoPropiedad.Descripcion,
+                                         PropiedadesAsociadas = _realEstateContext.Propiedades
+                                                               .Count(p => p.TipoPropiedad == tipoPropiedad.TipoPropiedadID)
 
                                      }).AsNoTracking()
                                      .ToListAsync();
+
             }
             catch (Exception ex)
             {
@@ -125,6 +127,62 @@ namespace RealEstate.Persistance.Repositories.dbo
                 _logger.LogError(result.Message, ex.ToString());
             }
             return result;
+        }
+
+        public async Task<OperationResult> RemoveTypeWithProperty(int tipoId)
+        {
+            OperationResult result = new OperationResult();
+
+            using (var transaction = await _realEstateContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var propiedadIDs = await _realEstateContext.Propiedades
+                        .Where(p => p.TipoPropiedad == tipoId)
+                        .Select(p => p.PropiedadID)
+                        .ToListAsync();
+
+                    if (propiedadIDs.Any())
+                    {
+                        _realEstateContext.Favoritos.RemoveRange(
+                            await _realEstateContext.Favoritos.Where(f => propiedadIDs.Contains(f.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.Mensajes.RemoveRange(
+                            await _realEstateContext.Mensajes.Where(m => propiedadIDs.Contains(m.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.Ofertas.RemoveRange(
+                            await _realEstateContext.Ofertas.Where(o => propiedadIDs.Contains(o.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.PropiedadFotos.RemoveRange(
+                            await _realEstateContext.PropiedadFotos.Where(f => propiedadIDs.Contains(f.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.PropiedadMejoras.RemoveRange(
+                            await _realEstateContext.PropiedadMejoras.Where(m => propiedadIDs.Contains(m.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.Propiedades.RemoveRange(
+                            await _realEstateContext.Propiedades.Where(p => propiedadIDs.Contains(p.PropiedadID)).ToListAsync());
+                    }
+
+                    var propiedadTiposVenta = await _realEstateContext.PropiedadTiposVenta.FindAsync(tipoId);
+                    if (propiedadTiposVenta != null)
+                        _realEstateContext.Remove(propiedadTiposVenta);
+
+                    var tipoPropiedad = await _realEstateContext.TiposPropiedad.FindAsync(tipoId);
+                    if (tipoPropiedad != null)
+                        _realEstateContext.TiposPropiedad.Remove(tipoPropiedad);
+
+                    await _realEstateContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    result.Success = false;
+                    result.Message = "Ha ocurrido un error eliminando el tipo de propiedad.";
+                    _logger.LogError(ex, result.Message);
+                }
+                return result;
+            }
         }
     }
 }

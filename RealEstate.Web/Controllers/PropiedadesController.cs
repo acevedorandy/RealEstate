@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
+using RealEstate.Application.Models;
 using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Models.EnumerablesModel;
 using RealEstate.Persistance.Models.ViewModel;
@@ -17,19 +19,25 @@ namespace RealEstate.Web.Controllers
         private readonly IOfertasService _ofertasService;
         private readonly ImagenHelper _imagenHelper;
         private readonly SelectListHelper _selectListHelper;
+        private readonly IMejorasService _mejorasService;
+        private readonly IPropiedadMejorasService _propiedadMejorasService;
 
         public PropiedadesController(IPropiedadesService propiedadesService,
                                      ImagenHelper imagenHelper,
                                      IPropiedadFotosService propiedadFotosService,
                                      IUsuariosService usuariosService,
                                      IOfertasService ofertasService,
-                                     SelectListHelper selectListHelper)
+                                     SelectListHelper selectListHelper,
+                                     IMejorasService mejorasService,
+                                     IPropiedadMejorasService propiedadMejorasService)
         {
             _propiedadesService = propiedadesService;
             _imagenHelper = imagenHelper;
             _propiedadFotosService = propiedadFotosService;
             _ofertasService = ofertasService;
             _selectListHelper = selectListHelper;
+            _mejorasService = mejorasService;
+            _propiedadMejorasService = propiedadMejorasService;
         }
 
         public async Task<IActionResult> Index()
@@ -42,6 +50,45 @@ namespace RealEstate.Web.Controllers
                 return View(propiedades);
             }
             return View();
+        }
+
+        public async Task<IActionResult> Mejoras()
+        {
+            var propiedades = await _selectListHelper.GetPropertyAvailableByAgent();
+            ViewBag.Propiedad = propiedades;
+
+            var result = await _mejorasService.GetAllAsync();
+
+            if (result.IsSuccess)
+            {
+                List<MejorasModel> mejoras = (List<MejorasModel>)result.Model;
+                return View(mejoras);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AsignarMejora(PropiedadMejorasDto dto)
+        {
+            try
+            {
+                var result = await _propiedadMejorasService.SaveAsync(dto);
+
+                if (result.IsSuccess)
+                {
+                    TempData["SuccessMessage"] = "Mejora añadida exitosamente.";
+                    return RedirectToAction("Mejoras", "Propiedades");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = result.Messages;
+                    return RedirectToAction("Mejoras", "Propiedad");
+                }
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         public async Task <IActionResult> Details(int id)
@@ -144,7 +191,44 @@ namespace RealEstate.Web.Controllers
 
                     ViewBag.TiposPropiedad = tiposPropiedad;
                     ViewBag.TiposVenta = tipoVenta;
-                    return View(dto);
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        public async Task<IActionResult> AdministrarMejoras(int id)
+        {
+            var result = await _mejorasService.GetMejorasByPropertyAsync(id);
+
+            if (result.IsSuccess)
+            {
+                List<PropiedadMejorasModelViewModel> mejoras = (List<PropiedadMejorasModelViewModel>)result.Model;
+                return View(mejoras);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarPropiedadMejora(int PropiedadMejoraID)
+        {
+            try
+            {
+                var dto = new PropiedadMejorasDto { PropiedadMejoraID = PropiedadMejoraID };
+                var result = await _propiedadMejorasService.RemoveAsync(dto);
+
+                if (result.IsSuccess)
+                {
+                    TempData["SuccessMessage"] = "Mejora eliminada exitosamente.";
+                    return RedirectToAction("AdministrarMejoras", "Propiedades");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = result.Messages;
+                    return RedirectToAction("AdministrarMejoras", "Propiedades");
                 }
             }
             catch
@@ -155,40 +239,50 @@ namespace RealEstate.Web.Controllers
 
         public async Task <IActionResult> Edit(int id)
         {
-            var result = await _propiedadesService.GetByIDAsync(id);
+            var result = await _propiedadesService.LoadPropertyAsync(id);
 
             if (result.IsSuccess)
             {
-                PropiedadesModel propiedades = (PropiedadesModel)result.Model;
+                PropiedadesViewModel propiedades = (PropiedadesViewModel)result.Model;
                 return View(propiedades);
             }
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task <IActionResult> Edit(PropiedadesDto dto)
-        {
-            try
-            {
-                var result = await _propiedadesService.UpdateAsync(dto);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task <IActionResult> Edit(PropiedadesDto dto, IFormFile file)
+        //{
+        //    try
+        //    {
+        //        var result = await _propiedadesService.UpdateAsync(dto);
 
-                if (result.IsSuccess)
-                {
-                    TempData["SuccessMessage"] = "Propiedad editada exitosamente.";
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = result.Messages;
-                    return View(dto);
-                }
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //        if (result.IsSuccess)
+        //        {
+        //            dto = result.Model;
+        //            dto = await _imagenHelper.UpdatePropertyPhoto(dto, file);
+        //            var updateResult = await _propiedadesService.UpdateAsync(dto);
+
+        //            if (!updateResult.IsSuccess)
+        //            {
+        //                updateResult.IsSuccess = false;
+        //                TempData["ErrorMessage"] = updateResult.Messages;
+        //            }
+
+        //            TempData["SuccessMessage"] = "Propiedad editada exitosamente.";
+        //            return RedirectToAction(nameof(Index));
+        //        }
+        //        else
+        //        {
+        //            TempData["ErrorMessage"] = result.Messages;
+        //            return RedirectToAction(nameof(Index));
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
 
         public async Task <IActionResult> Delete(int id)
         {

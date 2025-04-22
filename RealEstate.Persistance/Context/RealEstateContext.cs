@@ -23,6 +23,7 @@ namespace RealEstate.Persistance.Context
         public DbSet<Propiedades> Propiedades { get; set; }
         public DbSet<PropiedadFotos> PropiedadFotos { get; set; }
         public DbSet<PropiedadMejoras> PropiedadMejoras { get; set; }
+        public DbSet<PropiedadTiposVenta> PropiedadTiposVenta { get; set; }
         public DbSet<TiposPropiedad> TiposPropiedad { get; set; }
         public DbSet<TiposVenta> TiposVenta { get; set; }
         public DbSet<Reservas> Reservas { get; set; }
