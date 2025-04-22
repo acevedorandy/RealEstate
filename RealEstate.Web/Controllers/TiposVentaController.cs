@@ -82,7 +82,7 @@ namespace RealEstate.Web.Controllers
         {
             try
             {
-                var result = await _tiposVentaService.RemoveAsync(dto);
+                var result = await _tiposVentaService.RemoveTypeSalesWithPropertyAsync(dto.TipoVentaID);
 
                 if (result.IsSuccess)
                 {

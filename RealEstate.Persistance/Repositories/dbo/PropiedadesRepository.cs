@@ -71,6 +71,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                 propiedadesToUpdate.Disponibilidad = propiedades.Disponibilidad;
                 propiedadesToUpdate.Imagen = propiedades.Imagen;
                 propiedadesToUpdate.Vendida = propiedades.Vendida;
+                propiedadesToUpdate.TipoVenta = propiedades.TipoVenta;
 
                 result = await base.Update(propiedadesToUpdate);
             }
@@ -118,8 +119,12 @@ namespace RealEstate.Persistance.Repositories.dbo
                 var usuarios = await _identityContext.Users
                     .ToListAsync();
 
+                var tipoVentas = await _realEstateContext.TiposVenta 
+                    .ToListAsync();
+
                 var datos = (from propiedad in propiedades
                              join agente in usuarios on propiedad.AgenteID equals agente.Id
+                             join ventas in tipoVentas on propiedad.TipoVenta equals ventas.TipoVentaID
 
                              orderby propiedad.PropiedadID descending
 
@@ -147,7 +152,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                                     TipoPropiedad = propiedad.TipoPropiedad,
                                     Disponibilidad = propiedad.Disponibilidad,
                                     Imagen = propiedad != null ? propiedad.Imagen : (string?)null,
-                                    Vendida = propiedad.Vendida
+                                    Vendida = propiedad.Vendida,
+                                    TipoVenta = ventas.TipoVentaID,
 
                                 }).ToList();
 
@@ -174,8 +180,12 @@ namespace RealEstate.Persistance.Repositories.dbo
                 var usuarios = await _identityContext.Users
                     .ToListAsync();
 
+                var tipoVentas = await _realEstateContext.TiposVenta
+                    .ToListAsync();
+
                 var datos = (from propiedad in propiedades
                              join agente in usuarios on propiedad.AgenteID equals agente.Id
+                             join ventas in tipoVentas on propiedad.TipoVenta equals ventas.TipoVentaID
 
                              where propiedad.PropiedadID == id
 
@@ -200,7 +210,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  AñoConstruccion = propiedad.AñoConstruccion,
                                  TipoPropiedad = propiedad.TipoPropiedad,
                                  Disponibilidad = propiedad.Disponibilidad,
-                                 Imagen = propiedad.Imagen
+                                 Imagen = propiedad.Imagen,
+                                 TipoVenta = ventas.TipoVentaID,
 
                              }).FirstOrDefault();
 
@@ -265,9 +276,13 @@ namespace RealEstate.Persistance.Repositories.dbo
                 var usuarios = await _identityContext.Users
                     .ToListAsync();
 
+                var tipoVentas = await _realEstateContext.TiposVenta
+                    .ToListAsync();
+
                 var datos = (from propiedad in propiedades
                              join agente in usuarios on propiedad.AgenteID equals agente.Id
-                             
+                             join ventas in tipoVentas on propiedad.TipoVenta equals ventas.TipoVentaID
+
                              orderby propiedad.PropiedadID descending
 
                              where propiedad.AgenteID == agenteId /*&&
@@ -295,7 +310,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  TipoPropiedad = propiedad.TipoPropiedad,
                                  Disponibilidad = propiedad.Disponibilidad,
                                  Imagen = propiedad.Imagen,
-                                 Vendida = propiedad.Vendida
+                                 Vendida = propiedad.Vendida,
+                                 TipoVenta = ventas.TipoVentaID,
 
                              }).ToList();
 
@@ -330,6 +346,61 @@ namespace RealEstate.Persistance.Repositories.dbo
                 logger.LogError(result.Message, ex.ToString());
             }
             return result;
+        }
+
+        public async Task<OperationResult> RemovePropertyWithAll(int propiedadId)
+        {
+            OperationResult result = new OperationResult();
+
+            using (var transaction = await _realEstateContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var propiedadIDs = await _realEstateContext.Propiedades
+                        .Where(p => p.PropiedadID == propiedadId)
+                        .Select(p => p.PropiedadID)
+                        .ToListAsync();
+
+                    if (propiedadIDs.Any())
+                    {
+                        _realEstateContext.Favoritos.RemoveRange(
+                            await _realEstateContext.Favoritos.Where(f => propiedadIDs.Contains(f.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.Mensajes.RemoveRange(
+                            await _realEstateContext.Mensajes.Where(m => propiedadIDs.Contains(m.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.Ofertas.RemoveRange(
+                            await _realEstateContext.Ofertas.Where(o => propiedadIDs.Contains(o.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.PropiedadFotos.RemoveRange(
+                            await _realEstateContext.PropiedadFotos.Where(f => propiedadIDs.Contains(f.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.PropiedadMejoras.RemoveRange(
+                            await _realEstateContext.PropiedadMejoras.Where(m => propiedadIDs.Contains(m.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.Propiedades.RemoveRange(
+                            await _realEstateContext.Propiedades.Where(p => propiedadIDs.Contains(p.PropiedadID)).ToListAsync());
+
+                        _realEstateContext.PropiedadTiposVenta.RemoveRange(
+                            await _realEstateContext.PropiedadTiposVenta.Where(v => propiedadIDs.Contains(v.TipoVentaID)).ToListAsync());
+                    }
+
+                    var propiedad = await _realEstateContext.Propiedades.FindAsync(propiedadId);
+                    if (propiedad != null)
+                        _realEstateContext.Propiedades.Remove(propiedad);
+
+                    await _realEstateContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    result.Success = false;
+                    result.Message = "Ha ocurrido un error eliminando la propiedad y todas sus relaciones.";
+                    logger.LogError(ex, result.Message);
+                }
+                return result;
+            }
         }
     }
 }

@@ -3,6 +3,8 @@ using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
 using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Models.EnumerablesModel;
+using RealEstate.Persistance.Models.ViewModel;
+using RealEstate.Web.Helpers.Otros;
 
 namespace RealEstate.Web.Controllers
 {
@@ -11,19 +13,28 @@ namespace RealEstate.Web.Controllers
         private readonly IPropiedadesService _propiedadesService;
         private readonly IPropiedadFotosService _propiedadFotosService;
         private readonly IFavoritosService _favoritosService;
+        private readonly IMejorasService _mejorasService;
+        private readonly SelectListHelper _selectListHelper;
 
 
         public ClientesController(IPropiedadesService propiedadesService, 
                                   IPropiedadFotosService propiedadFotosService,
-                                  IFavoritosService favoritosService)
+                                  IFavoritosService favoritosService,
+                                  IMejorasService mejorasService,
+                                  SelectListHelper selectListHelper)
         {
             _propiedadesService = propiedadesService;
             _propiedadFotosService = propiedadFotosService;
             _favoritosService = favoritosService;
+            _mejorasService = mejorasService;
+            _selectListHelper = selectListHelper;
         }
 
         public async Task <IActionResult> Index()
         {
+            var tipos = await _selectListHelper.GetPropertyTypes();
+            ViewBag.Tipos = tipos;
+
             var result = await _propiedadesService.GetAllPropertyNotSold();
 
             if (result.IsSuccess)
@@ -59,12 +70,22 @@ namespace RealEstate.Web.Controllers
                 propiedadDetalles.UsuariosModel = (UsuariosModel)resultAgente.Model;
             }
 
+            var resultMejora = await _mejorasService.GetMejorasByPropertyAsync(id);
+
+            if (resultMejora.IsSuccess)
+            {
+                propiedadDetalles.MejorasModels = (List<PropiedadMejorasModelViewModel>)resultMejora.Model;
+            }
+
             return View(propiedadDetalles);
         }
 
-        public async Task<IActionResult> Filter(string tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
+        public async Task<IActionResult> Filter(int? propiedadId, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
         {
-            var result = await _propiedadesService.GetAllFilter(tipoPropiedad, minPrice, maxPrice, habitacion, baños);
+            var result = await _propiedadesService.GetAllFilter(propiedadId, minPrice, maxPrice, habitacion, baños);
+
+            var tipos = await _selectListHelper.GetPropertyTypes();
+            ViewBag.Tipos = tipos;
 
             if (result.IsSuccess)
             {
@@ -117,44 +138,6 @@ namespace RealEstate.Web.Controllers
                 return View(propiedades);
             }
             return View();
-        }
-
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }

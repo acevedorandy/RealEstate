@@ -306,14 +306,10 @@
         <form asp-action="Filter" method="get">
             <div class="row g-4">
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold"><i class="fas fa-building me-2"></i>Tipo de Propiedad</label>
-                    <select name="tipoPropiedad" class="form-select shadow-sm">
-                        <option value="">Todos los tipos</option>
-                        <option value="Casa">Casa</option>
-                        <option value="Departamento">Departamento</option>
-                        <option value="Terreno">Terreno</option>
-                        <option value="Oficina">Oficina</option>
-                    </select>
+                    <label class="form-label fw-semibold">
+                        <i class="fas fa-building me-2"></i>Tipo de Propiedad
+                    </label>
+                    @Html.DropDownList("tipoPropiedad", (List<SelectListItem>)ViewBag.Tipos, "Todos los tipos", new { @class = "form-select shadow-sm" })
                 </div>
 
                 <div class="col-md-3">

@@ -337,7 +337,7 @@
     <!-- Hero Section -->
     <div class="hero-section text-center">
         <h1 class="display-4 fw-bold mb-3 text-dark"><i class="fas fa-home me-3"></i>Mis Propiedades Registradas</h1>
-        <p class="lead text-muted mb-4">Administra todas las propiedades que has registrado, incluyendo disponibles, reservadas y vendidas</p>
+        <p class="lead text-muted mb-4">Resumen de todas las propiedades que has registrado, incluyendo disponibles, reservadas y vendidas</p>
     </div>
 
     <!-- Alert Messages -->
@@ -363,7 +363,7 @@
         </div>
     }
 
-    <!-- Filters Section -->
+@*     <!-- Filters Section -->
     <div class="filter-card">
         <h3 class="filter-title"><i class="fas fa-sliders-h"></i>Filtrar Mis Propiedades</h3>
         <form asp-action="Filter" method="get">
@@ -416,7 +416,7 @@
                 </div>
             </div>
         </form>
-    </div>
+    </div> *@
 
     <!-- Properties Listing -->
     @if (Model == null || !Model.Any())
@@ -424,10 +424,7 @@
         <div class="no-properties">
             <i class="fas fa-home"></i>
             <h3>No tienes propiedades registradas</h3>
-            <p>Parece que aún no has registrado ninguna propiedad. Haz clic en el botón "Nueva Propiedad" para comenzar.</p>
-            <a asp-action="Create" class="btn btn-refresh">
-                <i class="fas fa-plus me-2"></i>Registrar Propiedad
-            </a>
+            <p>Parece que aún no has registrado ninguna propiedad. Ingresa al "Mantenimiento Propiedades" para comenzar.</p>
         </div>
     }
     else

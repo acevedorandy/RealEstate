@@ -326,6 +326,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  Nombre = usuario.Nombre,
                                  Apellido = usuario.Apellido,
                                  UserName = usuario.UserName,
+                                 Foto = usuario.Foto,
                                  Cedula = usuario.Cedula,
                                  Email = usuario.Email,
                                  Telefono = usuario.PhoneNumber,
@@ -469,9 +470,12 @@ namespace RealEstate.Persistance.Repositories.dbo
 
                 userToUpdate.Nombre = user.Nombre;
                 userToUpdate.Apellido = user.Apellido;
-                userToUpdate.Cedula = user.Cedula;
-                userToUpdate.Email = user.Email;
-                userToUpdate.UserName = user.UserName;
+                userToUpdate.PhoneNumber = user.PhoneNumber;
+
+                if (user.Foto != null)
+                {
+                    userToUpdate.Foto = user.Foto;
+                }
 
                 if (!string.IsNullOrWhiteSpace(user.PasswordHash))
                 {
@@ -486,8 +490,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                     return SetError("Error actualizando usuario: " + errors);
                 }
 
-                result.Success = true;
-                result.Message = "Usuario actualizado correctamente.";
+                user.Foto = userToUpdate.Foto;
+                result.Data = userToUpdate;
             }
             catch (Exception ex)
             {

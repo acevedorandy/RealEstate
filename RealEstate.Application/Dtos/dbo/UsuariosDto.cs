@@ -1,5 +1,7 @@
 ﻿
 
+using Microsoft.AspNetCore.Http;
+
 namespace RealEstate.Application.Dtos.dbo
 {
     public class UsuariosDto
@@ -13,7 +15,9 @@ namespace RealEstate.Application.Dtos.dbo
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string Phone { get; set; }
+        public string PhoneNumber { get; set; }
+        public IFormFile File { get; set; }
 
     }
 }
+

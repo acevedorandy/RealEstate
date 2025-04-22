@@ -1,0 +1,229 @@
+﻿@model IEnumerable<RealEstate.Persistance.Models.ViewModel.PropiedadMejorasModelViewModel>
+
+@{
+    ViewData["Title"] = "Mejoras de la Propiedad";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4 position-relative text-white" style="margin-left: -15px; margin-right: -15px;">
+        <img src="~/images/program/mejoras.jpg" alt="Portada"
+             class="img-fluid"
+             style="width: 100vw; max-height: 300px; object-fit: cover; filter: brightness(60%);" />
+
+        <h1 class="position-absolute top-50 start-50 translate-middle text-center fw-bold display-5">
+            Mejoras De La Propiedad
+        </h1>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-3 fs-4"></i>
+                <div>@TempData["SuccessMessage"]</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                <div>@TempData["ErrorMessage"]</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a asp-action="Index" asp-controller="Propiedades" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Volver
+        </a>
+    </div>
+
+    <!-- Tarjeta principal -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-4">
+            <!-- Encabezado -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="h5 mb-0 text-primary">
+                    <i class="fas fa-tools me-2"></i>Listado de Mejoras
+                </h3>
+            </div>
+
+            <!-- Grid de mejoras -->
+            @if (Model.Any())
+            {
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
+                    @foreach (var mejora in Model)
+                    {
+                        <div class="col">
+                            <div class="card improvement-card h-100 border-0 shadow-sm">
+                                <div class="card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h5 class="h6 mb-1 text-truncate">@mejora.Nombre</h5>
+                                            <small class="text-muted">ID: @mejora.MejoraID</small>
+                                        </div>
+                                        <button type="button" class="btn btn-link text-danger p-0 remove-improvement"
+                                                data-mejoraid="@mejora.PropiedadMejoraID"
+                                                title="Eliminar mejora">
+                                            <i class="fas fa-times-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <div class="mb-3">
+                        <i class="fas fa-tools fa-3x text-muted"></i>
+                    </div>
+                    <h4 class="h5 text-muted">No se han agregado mejoras</h4>
+                    <p class="text-muted">Agrega mejoras para aumentar el valor de la propiedad</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro que deseas eliminar esta mejora de la propiedad?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Estilos para las cards de mejoras */
+        .improvement-card {
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+            background-color: #f8f9fa;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+            .improvement-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                background-color: white;
+                border-color: rgba(13, 110, 253, 0.2);
+            }
+
+        .remove-improvement {
+            transition: all 0.2s;
+            opacity: 0.5;
+        }
+
+            .remove-improvement:hover {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+        /* Efecto para el botón de agregar */
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+            transition: all 0.3s;
+        }
+
+            .btn-primary:hover {
+                background-color: #0b5ed7;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+            }
+
+        /* Estilos para el modal */
+        .modal-content {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Efecto de hover para los botones del modal */
+        .btn-danger {
+            transition: all 0.3s;
+        }
+
+            .btn-danger:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+            }
+
+        /* Ajustes generales */
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+        }
+
+        .text-primary {
+            color: #0d6efd !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            let mejoraIdToDelete = null;
+            const deleteUrl = '@Url.Action("EliminarPropiedadMejora", "Propiedades")';
+
+            // Configurar el modal de confirmación
+            $('.remove-improvement').click(function () {
+                mejoraIdToDelete = $(this).data('mejoraid');
+                $('#confirmDeleteModal').modal('show');
+            });
+
+            // Versión alternativa con form-data
+            $('#confirmDeleteBtn').click(function () {
+                if (mejoraIdToDelete) {
+                    $.post(deleteUrl, { PropiedadMejoraID: mejoraIdToDelete }, function () {
+                        location.reload();
+                    }).fail(function () {
+                        alert('Ocurrió un error al eliminar la mejora');
+                    });
+                }
+                $('#confirmDeleteModal').modal('hide');
+            });
+
+            // Efecto hover para las cards
+            $('.improvement-card').hover(
+                function () {
+                    $(this).find('.remove-improvement').css('opacity', '0.8');
+                },
+                function () {
+                    $(this).find('.remove-improvement').css('opacity', '0.5');
+                }
+            );
+        });
+    </script>
+}

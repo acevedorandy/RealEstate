@@ -27,6 +27,7 @@ namespace RealEstate.Application.Dtos.dbo
         public bool Disponibilidad { get; set; }
         public string Imagen { get; set; }
         public bool? Vendida { get; set; }
+        public int TipoVenta { get; set; }
         public List<IFormFile> Files { get; set; } = new List<IFormFile>();
 
     }

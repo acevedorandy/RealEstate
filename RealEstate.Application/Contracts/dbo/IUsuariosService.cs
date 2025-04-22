@@ -31,6 +31,7 @@ namespace RealEstate.Application.Contracts.dbo
         Task<ServiceResponse> GetAllAdminsAsync();
         Task<ServiceResponse> RemoveAgentWithPropertyAsync(string userId);
         Task<ServiceResponse> UpdateIdentityUserAsync(UsuariosDto user);
+        Task<ServiceResponse> GetPerfilInformation(string id);
 
     }
 }

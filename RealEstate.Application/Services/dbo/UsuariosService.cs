@@ -14,6 +14,7 @@ using RealEstate.Application.Helpers.web;
 using RealEstate.Application.Dtos.dbo;
 using Microsoft.AspNetCore.Identity;
 using RealEstate.Identity.Shared.Entities;
+using RealEstate.Application.Models;
 
 namespace RealEstate.Application.Services.dbo
 {
@@ -345,11 +346,62 @@ namespace RealEstate.Application.Services.dbo
 
                 var usuario = _mapper.Map<ApplicationUser>(user);
                 var result = await _usuariosRepository.UpdateIdentityUser(usuario);
+
+                if (result.Success)
+                {
+                    response.Model = _mapper.Map<UsuariosDto>(result.Data); 
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Messages = result.Message;
+                }
             }
             catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Messages = "Ha ocurrido un error actualizando el usuario.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> GetPerfilInformation(string id)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _usuariosRepository.GetIdentityUserBy(id);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+
+                var data = result.Data as UsuariosModel;
+
+                PerfilModel modelo = new PerfilModel
+                {
+                    Id = data.Id,
+                    Nombre = data.Nombre,
+                    Apellido = data.Apellido,
+                    PhoneNumber = data.Telefono,
+                    Cedula = data.Cedula,
+                    Foto = data.Foto,
+                    Email = data.Email,
+                };
+
+                response.Model = modelo;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo el usuario.";
                 _logger.LogError(response.Messages, ex.ToString());
             }
             return response;

@@ -4,10 +4,15 @@
     ViewData["Title"] = "Crear Nueva Propiedad";
 }
 
-<div class="container py-5">
+<!-- Fondo desenfocado -->
+<div class="property-background">
+    <div class="blur-overlay"></div>
+</div>
+
+<div class="container py-5 position-relative">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card shadow-lg border-0 rounded-3">
+            <div class="card shadow-lg border-0 rounded-3 glassmorphism-effect">
                 <div class="card-header bg-primary text-white py-3 rounded-top">
                     <div class="d-flex justify-content-between align-items-center">
                         <h2 class="h4 mb-0"><i class="fas fa-home me-2"></i>Nueva Propiedad</h2>
@@ -85,6 +90,13 @@
                                     <span asp-validation-for="TipoPropiedad" class="text-danger small"></span>
                                 </div>
                                 <div class="col-md-4">
+                                    <label asp-for="TipoVenta" class="form-label fw-semibold">Tipo de Venta</label>
+                                    <select asp-for="TipoVenta" asp-items="@ViewBag.TiposVenta" class="form-select" required>
+                                        <option value="" selected disabled>Seleccione un tipo</option>
+                                    </select>
+                                    <span asp-validation-for="TipoPropiedad" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-4">
                                     <label asp-for="TotalNivel" class="form-label fw-semibold">Niveles</label>
                                     <input asp-for="TotalNivel" class="form-control" placeholder="Ej: 2" />
                                     <span asp-validation-for="TotalNivel" class="text-danger small"></span>
@@ -135,50 +147,13 @@
                             </div>
                         </div>
 
-@*                         <!-- Sección 5: Amenidades -->
-                        <div class="mb-4">
-                            <h4 class="text-primary mb-3"><i class="fas fa-star me-2"></i>Amenidades</h4>
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" asp-for="TienePiscina" />
-                                        <label class="form-check-label fw-semibold" asp-for="TienePiscina">Piscina</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" asp-for="TieneGimnasio" />
-                                        <label class="form-check-label fw-semibold" asp-for="TieneGimnasio">Gimnasio</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" asp-for="TieneAreaJuegosInfantiles" />
-                                        <label class="form-check-label fw-semibold" asp-for="TieneAreaJuegosInfantiles">Área de juegos infantiles</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" asp-for="TieneParqueoVisitas" />
-                                        <label class="form-check-label fw-semibold" asp-for="TieneParqueoVisitas">Parqueo para visitas</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" asp-for="TieneSeguridadPrivada" />
-                                        <label class="form-check-label fw-semibold" asp-for="TieneSeguridadPrivada">Seguridad privada</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> *@
-
                         <!-- Sección 6: Imágenes -->
                         <div class="mb-4">
                             <h4 class="text-primary mb-3"><i class="fas fa-images me-2"></i>Imágenes de la Propiedad</h4>
-                            <div class="border rounded-3 p-3 bg-light">
+                            <div class="border rounded-3 p-3 bg-light bg-opacity-75">
                                 <label asp-for="Files" class="form-label fw-semibold">Seleccione imágenes (múltiples)</label>
                                 <input asp-for="Files" type="file" class="form-control" multiple accept="image/*" />
-                                <div class="form-text">Suba fotos de alta calidad que muestren la propiedad (máx. 10MB cada una)</div>
+                                <div class="form-text">Suba fotos de alta calidad que muestren la propiedad (máx. 25MB cada una)</div>
                                 <span asp-validation-for="Files" class="text-danger small"></span>
 
                                 <div class="mt-3" id="imagePreviewContainer" style="display: none;">
@@ -193,7 +168,7 @@
                             <button type="submit" class="btn btn-primary btn-lg px-4 me-md-2">
                                 <i class="fas fa-save me-2"></i>Guardar Propiedad
                             </button>
-                            <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
+                            <button type="reset" class="btn btn-outline-light btn-lg px-4">
                                 <i class="fas fa-eraser me-2"></i>Limpiar
                             </button>
                         </div>
@@ -203,6 +178,132 @@
         </div>
     </div>
 </div>
+
+@section Styles {
+    <style>
+        /* Estilos para el fondo desenfocado */
+        .property-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        .blur-overlay {
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Efecto glassmorphism para la tarjeta */
+        .glassmorphism-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* Mejoras generales */
+        .card {
+            border: none;
+            transition: transform 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            }
+
+        .card-header {
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ced4da;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #86b7fe;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+                background-color: white;
+            }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+            .btn-primary:hover {
+                background-color: #0b5ed7;
+                transform: translateY(-2px);
+            }
+
+        .btn-outline-light {
+            transition: all 0.3s;
+        }
+
+            .btn-outline-light:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+            }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .text-primary {
+            color: #0d6efd !important;
+        }
+
+        #imagePreviews img {
+            transition: transform 0.2s;
+        }
+
+            #imagePreviews img:hover {
+                transform: scale(1.05);
+            }
+
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .form-switch .form-check-input {
+            width: 2.5em;
+            height: 1.5em;
+        }
+
+        /* Efecto para los títulos de sección */
+        h4.text-primary {
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+            h4.text-primary:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 50px;
+                height: 3px;
+                background: linear-gradient(90deg, #0d6efd, transparent);
+                border-radius: 3px;
+            }
+    </style>
+}
 
 @section Scripts {
     @{
@@ -250,70 +351,4 @@
             });
         });
     </script>
-}
-
-@section Styles {
-    <style>
-        .card {
-            border: none;
-            transition: transform 0.3s ease;
-        }
-
-            .card:hover {
-                transform: translateY(-5px);
-            }
-
-        .card-header {
-            border-bottom: 2px solid rgba(255,255,255,0.1);
-        }
-
-        .form-control, .form-select {
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            border: 1px solid #ced4da;
-        }
-
-            .form-control:focus, .form-select:focus {
-                border-color: #86b7fe;
-                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-            }
-
-        .btn-primary {
-            background-color: #0d6efd;
-            border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.5rem;
-        }
-
-            .btn-primary:hover {
-                background-color: #0b5ed7;
-            }
-
-        .form-label {
-            font-weight: 500;
-            color: #495057;
-        }
-
-        .text-primary {
-            color: #0d6efd !important;
-        }
-
-        #imagePreviews img {
-            transition: transform 0.2s;
-        }
-
-            #imagePreviews img:hover {
-                transform: scale(1.05);
-            }
-
-        .form-check-input:checked {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-        }
-
-        .form-switch .form-check-input {
-            width: 2.5em;
-            height: 1.5em;
-        }
-    </style>
 }

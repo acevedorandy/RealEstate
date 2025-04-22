@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using RealEstate.Application.Dtos.dbo;
+using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Web.Helpers.Imagenes.Base;
 using System;
 using System.Collections.Generic;
@@ -39,9 +40,32 @@ namespace RealEstate.Web.Helpers.Imagenes
                     }
                 }
             }
-
             return imagePaths;
         }
+
+        //public async Task<PropiedadesDto> UpdatePropertyPhoto(PropiedadesDto dto)
+        //{
+        //    if (dto.Files != null && dto.Files.Any())
+        //    {
+        //        if (!string.IsNullOrEmpty(dto.Imagen))
+        //        {
+        //            string oldPhotoPath = dto.Imagen;
+        //            string fullOldPhotoPath = Path.Combine(_webHost.WebRootPath, oldPhotoPath.TrimStart('/'));
+        //            if (File.Exists(fullOldPhotoPath))
+        //            {
+        //                File.Delete(fullOldPhotoPath);
+        //            }
+        //        }
+
+        //        string filePath = await _loadPhoto.SaveFileAsync(Foto);
+
+        //        if (!string.IsNullOrEmpty(filePath))
+        //        {
+        //            dto.Imagen = filePath;
+        //        }
+        //    }
+        //    return dto;
+        //}
 
         private bool IsValidImage(IFormFile file)
         {

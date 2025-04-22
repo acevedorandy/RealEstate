@@ -161,7 +161,7 @@
                         </li>
 
                         <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Clientes" asp-action="Index">
+                            <a class="nav-link text-white" asp-area="" asp-controller="TiposPropiedad" asp-action="Index">
                                 <i class="bi bi-house"></i> Mantenimiento Tipo Propiedad
                             </a>
                         </li>
@@ -242,12 +242,6 @@
                         </li>
 
                         <li class="nav-item w-100 text-center">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Ofertas" asp-action="Index">
-                                <i class="bi bi-currency-dollar"></i> Ofertas recibidas
-                            </a>
-                        </li>
-
-                        <li class="nav-item w-100 text-center">
                             <a class="nav-link text-white" asp-area="" asp-controller="Pagos" asp-action="Index">
                                 <i class="bi bi-currency-dollar"></i> Pagos
                             </a>
@@ -279,11 +273,17 @@
                         </li>
                     }
 
-                    <!-- CONFIGURACIONES -->
+@*                     <!-- CONFIGURACIONES -->
                     <li class="nav-item">
                         <span class="nav-link text-white">
                             <i class="bi bi-person"></i> @usuarios.UserName
                         </span>
+                    </li> *@
+
+                    <li class="nav-item w-100 text-center">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="MiPerfil">
+                            <i class="bi bi-person"></i> @usuarios.UserName
+                        </a>
                     </li>
 
                     <li class="nav-item">
@@ -292,11 +292,13 @@
                         </a>
                         <div class="collapse" id="configCollapse">
                             <ul class="nav flex-column ms-3">
+
                                 <li class="nav-item">
                                     <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="ForgotPassword">
                                         <i class="bi bi-key me-2"></i> Restablecer contraseña
                                     </a>
                                 </li>
+
                                 <li><hr class="dropdown-divider bg-white"></li>
                             </ul>
                         </div>

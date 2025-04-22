@@ -95,6 +95,32 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
+        public async Task<ServiceResponse> RemoveTypeSalesWithPropertyAsync(int tipoId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _tiposVentaRepository.RemoveTypeSalesWithProperty(tipoId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error eliminando el tipo de venta junto a sus propiedades asociadas.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
         public async Task<ServiceResponse> SaveAsync(TiposVentaDto dto)
         {
             ServiceResponse response = new ServiceResponse();

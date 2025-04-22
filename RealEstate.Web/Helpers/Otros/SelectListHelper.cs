@@ -9,13 +9,17 @@ namespace RealEstate.Web.Helpers.Otros
     {
         private readonly ITiposPropiedadService _tiposPropiedadService;
         private readonly ITiposVentaService _tiposVentaService;
+        private readonly IPropiedadesService _propiedadesService;
 
         public SelectListHelper(ITiposPropiedadService tiposPropiedadService,
-                                ITiposVentaService tiposVentaService)
+                                ITiposVentaService tiposVentaService,
+                                IPropiedadesService propiedadesService)
         {
             _tiposPropiedadService = tiposPropiedadService;
             _tiposVentaService = tiposVentaService;
+            _propiedadesService = propiedadesService;
         }
+
         public List<SelectListItem> Roles()
         {
             return Enum.GetValues(typeof(ClienteAgente))
@@ -26,6 +30,31 @@ namespace RealEstate.Web.Helpers.Otros
                     Text = e.ToString()
                 }).ToList();
         }
+
+        public async Task<List<SelectListItem>> GetPropertyAvailableByAgent()
+        {
+            var cuentasList = new List<SelectListItem>();
+
+            try
+            {
+                var response = await _propiedadesService.GetAllPropertyNotSold();
+
+                if (response.IsSuccess && response.Model is List<PropiedadesModel> Propiedad)
+                {
+                    cuentasList = Propiedad.Select(t => new SelectListItem
+                    {
+                        Text = t.Titulo.ToString(),
+                        Value = t.PropiedadID.ToString()
+
+                    }).ToList();
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return cuentasList;
+        }
+
         public async Task<List<SelectListItem>> GetPropertyTypes()
         {
             var cuentasList = new List<SelectListItem>();
@@ -49,6 +78,7 @@ namespace RealEstate.Web.Helpers.Otros
             }
             return cuentasList;
         }
+
         public async Task<List<SelectListItem>> GetSellingTypes()
         {
             var cuentasList = new List<SelectListItem>();

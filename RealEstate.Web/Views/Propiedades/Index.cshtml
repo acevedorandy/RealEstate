@@ -4,14 +4,127 @@
     ViewData["Title"] = "Propiedades";
 }
 
-<div class="container my-5">
-    <h1 class="text-center text-primary mb-4">Propiedades Disponibles</h1>
-
-    <div class="mb-4 text-end">
-        <a class="btn btn-success" asp-action="Create">
-            <i class="fas fa-plus-circle"></i> Crear Nueva Propiedad
-        </a>
+<div class="mb-4 position-relative text-white">
+    <img src="~/images/program/propiedadesHome.jpg" alt="Portada" class="img-fluid w-100"
+         style="max-height: 300px; object-fit: cover; filter: brightness(60%);" />
+    <h1 class="position-absolute top-50 start-50 translate-middle text-center fw-bold display-5">
+        Propiedades Disponibles
+    </h1>
+</div>
+<!-- Alert Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-3 fs-4"></i>
+            <div>@TempData["SuccessMessage"]</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+            <div>@TempData["ErrorMessage"]</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="mb-4 text-end d-flex justify-content-end gap-3">
+    <a class="btn btn-gradient-green shadow-sm" asp-action="Create">
+        <i class="fas fa-plus-circle me-1"></i> Crear Nueva Propiedad
+    </a>
+
+        <a class="btn btn-gradient-blue shadow-sm" asp-action="Mejoras">
+        <i class="fas fa-magic me-1"></i> Mejorar Propiedad
+    </a>
+</div>
+
+<style>
+    .btn-gradient-green {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        border: none;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-gradient-green:hover {
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-gradient-blue {
+        background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        color: white;
+        border: none;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-gradient-blue:hover {
+        background: linear-gradient(135deg, #2563eb, #0ea5e9);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+        .btn-gradient-view {
+            background: linear-gradient(135deg, #4e73df, #224abe);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+            border-radius: 0.25rem;
+        }
+
+        .btn-gradient-edit {
+            background: linear-gradient(135deg, #f6c23e, #dda20a);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+            border-radius: 0.25rem;
+        }
+
+        .btn-gradient-delete {
+            background: linear-gradient(135deg, #e74a3b, #be2617);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+            border-radius: 0.25rem;
+        }
+
+        .btn-gradient-improve {
+            background: linear-gradient(135deg, #1cc88a, #13855c);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+            border-radius: 0.25rem;
+        }
+
+        .btn-group > .btn:not(:first-child) {
+            margin-left: 1px;
+        }
+
+        .btn-group > .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            opacity: 0.9;
+        }
+
+        .btn-group > .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-group {
+            gap: 2px;
+        }
+</style>
+
+<hr />
 
     @if (Model == null || !Model.Any())
     {
@@ -57,15 +170,18 @@
                             </div>
 
                             <div class="mt-auto">
-                                <div class="btn-group w-100">
-                                    <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@item.PropiedadID">
-                                        <i class="fas fa-eye"></i> Ver
+                                <div class="btn-group w-100 shadow-sm" role="group">
+                                    <a class="btn btn-sm btn-gradient-view" asp-action="Details" asp-route-id="@item.PropiedadID">
+                                        <i class="fas fa-eye mr-1"></i> Ver
                                     </a>
-                                    <a class="btn btn-outline-warning btn-sm" asp-action="Edit" asp-route-id="@item.PropiedadID">
-                                        <i class="fas fa-edit"></i> Editar
+                                    <a class="btn btn-sm btn-gradient-edit" asp-action="Edit" asp-route-id="@item.PropiedadID">
+                                        <i class="fas fa-edit mr-1"></i> Editar
                                     </a>
-                                    <a class="btn btn-outline-danger btn-sm" asp-action="Delete" asp-route-id="@item.PropiedadID">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    <a class="btn btn-sm btn-gradient-delete" asp-action="Delete" asp-route-id="@item.PropiedadID">
+                                        <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                                    </a>
+                                    <a class="btn btn-sm btn-gradient-improve" asp-action="AdministrarMejoras" asp-route-id="@item.PropiedadID">
+                                        <i class="fas fa-home mr-1"></i> Mejoras
                                     </a>
                                 </div>
                             </div>

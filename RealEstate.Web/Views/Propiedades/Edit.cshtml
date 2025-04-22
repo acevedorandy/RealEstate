@@ -1,107 +1,353 @@
-﻿@model RealEstate.Persistance.Models.dbo.PropiedadesModel
+﻿@model RealEstate.Application.Models.PropiedadesViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Propiedad";
 }
 
-<h1>Edit</h1>
+<div class="property-edit-container">
+    <div class="property-edit-card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h4 mb-0">
+                    <i class="fas fa-edit me-2"></i>Editar Propiedad
+                </h2>
+                <a asp-action="Index" class="btn btn-light btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Volver al listado
+                </a>
+            </div>
+        </div>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="PropiedadID" class="control-label"></label>
-                <input asp-for="PropiedadID" class="form-control" />
-                <span asp-validation-for="PropiedadID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Codigo" class="control-label"></label>
-                <input asp-for="Codigo" class="form-control" />
-                <span asp-validation-for="Codigo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AgenteID" class="control-label"></label>
-                <input asp-for="AgenteID" class="form-control" />
-                <span asp-validation-for="AgenteID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Titulo" class="control-label"></label>
-                <input asp-for="Titulo" class="form-control" />
-                <span asp-validation-for="Titulo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Precio" class="control-label"></label>
-                <input asp-for="Precio" class="form-control" />
-                <span asp-validation-for="Precio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Direccion" class="control-label"></label>
-                <input asp-for="Direccion" class="form-control" />
-                <span asp-validation-for="Direccion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ciudad" class="control-label"></label>
-                <input asp-for="Ciudad" class="form-control" />
-                <span asp-validation-for="Ciudad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sector" class="control-label"></label>
-                <input asp-for="Sector" class="form-control" />
-                <span asp-validation-for="Sector" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CodigoPostal" class="control-label"></label>
-                <input asp-for="CodigoPostal" class="form-control" />
-                <span asp-validation-for="CodigoPostal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalNivel" class="control-label"></label>
-                <input asp-for="TotalNivel" class="form-control" />
-                <span asp-validation-for="TotalNivel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Piso" class="control-label"></label>
-                <input asp-for="Piso" class="form-control" />
-                <span asp-validation-for="Piso" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AñoConstruccion" class="control-label"></label>
-                <input asp-for="AñoConstruccion" class="form-control" />
-                <span asp-validation-for="AñoConstruccion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipoPropiedad" class="control-label"></label>
-                <input asp-for="TipoPropiedad" class="form-control" />
-                <span asp-validation-for="TipoPropiedad" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Disponibilidad" /> @Html.DisplayNameFor(model => model.Disponibilidad)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="Imagen" class="control-label"></label>
-                <input asp-for="Imagen" class="form-control" />
-                <span asp-validation-for="Imagen" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        <div class="card-body">
+            <form asp-action="Edit" enctype="multipart/form-data" class="needs-validation" novalidate>
+                <input type="hidden" asp-for="PropiedadID" />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row">
+                    <!-- Columna Izquierda -->
+                    <div class="col-md-6">
+                        <!-- Información Básica -->
+                        <div class="section-card mb-4">
+                            <div class="section-header">
+                                <i class="fas fa-info-circle me-2"></i>Información Básica
+                            </div>
+                            <div class="section-body">
+                                <div class="form-group">
+                                    <label asp-for="Codigo" class="form-label"></label>
+                                    <input asp-for="Codigo" class="form-control" />
+                                    <span asp-validation-for="Codigo" class="text-danger small"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Titulo" class="form-label"></label>
+                                    <input asp-for="Titulo" class="form-control" />
+                                    <span asp-validation-for="Titulo" class="text-danger small"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Descripcion" class="form-label"></label>
+                                    <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                                    <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Precio" class="form-label"></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input asp-for="Precio" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="Precio" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ubicación -->
+                        <div class="section-card mb-4">
+                            <div class="section-header">
+                                <i class="fas fa-map-marker-alt me-2"></i>Ubicación
+                            </div>
+                            <div class="section-body">
+                                <div class="form-group">
+                                    <label asp-for="Direccion" class="form-label"></label>
+                                    <input asp-for="Direccion" class="form-control" />
+                                    <span asp-validation-for="Direccion" class="text-danger small"></span>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Ciudad" class="form-label"></label>
+                                            <input asp-for="Ciudad" class="form-control" />
+                                            <span asp-validation-for="Ciudad" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Sector" class="form-label"></label>
+                                            <input asp-for="Sector" class="form-control" />
+                                            <span asp-validation-for="Sector" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="CodigoPostal" class="form-label"></label>
+                                    <input asp-for="CodigoPostal" class="form-control" />
+                                    <span asp-validation-for="CodigoPostal" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha -->
+                    <div class="col-md-6">
+                        <!-- Características -->
+                        <div class="section-card mb-4">
+                            <div class="section-header">
+                                <i class="fas fa-home me-2"></i>Características
+                            </div>
+                            <div class="section-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="TipoPropiedad" class="form-label"></label>
+                                            <select asp-for="TipoPropiedad" class="form-select">
+                                                <option value="">Seleccione...</option>
+                                                <option value="Casa">Casa</option>
+                                                <option value="Apartamento">Apartamento</option>
+                                                <option value="Terreno">Terreno</option>
+                                                <option value="Local">Local Comercial</option>
+                                            </select>
+                                            <span asp-validation-for="TipoPropiedad" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="TipoVenta" class="form-label"></label>
+                                            <select asp-for="TipoVenta" class="form-select">
+                                                <option value="">Seleccione...</option>
+                                                <option value="Venta">Venta</option>
+                                                <option value="Alquiler">Alquiler</option>
+                                                <option value="Alquiler con Opción">Alquiler con Opción</option>
+                                            </select>
+                                            <span asp-validation-for="TipoVenta" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="TotalNivel" class="form-label"></label>
+                                            <input asp-for="TotalNivel" class="form-control" type="number" min="0" />
+                                            <span asp-validation-for="TotalNivel" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Piso" class="form-label"></label>
+                                            <input asp-for="Piso" class="form-control" type="number" min="0" />
+                                            <span asp-validation-for="Piso" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="AñoConstruccion" class="form-label"></label>
+                                            <input asp-for="AñoConstruccion" class="form-control" type="number" />
+                                            <span asp-validation-for="AñoConstruccion" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Configuraciones -->
+                        <div class="section-card mb-4">
+                            <div class="section-header">
+                                <i class="fas fa-cog me-2"></i>Configuraciones
+                            </div>
+                            <div class="section-body">
+
+                                <input asp-for="AgenteID" type="hidden" />
+
+                                <div class="mb-4">
+                                    <h4 class="text-primary mb-3"><i class="fas fa-images me-2"></i>Imágenes de la Propiedad</h4>
+                                    <div class="border rounded-3 p-3 bg-light bg-opacity-75">
+                                        <label asp-for="Files" class="form-label fw-semibold">Seleccione imágenes (múltiples)</label>
+                                        <input asp-for="Files" type="file" class="form-control" multiple accept="image/*" />
+                                        <div class="form-text">Suba fotos de alta calidad que muestren la propiedad (máx. 10MB cada una)</div>
+                                        <span asp-validation-for="Files" class="text-danger small"></span>
+
+                                        <div class="mt-3" id="imagePreviewContainer" style="display: none;">
+                                            <h6 class="text-muted">Vista previa:</h6>
+                                            <div class="d-flex flex-wrap gap-2" id="imagePreviews"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" asp-for="Disponibilidad">
+                                    <label class="form-check-label" asp-for="Disponibilidad"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Styles {
+    <style>
+        .property-edit-container {
+            padding: 2rem 0;
+        }
+
+        .property-edit-card {
+            max-width: 1200px;
+            margin: 0 auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-card {
+            background: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background-color: #f8f9fa;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .section-body {
+            padding: 1.25rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #86b7fe;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            }
+
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .form-switch .form-check-input {
+            width: 2.5em;
+            height: 1.5em;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+            transition: all 0.3s;
+        }
+
+            .btn-primary:hover {
+                background-color: #0b5ed7;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+            }
+
+        .text-danger {
+            font-size: 0.875rem;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+            color: #842029;
+        }
+    </style>
+}
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Validación para campos numéricos
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('change', function () {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+
+        // Vista previa de imágenes antes de subir
+        document.getElementById('Files').addEventListener('change', function (event) {
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const previewsContainer = document.getElementById('imagePreviews');
+
+            previewsContainer.innerHTML = '';
+
+            if (this.files.length > 0) {
+                previewContainer.style.display = 'block';
+
+                for (let file of this.files) {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.maxWidth = '120px';
+                            img.style.maxHeight = '90px';
+                            img.className = 'img-thumbnail';
+                            previewsContainer.appendChild(img);
+                        }
+
+                        reader.readAsDataURL(file);
+                    }
+                }
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+
+        // Validación para campos numéricos
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('change', function () {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+}
+
+    </script>
 }
