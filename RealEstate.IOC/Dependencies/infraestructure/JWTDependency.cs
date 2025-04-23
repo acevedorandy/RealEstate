@@ -1,11 +1,13 @@
-﻿using System.Text;
+﻿/*using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using RealEstate.Application.Contracts.identity;
 using RealEstate.Application.Responses.identity;
+using RealEstate.Identity.Services;
 using RealEstate.Infraestructure.Settings;
 
 namespace RealEstate.IOC.Dependencies.infraestructure
@@ -62,6 +64,11 @@ namespace RealEstate.IOC.Dependencies.infraestructure
                     }
                 };
             });
+
+            #region Service
+            services.AddTransient<IAccountServiceForWebApi, AccountServiceForWebApi>();
+            #endregion
         }
     }
 }
+*/

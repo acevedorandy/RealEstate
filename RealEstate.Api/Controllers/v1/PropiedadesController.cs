@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
-using RealEstate.Application.Dtos.dbo;
 using RealEstate.Persistance.Models.dbo;
 
 namespace RealEstate.Api.Controllers.v1
@@ -8,6 +8,7 @@ namespace RealEstate.Api.Controllers.v1
     [ApiVersion("1.0")]
     [Route("api/v{version}/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Administrador,Desarrollador")]
     public class PropiedadesController : ControllerBase
     {
         private readonly IPropiedadesService _propiedadesService;
@@ -17,7 +18,7 @@ namespace RealEstate.Api.Controllers.v1
             _propiedadesService = propiedadesService;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet("List")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -77,7 +78,7 @@ namespace RealEstate.Api.Controllers.v1
             }
 
             return Ok(propiedades);
-        }*/
+        }
 
         [HttpGet("GetAllFilter/{tipoPropiedad}/{minPrice}/{maxPrice}/{habitacion}/{baños}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
@@ -197,6 +198,6 @@ namespace RealEstate.Api.Controllers.v1
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-        }
+        }*/
     }
 }

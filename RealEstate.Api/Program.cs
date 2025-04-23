@@ -13,15 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<RealEstateContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("RealEstateDB")));
 
 //Dependecies dbo
-builder.Services.AddDboDependency();
+builder.Services.AddDboDependencyForApi();
 
 //Dependecies Identity
-builder.Services.AddIdentityDependency(builder.Configuration);
-builder.Services.AddIdentityService();
+builder.Services.AddIdentityDependencyForApi(builder.Configuration);
+//builder.Services.AddIdentityService();
 
 //Dependencies Infraestructure
 builder.Services.AddEmailDependency(builder.Configuration);
-builder.Services.AddJWTokenDependency(builder.Configuration);
 
 //Others Dependencies for API
 builder.Services.AddHealthChecks();

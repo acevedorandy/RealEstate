@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
 using RealEstate.Persistance.Models.dbo;
@@ -184,3 +184,4 @@ namespace RealEstate.Api.Controllers.v1
         }
     }
 }
+*/

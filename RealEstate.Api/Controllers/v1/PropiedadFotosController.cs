@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿/*using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
@@ -139,3 +139,4 @@ namespace RealEstate.Api.Controllers.v1
         }
     }
 }
+*/

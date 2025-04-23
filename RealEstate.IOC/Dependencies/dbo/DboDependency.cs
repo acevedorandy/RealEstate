@@ -10,7 +10,7 @@ namespace RealEstate.IOC.Dependencies.dbo
 {
     public static class DboDependency
     {
-        public static void AddDboDependency(this IServiceCollection services)
+        private static void AddDboDependency(this IServiceCollection services)
         {
             // Repositorios 
             services.AddTransient<IContratosRepository, ContratosRepository>();
@@ -24,9 +24,7 @@ namespace RealEstate.IOC.Dependencies.dbo
             services.AddTransient<IPropiedadFotosRepository, PropiedadFotosRepository>();
             services.AddTransient<IPropiedadTiposVentaRepository, PropiedadTiposVentaRepository>();
             services.AddTransient<IReservasRepository, ReservasRepository>();
-            services.AddTransient<ITiposPropiedadRepository, TiposPropiedadRepository>();
-            services.AddTransient<ITiposVentaRepository, TiposVentaRepository>();
-            services.AddTransient<IUsuariosRepository, UsuariosRepository>();
+            //services.AddTransient<IUsuariosRepository, UsuariosRepository>();
 
             // Servicios
             services.AddScoped<IContratosService, ContratosService>();
@@ -40,9 +38,7 @@ namespace RealEstate.IOC.Dependencies.dbo
             services.AddScoped<IPropiedadTiposVentaService, PropiedadTiposVentaService>();
             services.AddScoped<IPropiedadesService, PropiedadesService>();
             services.AddScoped<IReservasService, ReservasService>();
-            services.AddScoped<ITiposPropiedadService, TiposPropiedadService>();
-            services.AddScoped<ITiposVentaService, TiposVentaService>();
-            services.AddScoped<IUsuariosService, UsuariosService>();
+            //services.AddScoped<IUsuariosService, UsuariosService>();
 
             // Validaciones
             services.AddScoped<MensajesValidate>();
@@ -53,6 +49,17 @@ namespace RealEstate.IOC.Dependencies.dbo
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddAutoMapper(typeof(DboMapping));
 
+        }
+
+        public static void AddDboDependencyForApi(this IServiceCollection services)
+        {
+            AddDboDependency(services);
+        }
+        public static void AddDboDependencyForWebApp(this IServiceCollection services)
+        {
+            AddDboDependency(services);
+            services.AddTransient<IUsuariosRepository, UsuariosRepository>();
+            services.AddScoped<IUsuariosService, UsuariosService>();
         }
     }
 }

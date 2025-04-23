@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.identity;
 using RealEstate.Application.Dtos.identity;
 
@@ -8,9 +9,9 @@ namespace RealEstate.Api.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountService _accountService;
+        private readonly IAccountServiceForWebApi _accountService;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IAccountServiceForWebApi accountService)
         {
             _accountService = accountService;
         }
@@ -21,14 +22,24 @@ namespace RealEstate.Api.Controllers
             return Ok(await _accountService.AuthenticateAsync(request));
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterRequest request)
+        [HttpPost("registerDesarrollador")]
+        public async Task<IActionResult> RegisterDesarrolladorAsync(RegisterRequest request)
         {
             var origin = Request.Headers["origin"];
+            request.Rol = "Desarrollador";
             return Ok(await _accountService.RegisterIdentityAsync(request, origin));
         }
 
-        [HttpGet("confirm-email")]
+        [HttpPost("registerAdministrador")]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> RegisterAdministradorAsync(RegisterRequest request)
+        {
+            var origin = Request.Headers["origin"];
+            request.Rol = "Administrador";
+            return Ok(await _accountService.RegisterIdentityAsync(request, origin));
+        }
+
+        /*[HttpGet("confirm-email")]
         public async Task<IActionResult> RegisterAsync([FromQuery] string userId, [FromQuery] string token)
         {
             return Ok(await _accountService.ConfirmAccountAsync(userId, token));
@@ -45,6 +56,6 @@ namespace RealEstate.Api.Controllers
         public async Task<IActionResult> ResetPasswordAsync(ResetPasswordRequest request)
         {
             return Ok(await _accountService.ResetPasswordAsync(request));
-        }
+        }*/
     }
 }
