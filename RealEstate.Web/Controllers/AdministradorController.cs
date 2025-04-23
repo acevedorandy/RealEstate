@@ -1,15 +1,17 @@
-﻿using Azure;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
 using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Application.Responses.identity;
-using RealEstate.Application.Services.dbo;
 using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Models.ViewModel;
+using RealEstate.Web.Middlewares;
 
 namespace RealEstate.Web.Controllers
 {
+    [ServiceFilter(typeof(LoginAuthorize))]
+    [Authorize(Roles = "Administrador")]
     public class AdministradorController : Controller
     {
         private readonly IUsuariosService _usuariosService;

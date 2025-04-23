@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Persistance.Models.dbo;
+using RealEstate.Web.Middlewares;
 
 namespace RealEstate.Web.Controllers
 {
@@ -16,6 +18,8 @@ namespace RealEstate.Web.Controllers
             _propiedadesService = propiedadesService;
         }
 
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
         public async Task <IActionResult> Index()
         {
             var result = await _usuariosService.GetAgentActiveAsync();
@@ -28,6 +32,8 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> PropiedadesAgente(string agenteId)
         {
             var result = await _propiedadesService.GetAllPropertyByAgentAsync(agenteId);
@@ -40,6 +46,8 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Buscar(string nombre)
         {
             var result = await _usuariosService.GetAgentByNameAsync(nombre);
@@ -53,11 +61,8 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Agente")]
         public async Task<IActionResult> Home()
         {
             var result = await _propiedadesService.GetAllPropertyByAgentIncludeSold();

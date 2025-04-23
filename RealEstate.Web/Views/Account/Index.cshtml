@@ -3,9 +3,35 @@
 
 @{
     ViewData["Title"] = "Bienvenido a RealEstate";
+    Layout = "_Layout"; // Asegúrate que use tu layout principal
 }
 
+<body class="login-page">
+    <!-- Agrega esta clase -->
+    <!-- El resto de tu código sigue igual -->
 <style>
+
+    body.login-page {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3') no-repeat center center fixed !important;
+        background-size: cover !important;
+        height: 100vh !important;
+        display: block !important;
+    }
+
+        /* Oculta el sidebar */
+        body.login-page .sidebar {
+            display: none !important;
+        }
+
+        /* Ajusta el contenido principal */
+        body.login-page .content {
+            margin-left: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+
     /* Estilo para el fondo desenfocado */
     body {
         margin: 0;
@@ -31,13 +57,14 @@
         }
 
     /* Contenedor principal */
-    .login-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        padding: 20px;
-    }
+        .login-container {
+            background: transparent !important; /* Añade esto */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
     /* Tarjeta de login */
     .login-card {
@@ -274,6 +301,7 @@
         </div>
     </div>
 </div>
+</body>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

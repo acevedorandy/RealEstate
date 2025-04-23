@@ -70,7 +70,11 @@ namespace RealEstate.Persistance.Repositories.dbo
                 propiedadesToUpdate.TipoPropiedad = propiedades.TipoPropiedad;
                 propiedadesToUpdate.Disponibilidad = propiedades.Disponibilidad;
                 propiedadesToUpdate.Imagen = propiedades.Imagen;
-                propiedadesToUpdate.Vendida = propiedades.Vendida;
+
+                if (propiedades.Vendida != null)
+                {
+                    propiedadesToUpdate.Vendida = propiedades.Vendida;
+                }
                 propiedadesToUpdate.TipoVenta = propiedades.TipoVenta;
 
                 result = await base.Update(propiedadesToUpdate);

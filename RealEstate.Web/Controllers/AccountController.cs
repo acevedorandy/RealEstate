@@ -78,9 +78,6 @@ namespace RealEstate.Web.Controllers
             }
         }
 
-
-
-
         public IActionResult Register()
         {
             var roles = _selectRol.Roles();
@@ -120,7 +117,7 @@ namespace RealEstate.Web.Controllers
             await _usuariosService.SignOutAsync();
             HttpContext.Session.Remove("usuario");
 
-            return RedirectToRoute(new { controller = "Account", action = "Index" });
+            return RedirectToRoute(new { controller = "Home", action = "Index" });
         }
 
         public IActionResult ForgotPassword()
@@ -231,8 +228,6 @@ namespace RealEstate.Web.Controllers
 
                     TempData["SuccessMessage"] = "Informacion actualizada exitosamente.";
                     return RedirectToRoute(new { controller = "Account", action = "MiPerfil" });
-                    //TempData["SuccessMessage"] = "Informacion actualizada exitosamente.";
-                    //return RedirectToRoute(new { controller = "Account", action = "MiPerfil" });
                 }
                 else
                 {
