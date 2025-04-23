@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
 using RealEstate.Persistance.Models.ViewModel;
+using RealEstate.Web.Middlewares;
 
 namespace RealEstate.Web.Controllers
 {
@@ -17,6 +19,8 @@ namespace RealEstate.Web.Controllers
             _propiedadesService = propiedadesService;
         }
 
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
         public async Task <IActionResult> Index()
         {
             var result = await _ofertasService.GetPropertyOfferedAsync();
@@ -29,11 +33,15 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
         public ActionResult Create()
         {
             return View();
         }
 
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OfertasDto dto)
@@ -67,12 +75,8 @@ namespace RealEstate.Web.Controllers
             }
         }
 
-
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Agente")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmarOrRechazarOferta(OfertasDto dto)

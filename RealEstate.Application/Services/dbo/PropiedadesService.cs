@@ -335,8 +335,8 @@ namespace RealEstate.Application.Services.dbo
                 var propiedad = _mapper.Map<Propiedades>(dto);
                 var result = await _propiedadesRepository.Update(propiedad);
 
-                var dtoConvertion = _mapper.Map<PropiedadesDto>(propiedad);
-                response.Model = dtoConvertion;
+                dto.PropiedadID = propiedad.PropiedadID;
+                response.Model = dto;
             }
             catch (Exception ex)
             {

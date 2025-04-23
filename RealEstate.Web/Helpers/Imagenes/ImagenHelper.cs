@@ -1,13 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using RealEstate.Application.Dtos.dbo;
-using RealEstate.Application.Dtos.identity.account;
+﻿using RealEstate.Application.Dtos.dbo;
 using RealEstate.Web.Helpers.Imagenes.Base;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace RealEstate.Web.Helpers.Imagenes
 {
@@ -43,31 +36,52 @@ namespace RealEstate.Web.Helpers.Imagenes
             return imagePaths;
         }
 
-        //public async Task<PropiedadesDto> UpdatePropertyPhoto(PropiedadesDto dto)
-        //{
-        //    if (dto.Files != null && dto.Files.Any())
-        //    {
-        //        if (!string.IsNullOrEmpty(dto.Imagen))
-        //        {
-        //            string oldPhotoPath = dto.Imagen;
-        //            string fullOldPhotoPath = Path.Combine(_webHost.WebRootPath, oldPhotoPath.TrimStart('/'));
-        //            if (File.Exists(fullOldPhotoPath))
-        //            {
-        //                File.Delete(fullOldPhotoPath);
-        //            }
-        //        }
+        public async Task<List<string>> UpdatePropertyPhoto(PropiedadesDto dto)
+        {
+            var imagePaths = new List<string>();
 
-        //        string filePath = await _loadPhoto.SaveFileAsync(Foto);
+            if (dto.Files == null || !dto.Files.Any())
+                return imagePaths;
 
-        //        if (!string.IsNullOrEmpty(filePath))
-        //        {
-        //            dto.Imagen = filePath;
-        //        }
-        //    }
-        //    return dto;
-        //}
+            foreach (var foto in dto.Files)
+            {
+                if (foto.Length > 0 && IsValidImage(foto))
+                {
+                    var savedPath = await _loadPhoto.SaveFileAsync(foto);
+                    if (!string.IsNullOrEmpty(savedPath))
+                    {
+                        imagePaths.Add(savedPath);
+                    }
+                }
+            }
+            return imagePaths;
+        }
 
-        private bool IsValidImage(IFormFile file)
+        public async Task<UsuariosDto> UpdatePerfilPhoto(UsuariosDto dto, IFormFile Foto)
+        {
+            if (Foto != null && Foto.Length > 0)
+            {
+                if (!string.IsNullOrEmpty(dto.Foto))
+                {
+                    string oldPhotoPath = dto.Foto;
+                    string fullOldPhotoPath = Path.Combine(_webHost.WebRootPath, oldPhotoPath.TrimStart('/'));
+                    if (File.Exists(fullOldPhotoPath))
+                    {
+                        File.Delete(fullOldPhotoPath);
+                    }
+                }
+
+                string filePath = await _loadPhoto.SaveFileAsync(Foto);
+
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    dto.Foto = filePath;
+                }
+            }
+            return dto;
+        }
+
+            private bool IsValidImage(IFormFile file)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
             var extension = Path.GetExtension(file.FileName).ToLower();

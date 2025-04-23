@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Persistance.Models.dbo;
+using RealEstate.Web.Middlewares;
 
 namespace RealEstate.Web.Controllers
 {
@@ -53,11 +55,8 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Agente")]
         public async Task<IActionResult> Home()
         {
             var result = await _propiedadesService.GetAllPropertyByAgentIncludeSold();

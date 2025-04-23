@@ -5,54 +5,165 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="text-primary">Asignar Mejora a Propiedad</h3>
-    </div>
-
-    <form method="post" asp-action="AsignarMejora">
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label for="PropiedadID" class="form-label">Selecciona una Propiedad</label>
-                @Html.DropDownList("PropiedadID", ViewBag.Propiedad as IEnumerable<SelectListItem>, "-- Selecciona --", new { @class = "form-select" })
+<div class="container py-5">
+    <div class="card border-0 shadow-lg">
+        <div class="card-header bg-primary text-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-home me-2"></i>Asignar Mejora a Propiedad
+                </h3>
+                <span class="badge bg-light text-primary fs-6">@Model.Count Mejoras Disponibles</span>
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-striped table-hover shadow-sm rounded-3">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th class="text-end">Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Count > 0)
-                    {
-                        foreach (var item in Model)
-                        {
+        <div class="card-body">
+            <form method="post" asp-action="AsignarMejora" class="needs-validation" novalidate>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            @Html.DropDownList("PropiedadID", ViewBag.Propiedad as IEnumerable<SelectListItem>, "-- Selecciona una Propiedad --",
+                                     new { @class = "form-select", required = "required", id = "propiedadSelect" })
+                            <label for="propiedadSelect" class="form-label">Propiedad</label>
+                            <div class="invalid-feedback">
+                                Por favor selecciona una propiedad
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-text">
+                            <i class="fas fa-info-circle text-primary me-1"></i> Selecciona la propiedad a la que asignarás mejoras
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+
+                <h5 class="mb-4 text-secondary">
+                    <i class="fas fa-list-check me-2"></i>Catálogo de Mejoras Disponibles
+                </h5>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <td>@item.MejoraID</td>
-                                <td>@item.Nombre</td>
-                                <td>@item.Descripcion</td>
-                                <td class="text-end">
-                                    <button type="submit" name="mejoraId" value="@item.MejoraID" class="btn btn-sm btn-primary">
-                                        Asignar
-                                    </button>
-                                </td>
+                                <th class="ps-4">ID</th>
+                                <th>Mejora</th>
+                                <th>Descripción</th>
+                                <th class="text-end pe-4">Acción</th>
                             </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="4" class="text-center text-muted">No hay mejoras registradas.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Count > 0)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr class="position-relative">
+                                        <td class="ps-4 fw-bold text-primary">@item.MejoraID</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="icon-circle bg-primary-light me-3">
+                                                    <i class="fas fa-hammer text-primary"></i>
+                                                </div>
+                                                <span class="fw-medium">@item.Nombre</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-muted">@(string.IsNullOrEmpty(item.Descripcion) ? "Sin descripción" : item.Descripcion)</td>
+                                        <td class="text-end pe-4">
+                                            <button type="submit" name="mejoraId" value="@item.MejoraID"
+                                                    class="btn btn-primary rounded-pill px-3 py-1 btn-sm btn-assign">
+                                                <i class="fas fa-plus me-1"></i> Asignar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                            <h5 class="text-muted">No hay mejoras registradas</h5>
+                                            <p class="text-muted">Actualmente no hay mejoras disponibles para asignar</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
+
+<style>
+    .card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .icon-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-primary-light {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+
+    .btn-assign {
+        transition: all 0.3s ease;
+    }
+
+    .btn-assign:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-state {
+        opacity: 0.7;
+    }
+
+    .form-floating > .form-select {
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Validación del formulario
+        (function () {
+            'use strict'
+
+            const forms = document.querySelectorAll('.needs-validation')
+
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+
+        // Efecto al pasar el ratón sobre las filas
+        document.querySelectorAll('.table-hover tbody tr').forEach(row => {
+            row.style.transition = 'all 0.2s ease';
+        });
+    </script>
+}

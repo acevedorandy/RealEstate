@@ -1,9 +1,6 @@
-﻿
-
-using RealEstate.Application.Base;
+﻿using RealEstate.Application.Base;
 using RealEstate.Application.Core;
 using RealEstate.Application.Dtos.dbo;
-using RealEstate.Domain.Result;
 
 namespace RealEstate.Application.Contracts.dbo
 {

@@ -5,7 +5,6 @@ using RealEstate.Application.Core;
 using RealEstate.Application.Dtos.dbo;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
-using RealEstate.Persistance.Repositories.dbo;
 
 namespace RealEstate.Application.Services.dbo
 {

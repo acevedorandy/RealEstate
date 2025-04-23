@@ -157,59 +157,6 @@ namespace RealEstate.Persistance.Repositories.dbo
             return result;
         }
 
-        //public async Task<OperationResult> GetPropertyByID(int propiedadId)
-        //{
-        //    OperationResult result = new OperationResult();
-
-        //    try
-        //    {
-        //        var propiedades = await _realEstateContext.Propiedades
-        //            .ToListAsync();
-
-        //        var usuarios = await _identityContext.Users
-        //            .ToListAsync();
-
-        //        var datos = (from propiedad in propiedades
-        //                     join agente in usuarios on propiedad.AgenteID equals agente.Id
-
-        //                     where propiedad.PropiedadID == propiedadId
-
-        //                     select new PropiedadesModel()
-        //                     {
-        //                         PropiedadID = propiedad.PropiedadID,
-        //                         Codigo = propiedad.Codigo,
-        //                         AgenteID = agente.Id,
-        //                         Titulo = propiedad.Titulo,
-        //                         Descripcion = propiedad.Descripcion,
-        //                         Precio = propiedad.Precio,
-        //                         Direccion = propiedad.Direccion,
-        //                         Ciudad = propiedad.Ciudad,
-        //                         Sector = propiedad.Sector,
-        //                         CodigoPostal = propiedad.CodigoPostal,
-        //                         Habitaciones = propiedad.Habitaciones,
-        //                         Baños = propiedad.Baños,
-        //                         Parqueos = propiedad.Parqueos,
-        //                         TamañoTerreno = propiedad.TamañoTerreno,
-        //                         TotalNivel = propiedad.TotalNivel,
-        //                         Piso = propiedad.Piso,
-        //                         AñoConstruccion = propiedad.AñoConstruccion,
-        //                         TipoPropiedad = propiedad.TipoPropiedad,
-        //                         Disponibilidad = propiedad.Disponibilidad,
-        //                         Imagen = propiedad.Imagen
-
-        //                     }).FirstOrDefault();
-
-        //        result.Data = datos;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result.Success = false;
-        //        result.Message = "Ha ocurrido un error obteniendo la propiedad";
-        //        logger.LogError(result.Message, ex.ToString());
-        //    }
-        //    return result;
-        //}
-
         public async Task<bool> ExistsRelation(int propiedadId, string userId)
         {
             var relation = await _realEstateContext.Favoritos
@@ -261,7 +208,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  AñoConstruccion = propiedad.AñoConstruccion,
                                  TipoPropiedad = propiedad.TipoPropiedad,
                                  Disponibilidad = propiedad.Disponibilidad,
-                                 Imagen = propiedad.Imagen
+                                 Imagen = propiedad.Imagen,
 
                              }).ToList();
 

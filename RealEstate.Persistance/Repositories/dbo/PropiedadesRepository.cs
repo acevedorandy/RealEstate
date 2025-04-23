@@ -70,7 +70,11 @@ namespace RealEstate.Persistance.Repositories.dbo
                 propiedadesToUpdate.TipoPropiedad = propiedades.TipoPropiedad;
                 propiedadesToUpdate.Disponibilidad = propiedades.Disponibilidad;
                 propiedadesToUpdate.Imagen = propiedades.Imagen;
-                propiedadesToUpdate.Vendida = propiedades.Vendida;
+
+                if (propiedades.Vendida != null)
+                {
+                    propiedadesToUpdate.Vendida = propiedades.Vendida;
+                }
                 propiedadesToUpdate.TipoVenta = propiedades.TipoVenta;
 
                 result = await base.Update(propiedadesToUpdate);
@@ -401,6 +405,64 @@ namespace RealEstate.Persistance.Repositories.dbo
                 }
                 return result;
             }
+        }
+
+        public async Task<OperationResult> GetPropertyByCode(string codigo)
+        {
+            OperationResult result = new OperationResult();
+
+            try
+            {
+                var propiedades = await _realEstateContext.Propiedades
+                    .ToListAsync();
+
+                var usuarios = await _identityContext.Users
+                    .ToListAsync();
+
+                var tipoVentas = await _realEstateContext.TiposVenta
+                    .ToListAsync();
+
+                var datos = (from propiedad in propiedades
+                             join agente in usuarios on propiedad.AgenteID equals agente.Id
+                             join ventas in tipoVentas on propiedad.TipoVenta equals ventas.TipoVentaID
+
+                             where propiedad.Codigo == codigo
+
+                             select new PropiedadesModel()
+                             {
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Codigo = propiedad.Codigo,
+                                 AgenteID = agente.Id,
+                                 Titulo = propiedad.Titulo,
+                                 Descripcion = propiedad.Descripcion,
+                                 Precio = propiedad.Precio,
+                                 Direccion = propiedad.Direccion,
+                                 Ciudad = propiedad.Ciudad,
+                                 Sector = propiedad.Sector,
+                                 CodigoPostal = propiedad.CodigoPostal,
+                                 Habitaciones = propiedad.Habitaciones,
+                                 Baños = propiedad.Baños,
+                                 Parqueos = propiedad.Parqueos,
+                                 TamañoTerreno = propiedad.TamañoTerreno,
+                                 TotalNivel = propiedad.TotalNivel,
+                                 Piso = propiedad.Piso,
+                                 AñoConstruccion = propiedad.AñoConstruccion,
+                                 TipoPropiedad = propiedad.TipoPropiedad,
+                                 Disponibilidad = propiedad.Disponibilidad,
+                                 Imagen = propiedad.Imagen,
+                                 TipoVenta = ventas.TipoVentaID,
+
+                             }).FirstOrDefault();
+
+                result.Data = datos;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error obteniendo la propiedad";
+                logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
         }
     }
 }

@@ -110,27 +110,20 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label asp-for="TipoPropiedad" class="form-label"></label>
-                                            <select asp-for="TipoPropiedad" class="form-select">
-                                                <option value="">Seleccione...</option>
-                                                <option value="Casa">Casa</option>
-                                                <option value="Apartamento">Apartamento</option>
-                                                <option value="Terreno">Terreno</option>
-                                                <option value="Local">Local Comercial</option>
+                                            <label asp-for="TipoPropiedad" class="form-label fw-semibold">Tipo de Propiedad</label>
+                                            <select asp-for="TipoPropiedad" asp-items="@ViewBag.TiposPropiedad" class="form-select" required>
+                                                <option value="" selected disabled>Seleccione un tipo</option>
                                             </select>
                                             <span asp-validation-for="TipoPropiedad" class="text-danger small"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label asp-for="TipoVenta" class="form-label"></label>
-                                            <select asp-for="TipoVenta" class="form-select">
-                                                <option value="">Seleccione...</option>
-                                                <option value="Venta">Venta</option>
-                                                <option value="Alquiler">Alquiler</option>
-                                                <option value="Alquiler con Opción">Alquiler con Opción</option>
+                                            <label asp-for="TipoVenta" class="form-label fw-semibold">Tipo de Venta</label>
+                                            <select asp-for="TipoVenta" asp-items="@ViewBag.TiposVenta" class="form-select" required>
+                                                <option value="" selected disabled>Seleccione un tipo</option>
                                             </select>
-                                            <span asp-validation-for="TipoVenta" class="text-danger small"></span>
+                                            <span asp-validation-for="TipoPropiedad" class="text-danger small"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -138,24 +131,56 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label asp-for="TotalNivel" class="form-label"></label>
+                                            <label asp-for="Habitaciones" class="form-label">Habitaciones</label>
+                                            <input asp-for="Habitaciones" class="form-control" type="number" min="0" />
+                                            <span asp-validation-for="Habitaciones" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Baños" class="form-label">Baños</label>
+                                            <input asp-for="Baños" class="form-control" type="number" min="0" />
+                                            <span asp-validation-for="Baños" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Parqueos" class="form-label">Parqueos</label>
+                                            <input asp-for="Parqueos" class="form-control" type="number" min="0" />
+                                            <span asp-validation-for="Parqueos" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="TamañoTerreno" class="form-label">Tamaño del Terreno (m²)</label>
+                                            <input asp-for="TamañoTerreno" class="form-control" type="number" step="0.01" min="0" />
+                                            <span asp-validation-for="TamañoTerreno" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="TotalNivel" class="form-label">Niveles</label>
                                             <input asp-for="TotalNivel" class="form-control" type="number" min="0" />
                                             <span asp-validation-for="TotalNivel" class="text-danger small"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label asp-for="Piso" class="form-label"></label>
+                                            <label asp-for="Piso" class="form-label">Piso</label>
                                             <input asp-for="Piso" class="form-control" type="number" min="0" />
                                             <span asp-validation-for="Piso" class="text-danger small"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="AñoConstruccion" class="form-label"></label>
-                                            <input asp-for="AñoConstruccion" class="form-control" type="number" />
-                                            <span asp-validation-for="AñoConstruccion" class="text-danger small"></span>
-                                        </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="AñoConstruccion" class="form-label fw-semibold">Año de Construcción</label>
+                                        <input asp-for="AñoConstruccion" class="form-control" placeholder="Ej: 2015" />
+                                        <span asp-validation-for="AñoConstruccion" class="text-danger small"></span>
                                     </div>
                                 </div>
                             </div>
@@ -167,7 +192,6 @@
                                 <i class="fas fa-cog me-2"></i>Configuraciones
                             </div>
                             <div class="section-body">
-
                                 <input asp-for="AgenteID" type="hidden" />
 
                                 <div class="mb-4">
@@ -185,9 +209,18 @@
                                     </div>
                                 </div>
 
-                                <div class="form-check form-switch">
+                                <div class="form-check form-switch mb-3">
                                     <input class="form-check-input" type="checkbox" role="switch" asp-for="Disponibilidad">
                                     <label class="form-check-label" asp-for="Disponibilidad"></label>
+                                </div>
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                           id="Vendida" name="Vendida"
+                                    @(Model.Vendida.HasValue && Model.Vendida.Value ? "checked" : "")
+                                           value="true" />
+                                    <input type="hidden" name="Vendida" value="false" />
+                                    <label class="form-check-label" for="Vendida">Vendida</label>
                                 </div>
                             </div>
                         </div>
@@ -338,16 +371,5 @@
                 previewContainer.style.display = 'none';
             }
         });
-
-        // Validación para campos numéricos
-        document.querySelectorAll('input[type="number"]').forEach(input => {
-            input.addEventListener('change', function () {
-                if (this.value < 0) {
-                    this.value = 0;
-                }
-            });
-        });
-}
-
     </script>
 }

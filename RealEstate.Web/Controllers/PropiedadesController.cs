@@ -1,4 +1,4 @@
-﻿using Humanizer;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using RealEstate.Application.Contracts.dbo;
@@ -9,9 +9,12 @@ using RealEstate.Persistance.Models.EnumerablesModel;
 using RealEstate.Persistance.Models.ViewModel;
 using RealEstate.Web.Helpers.Imagenes;
 using RealEstate.Web.Helpers.Otros;
+using RealEstate.Web.Middlewares;
 
 namespace RealEstate.Web.Controllers
 {
+    [ServiceFilter(typeof(LoginAuthorize))]
+    [Authorize(Roles = "Agente")]
     public class PropiedadesController : Controller
     {
         private readonly IPropiedadesService _propiedadesService;
@@ -239,6 +242,12 @@ namespace RealEstate.Web.Controllers
 
         public async Task <IActionResult> Edit(int id)
         {
+            var tipoPropiedad = await _selectListHelper.GetPropertyTypes();
+            var tipoVenta = await _selectListHelper.GetSellingTypes();
+
+            ViewBag.TiposPropiedad = tipoPropiedad;
+            ViewBag.TiposVenta = tipoVenta;
+
             var result = await _propiedadesService.LoadPropertyAsync(id);
 
             if (result.IsSuccess)
@@ -249,40 +258,52 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task <IActionResult> Edit(PropiedadesDto dto, IFormFile file)
-        //{
-        //    try
-        //    {
-        //        var result = await _propiedadesService.UpdateAsync(dto);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(PropiedadesDto dto)
+        {
+            try
+            {
+                var result = await _propiedadesService.UpdateAsync(dto);
 
-        //        if (result.IsSuccess)
-        //        {
-        //            dto = result.Model;
-        //            dto = await _imagenHelper.UpdatePropertyPhoto(dto, file);
-        //            var updateResult = await _propiedadesService.UpdateAsync(dto);
+                if (result.IsSuccess)
+                {
+                    dto = result.Model;
+                    var updateFoto = await _imagenHelper.UpdatePropertyPhoto(dto);
 
-        //            if (!updateResult.IsSuccess)
-        //            {
-        //                updateResult.IsSuccess = false;
-        //                TempData["ErrorMessage"] = updateResult.Messages;
-        //            }
+                    if (updateFoto.Any())
+                    {
+                        dto.Imagen = updateFoto.First();
+                        await _propiedadesService.UpdateAsync(dto);
+                        var photosResponse = await _propiedadFotosService.AddPhotoAsEntity(dto.PropiedadID, updateFoto);
+                    }
+                    var updateResult = await _propiedadesService.UpdateAsync(dto);
 
-        //            TempData["SuccessMessage"] = "Propiedad editada exitosamente.";
-        //            return RedirectToAction(nameof(Index));
-        //        }
-        //        else
-        //        {
-        //            TempData["ErrorMessage"] = result.Messages;
-        //            return RedirectToAction(nameof(Index));
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+                    if (!updateResult.IsSuccess)
+                    {
+                        updateResult.IsSuccess = false;
+                        TempData["ErrorMessage"] = updateResult.Messages;
+                    }
+
+                    TempData["SuccessMessage"] = "Propiedad editada exitosamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = result.Messages;
+                    var tipoPropiedad = await _selectListHelper.GetPropertyTypes();
+                    var tipoVenta = await _selectListHelper.GetSellingTypes();
+
+                    ViewBag.TiposPropiedad = tipoPropiedad;
+                    ViewBag.TiposVenta = tipoVenta;
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
         public async Task <IActionResult> Delete(int id)
         {
