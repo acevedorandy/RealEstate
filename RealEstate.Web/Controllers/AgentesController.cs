@@ -18,8 +18,6 @@ namespace RealEstate.Web.Controllers
             _propiedadesService = propiedadesService;
         }
 
-        [ServiceFilter(typeof(LoginAuthorize))]
-        [Authorize(Roles = "Cliente")]
         public async Task <IActionResult> Index()
         {
             var result = await _usuariosService.GetAgentActiveAsync();
@@ -32,8 +30,6 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
-        [ServiceFilter(typeof(LoginAuthorize))]
-        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> PropiedadesAgente(string agenteId)
         {
             var result = await _propiedadesService.GetAllPropertyByAgentAsync(agenteId);
@@ -46,8 +42,6 @@ namespace RealEstate.Web.Controllers
             return View();
         }
 
-        [ServiceFilter(typeof(LoginAuthorize))]
-        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> Buscar(string nombre)
         {
             var result = await _usuariosService.GetAgentByNameAsync(nombre);
