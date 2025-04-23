@@ -20,81 +20,121 @@ namespace RealEstate.Api.Controllers.v1
         [HttpGet("GetAll")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReservasModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var result = await _reservasService.GetAllAsync();
-
-            if (!result.IsSuccess)
+            try
             {
-                return NotFound();
-            }
+                var result = await _reservasService.GetAllAsync();
 
-            return Ok(result);
+                if (!result.IsSuccess)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpGet("GetBy{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReservasModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _reservasService.GetByIDAsync(id);
-
-            if (!result.IsSuccess)
+            try
             {
-                return NotFound();
-            }
+                var result = await _reservasService.GetByIDAsync(id);
 
-            return Ok(result);
+                if (!result.IsSuccess)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPost("Save")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] ReservasDto dto)
         {
-            var result = await _reservasService.SaveAsync(dto);
-
-            if (!result.IsSuccess)
+            try
             {
-                return BadRequest();
-            }
+                var result = await _reservasService.SaveAsync(dto);
 
-            return NoContent();
+                if (!result.IsSuccess)
+                {
+                    return BadRequest();
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPut("Update/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReservasDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(int id, [FromBody] ReservasDto dto)
         {
-            dto.ReservaID = id;
-            var result = await _reservasService.UpdateAsync(dto);
-
-            if (!result.IsSuccess)
+            try
             {
-                return BadRequest();
-            }
+                dto.ReservaID = id;
+                var result = await _reservasService.UpdateAsync(dto);
 
-            return Ok(dto);
+                if (!result.IsSuccess)
+                {
+                    return BadRequest();
+                }
+
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpDelete("Delete/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(int id)
         {
-            var dto = new ReservasDto
+            try
             {
-                ReservaID = id
-            };
-            var result = await _reservasService.RemoveAsync(dto);
+                var dto = new ReservasDto
+                {
+                    ReservaID = id
+                };
+                var result = await _reservasService.RemoveAsync(dto);
 
-            if (!result.IsSuccess)
-            {
-                return BadRequest();
+                if (!result.IsSuccess)
+                {
+                    return BadRequest();
+                }
+
+                return NoContent();
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }

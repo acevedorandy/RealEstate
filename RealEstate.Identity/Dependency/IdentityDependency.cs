@@ -104,6 +104,7 @@ namespace RealEstate.Identity.Dependency
             services.AddTransient<IAccountService, AccountService>();
             //services.AddTransient<IProfileService, ProfileService>();
             services.AddTransient<EmailHelper>();
+            services.AddTransient<JWTHelper>();
         }
     }
 }

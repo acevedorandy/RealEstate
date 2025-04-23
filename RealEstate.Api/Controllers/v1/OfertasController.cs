@@ -8,24 +8,24 @@ namespace RealEstate.Api.Controllers.v1
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class MensajesController : ControllerBase
+    public class OfertasController : ControllerBase
     {
-        private readonly IMensajesService _mensajesService;
+        private IOfertasService _ofertasService;
 
-        public MensajesController(IMensajesService mensajesService)
+        public OfertasController(IOfertasService ofertasService)
         {
-            _mensajesService = mensajesService;
+            _ofertasService = ofertasService;
         }
 
         [HttpGet("GetAll")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensajesModel))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OfertasModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
             try
             {
-                var result = await _mensajesService.GetAllAsync();
+                var result = await _ofertasService.GetAllAsync();
 
                 if (!result.IsSuccess)
                 {
@@ -41,14 +41,60 @@ namespace RealEstate.Api.Controllers.v1
         }
 
         [HttpGet("GetBy{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensajesModel))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OfertasModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id)
         {
             try
             {
-                var result = await _mensajesService.GetByIDAsync(id);
+                var result = await _ofertasService.GetByIDAsync(id);
+
+                if (!result.IsSuccess)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("GetOfferedByMyPropertyAsync/{propiedadId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OfertasModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetOfferedByMyPropertyAsync(int propiedadId)
+        {
+            try
+            {
+                var result = await _ofertasService.GetOfferedByMyPropertyAsync(propiedadId);
+
+                if (!result.IsSuccess)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("GetAllOffersByClientAsync/{propiedadId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OfertasModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllOffersByClientAsync(int propiedadId, string clienteId)
+        {
+            try
+            {
+                var result = await _ofertasService.GetAllOffersByClientAsync(propiedadId, clienteId);
 
                 if (!result.IsSuccess)
                 {
@@ -67,11 +113,11 @@ namespace RealEstate.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] MensajesDto dto)
+        public async Task<IActionResult> Post([FromBody] OfertasDto dto)
         {
             try
             {
-                var result = await _mensajesService.SaveAsync(dto);
+                var result = await _ofertasService.SaveAsync(dto);
 
                 if (!result.IsSuccess)
                 {
@@ -87,15 +133,15 @@ namespace RealEstate.Api.Controllers.v1
         }
 
         [HttpPut("Update/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MensajesDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OfertasDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Put(int id, [FromBody] MensajesDto dto)
+        public async Task<IActionResult> Put(int id, [FromBody] OfertasDto dto)
         {
             try
             {
-                dto.MensajeID = id;
-                var result = await _mensajesService.UpdateAsync(dto);
+                dto.OfertaID = id;
+                var result = await _ofertasService.UpdateAsync(dto);
 
                 if (!result.IsSuccess)
                 {
@@ -118,11 +164,11 @@ namespace RealEstate.Api.Controllers.v1
         {
             try
             {
-                var dto = new MensajesDto
+                var dto = new OfertasDto
                 {
-                    MensajeID = id
+                    OfertaID = id
                 };
-                var result = await _mensajesService.RemoveAsync(dto);
+                var result = await _ofertasService.RemoveAsync(dto);
 
                 if (!result.IsSuccess)
                 {

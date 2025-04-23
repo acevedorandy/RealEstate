@@ -6,7 +6,7 @@ using RealEstate.Persistance.Models.dbo;
 namespace RealEstate.Api.Controllers.v1
 {
     [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version}/[controller]")]
     [ApiController]
     public class PropiedadesController : ControllerBase
     {
@@ -20,9 +20,56 @@ namespace RealEstate.Api.Controllers.v1
         [HttpGet("GetAll")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var propiedades = await _propiedadesService.GetAllAsync();
+            try
+            {
+                var propiedades = await _propiedadesService.GetAllAsync();
+
+                if (!propiedades.IsSuccess)
+                {
+                    return NotFound();
+                }
+
+                return Ok(propiedades);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            
+        }
+
+        [HttpGet("GetBy{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Get(int id)
+        {
+            try
+            {
+                var propiedad = await _propiedadesService.GetByIDAsync(id);
+
+                if (!propiedad.IsSuccess)
+                {
+                    return NotFound();
+                }
+
+                return Ok(propiedad);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        /*[HttpGet("GetAllPropertyByAgentAsync")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAllPropertyByAgentAsync()
+        {
+            var propiedades = await _propiedadesService.GetAllPropertyByAgentAsync();
 
             if (!propiedades.IsSuccess)
             {
@@ -30,71 +77,126 @@ namespace RealEstate.Api.Controllers.v1
             }
 
             return Ok(propiedades);
-        }
+        }*/
 
-        [HttpGet("GetBy{id}")]
+        [HttpGet("GetAllFilter/{tipoPropiedad}/{minPrice}/{maxPrice}/{habitacion}/{baños}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(int id)
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAllFilter(string tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
         {
-            var propiedad = await _propiedadesService.GetByIDAsync(id);
-
-            if (!propiedad.IsSuccess)
+            try
             {
-                return NotFound();
-            }
+                var propiedades = await _propiedadesService.GetAllFilter(tipoPropiedad, minPrice, maxPrice, habitacion, baños);
 
-            return Ok(propiedad);
+                if (!propiedades.IsSuccess)
+                {
+                    return NotFound();
+                }
+
+                return Ok(propiedades);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("GetAgentByPropertyAsync/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UsuariosModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAgentByPropertyAsync(int propiedadId)
+        {
+            try
+            {
+                var agente = await _propiedadesService.GetAgentByPropertyAsync(propiedadId);
+
+                if (!agente.IsSuccess)
+                {
+                    return NotFound();
+                }
+
+                return Ok(agente);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPost("Save")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] PropiedadesDto dto)
         {
-            var propiedades = await _propiedadesService.SaveAsync(dto);
-
-            if (!propiedades.IsSuccess)
+            try
             {
-                return BadRequest();
-            }
+                var propiedades = await _propiedadesService.SaveAsync(dto);
 
-            return NoContent();
+                if (!propiedades.IsSuccess)
+                {
+                    return BadRequest();
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPut("Update/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(int id, [FromBody] PropiedadesDto dto)
         {
-            dto.PropiedadID = id;
-            var propiedades = await _propiedadesService.UpdateAsync(dto);
-
-            if (!propiedades.IsSuccess)
+            try
             {
-                return BadRequest();
-            }
+                dto.PropiedadID = id;
+                var propiedades = await _propiedadesService.UpdateAsync(dto);
 
-            return Ok(dto);
+                if (!propiedades.IsSuccess)
+                {
+                    return BadRequest();
+                }
+
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpDelete("Delete/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(int id)
         {
-            var dto = new PropiedadesDto
+            try
             {
-                PropiedadID = id
-            };
-            var propiedades = await _propiedadesService.RemoveAsync(dto);
+                var dto = new PropiedadesDto
+                {
+                    PropiedadID = id
+                };
+                var propiedades = await _propiedadesService.RemoveAsync(dto);
 
-            if (!propiedades.IsSuccess)
-            {
-                return BadRequest();
+                if (!propiedades.IsSuccess)
+                {
+                    return BadRequest();
+                }
+
+                return NoContent();
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore;
 using RealEstate.Api.Extensions;
 using RealEstate.Identity.Dependency;
@@ -22,6 +21,7 @@ builder.Services.AddIdentityService();
 
 //Dependencies Infraestructure
 builder.Services.AddEmailDependency(builder.Configuration);
+builder.Services.AddJWTokenDependency(builder.Configuration);
 
 //Others Dependencies for API
 builder.Services.AddHealthChecks();

@@ -20,6 +20,7 @@ namespace RealEstate.Api.Controllers.v1
         [HttpGet("GetAll")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagosModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
             var result = await _pagosService.GetAllAsync();
@@ -35,6 +36,7 @@ namespace RealEstate.Api.Controllers.v1
         [HttpGet("GetBy{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagosModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get(int id)
         {
             var result = await _pagosService.GetByIDAsync(id);
@@ -50,6 +52,7 @@ namespace RealEstate.Api.Controllers.v1
         [HttpPost("Save")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] PagosDto dto)
         {
             var result = await _pagosService.SaveAsync(dto);
@@ -65,6 +68,7 @@ namespace RealEstate.Api.Controllers.v1
         [HttpPut("Update/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagosDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put(int id, [FromBody] PagosDto dto)
         {
             dto.ContratoID = id;
@@ -81,6 +85,7 @@ namespace RealEstate.Api.Controllers.v1
         [HttpDelete("Delete/{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(int id)
         {
             var dto = new PagosDto
