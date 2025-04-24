@@ -118,18 +118,18 @@ namespace RealEstate.Api.Controllers.v1
             }
         }
 
-        [HttpDelete("Delete{id}")]
+        [HttpDelete("Delete")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(
             Summary = "Eliminar Tipo de Venta",
             Description = "Elimina un Tipo de Venta (Este metodo es irreversible)"
             )]
-        public async Task<IActionResult> Delete(int id, RemoveTiposVentaCommand command)
+        public async Task<IActionResult> Delete(RemoveTiposVentaCommand command)
         {
             try
             {
-                await Mediator.Send(new RemoveTiposVentaCommand() { TipoVentaID = id });
+                await Mediator.Send(new RemoveTiposVentaCommand() { TipoVentaID = command.TipoVentaID });
                 return NoContent();
             }
             catch (Exception ex)

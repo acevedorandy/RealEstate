@@ -118,18 +118,18 @@ namespace RealEstate.Api.Controllers.v1
             }
         }
 
-        [HttpDelete("Delete{id}")]
+        [HttpDelete("Delete")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [SwaggerOperation(
             Summary = "Eliminar mejora",
             Description = "Elimina una mejora (Este metodo es irreversible)"
             )]
-        public async Task<IActionResult> Delete(int id, RemoveMejorasCommand command)
+        public async Task<IActionResult> Delete(RemoveMejorasCommand command)
         {
             try
             {
-                await Mediator.Send(new RemoveMejorasCommand() { MejoraID = id });
+                await Mediator.Send(new RemoveMejorasCommand() { MejoraID = command.MejoraID });
                 return NoContent();
             }
             catch (Exception ex)
