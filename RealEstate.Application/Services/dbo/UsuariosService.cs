@@ -366,6 +366,32 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
+        public async Task<ServiceResponse> UpdatePhotoIdentityUserAsync(string Id, string foto)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _usuariosRepository.UpdatePhotoIdentityUser(Id, foto);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error actualizando la foto del usuario.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
         public async Task<ServiceResponse> GetPerfilInformation(string id)
         {
             ServiceResponse response = new ServiceResponse();
@@ -407,12 +433,6 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
-        public Task<ServiceResponse> GetUserByRolAsync(string rol)
-        {
-            throw new NotImplementedException();
-        }
-
-
         /* Metodos de las cuentas */
         public async Task<string> ConfirmEmailAsync(string userId, string token)
         {
@@ -435,9 +455,13 @@ namespace RealEstate.Application.Services.dbo
         public async Task<RegisterResponse> RegisterAsync(RegisterDto registerDto, string origin)
         {
             RegisterRequest register = _mapper.Map<RegisterRequest>(registerDto);
+            register.FotoFile = registerDto.File; 
+
             RegisterResponse response = await _accountService.RegisterIdentityAsync(register, origin);
+
             return response;
         }
+
 
         public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordDto resetPasswordDto)
         {

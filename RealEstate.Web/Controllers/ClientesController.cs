@@ -84,9 +84,9 @@ namespace RealEstate.Web.Controllers
             return View(propiedadDetalles);
         }
 
-        public async Task<IActionResult> Filter(int? propiedadId, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
+        public async Task<IActionResult> Filter(int? propiedadId, string? codigo, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
         {
-            var result = await _propiedadesService.GetAllFilter(propiedadId, minPrice, maxPrice, habitacion, baños);
+            var result = await _propiedadesService.GetAllFilter(propiedadId, codigo, minPrice, maxPrice, habitacion, baños);
 
             var tipos = await _selectListHelper.GetPropertyTypes();
             ViewBag.Tipos = tipos;

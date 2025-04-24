@@ -9,5 +9,7 @@ namespace RealEstate.Persistance.Interfaces.dbo
     public interface IMejorasRepository : IBaseRepository<Mejoras>
     {
         Task<OperationResult> GetMejorasByProperty(int propiedadId);
+        Task<bool> ExisteMejora(int mejoraId, int propiedadId);
+
     }
 }

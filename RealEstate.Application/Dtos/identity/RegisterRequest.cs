@@ -1,10 +1,12 @@
 ﻿
 
+using Microsoft.AspNetCore.Http;
+
 namespace RealEstate.Application.Dtos.identity
 {
     public class RegisterRequest
     {
-        public string Id { get; set; }
+        //public string Id { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         public string? Foto { get; set; }
@@ -16,6 +18,7 @@ namespace RealEstate.Application.Dtos.identity
         public string Phone { get; set; }
         public string Rol { get; set; }
         public bool IsActive { get; set; } 
+        public IFormFile FotoFile { get; set; }
 
     }
 }

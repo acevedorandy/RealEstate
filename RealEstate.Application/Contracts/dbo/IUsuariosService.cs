@@ -2,7 +2,6 @@
 using RealEstate.Application.Dtos.dbo;
 using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Application.Responses.identity;
-using RealEstate.Domain.Result;
 
 
 namespace RealEstate.Application.Contracts.dbo
@@ -21,7 +20,6 @@ namespace RealEstate.Application.Contracts.dbo
         /* Metodos Generales Con Las Cuentas */
         Task<ServiceResponse> GetIdentityUserAllAsync();
         Task<ServiceResponse> GetIdentityUserByAsync(string userId);
-        Task<ServiceResponse> GetUserByRolAsync(string rol);
         Task<ServiceResponse> ActivarOrDesactivarAsync(string userId);
         Task<ServiceResponse> GetAgentActiveAsync();
         Task<ServiceResponse> GetAgentByNameAsync(string name);
@@ -31,6 +29,7 @@ namespace RealEstate.Application.Contracts.dbo
         Task<ServiceResponse> GetAllAdminsAsync();
         Task<ServiceResponse> RemoveAgentWithPropertyAsync(string userId);
         Task<ServiceResponse> UpdateIdentityUserAsync(UsuariosDto user);
+        Task<ServiceResponse> UpdatePhotoIdentityUserAsync(string Id, string foto);
         Task<ServiceResponse> GetPerfilInformation(string id);
 
     }

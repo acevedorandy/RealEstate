@@ -8,6 +8,7 @@ using RealEstate.Persistance.Context;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Models.ViewModel;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RealEstate.Persistance.Repositories.dbo
 {
@@ -232,6 +233,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  ClienteID = cliente.Id,
                                  PropiedadID = propiedad.PropiedadID,
                                  Codigo = propiedad.Codigo,
+                                 Imagen = propiedad.Imagen,
                                  NombreCliente = cliente.Nombre,
                                  ApellidoCliente = cliente.Apellido,
                                  FotoCliente = cliente.Foto,

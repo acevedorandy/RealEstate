@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using RealEstate.Application.Contracts.identity;
 using RealEstate.Application.Dtos.identity;
+using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Application.Enum;
 using RealEstate.Application.Responses.identity;
 using RealEstate.Identity.Helpers;
@@ -17,16 +19,19 @@ namespace RealEstate.Identity.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly EmailHelper _emailHelper;
+        private readonly IMapper _mapper;
 
         public AccountService(UserManager<ApplicationUser> userManager,
                               SignInManager<ApplicationUser> signInManager,
                               IEmailService emailService,
-                              EmailHelper emailHelper)
+                              EmailHelper emailHelper,
+                              IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
             _emailHelper = emailHelper;
+            _mapper = mapper;
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest authenticationRequest)
@@ -40,9 +45,15 @@ namespace RealEstate.Identity.Services
                 return response;
             }
 
+
             var usuario = await _userManager.FindByEmailAsync(authenticationRequest.Email);
             if (usuario == null)
                 return SetError($"No hay cuentas registradas con el correo {authenticationRequest.Email}");
+
+            var roles = await _userManager.GetRolesAsync(usuario);
+
+            if (roles.Contains("Desarrollador"))
+                return SetError("Acceso denegado para usuarios desarrolladores.");
 
             var result = await _signInManager.PasswordSignInAsync(usuario.UserName, authenticationRequest.Password, false, lockoutOnFailure: false);
             if (!result.Succeeded)
@@ -122,10 +133,10 @@ namespace RealEstate.Identity.Services
                 return SetError($"Ya existe un usuario con la cédula {request.Cedula}.");
 
             var activeByDefaultRoles = new List<string>
-            {
-                Roles.Desarrollador.ToString(),
-                Roles.Administrador.ToString()
-            };
+    {
+        Roles.Desarrollador.ToString(),
+        Roles.Administrador.ToString()
+    };
 
             var usuario = new ApplicationUser
             {
@@ -140,15 +151,21 @@ namespace RealEstate.Identity.Services
             };
 
             var result = await _userManager.CreateAsync(usuario, request.Password);
+
             if (!result.Succeeded)
                 return SetError(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            var registerDto = _mapper.Map<RegisterDto>(usuario);
+
+            registerDto.File = request.FotoFile;
+
+            response.Dynamic = registerDto;
 
             switch (request.Rol)
             {
                 case "Administrador":
                     await _userManager.AddToRoleAsync(usuario, Roles.Administrador.ToString());
 
-                    // Opcional: Enviar email de bienvenida a desarrolladores
                     await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
                     {
                         To = usuario.Email,
@@ -160,7 +177,6 @@ namespace RealEstate.Identity.Services
                 case "Desarrollador":
                     await _userManager.AddToRoleAsync(usuario, Roles.Desarrollador.ToString());
 
-                    // Opcional: Enviar email de bienvenida a desarrolladores
                     await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
                     {
                         To = usuario.Email,
@@ -174,7 +190,7 @@ namespace RealEstate.Identity.Services
                     await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
                     {
                         To = usuario.Email,
-                        Body = $"Bienvenido {usuario.Nombre} como Agente Inmobiliario. Su cuenta necesita la activacion. Por favor, contactar con un administrador.",
+                        Body = $"Bienvenido {usuario.Nombre} como Agente Inmobiliario. Su cuenta necesita la activación. Por favor, contactar con un administrador.",
                         Subject = "Registro de Agente"
                     });
                     break;
@@ -193,9 +209,9 @@ namespace RealEstate.Identity.Services
                 default:
                     return SetError("Rol no válido.");
             }
-
             return response;
         }
+
 
         public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request)
         {

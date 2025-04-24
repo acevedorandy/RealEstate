@@ -5,6 +5,7 @@ using RealEstate.Application.Core;
 using RealEstate.Application.Dtos.dbo;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
+using RealEstate.Persistance.Repositories.dbo;
 
 namespace RealEstate.Application.Services.dbo
 {
@@ -21,6 +22,12 @@ namespace RealEstate.Application.Services.dbo
             _mejorasRepository = mejorasRepository;
             _logger = logger;
             _mapper = mapper;
+        }
+
+        public async Task<bool> ExisteMejoraAsync(int mejoraId, int propiedadId)
+        {
+            var result = await _mejorasRepository.ExisteMejora(mejoraId, propiedadId);
+            return result;
         }
 
         public async Task<ServiceResponse> GetAllAsync()

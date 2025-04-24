@@ -288,7 +288,18 @@
             <!-- Tarjeta del agente -->
             <div class="card agent-card mb-4">
                 <div class="card-body text-center p-4">
-                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="agent-img rounded-circle mb-3" alt="Agente @Model.UsuariosModel.Nombre" />
+
+                    @{
+                        var foto = string.IsNullOrEmpty(Model.UsuariosModel.Foto)
+                        ? "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                        : Model.UsuariosModel.Foto;
+                    }
+
+                    <img src="@foto"
+                         class="agent-img rounded-circle mb-3"
+                         alt="Agente @Model.UsuariosModel.Nombre"
+                         style="width: 120px; height: 120px; object-fit: cover;" />
+
                     <h4 class="mb-2">@Model.UsuariosModel.Nombre @Model.UsuariosModel.Apellido</h4>
                     <p class="text-muted mb-3">Agente Inmobiliario</p>
 
@@ -308,6 +319,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Formulario de contacto (puedes implementarlo después) -->
             <div class="card feature-card">

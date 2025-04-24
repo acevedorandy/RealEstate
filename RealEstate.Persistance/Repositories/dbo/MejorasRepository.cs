@@ -156,5 +156,14 @@ namespace RealEstate.Persistance.Repositories.dbo
             return result;
         }
 
+        public async Task<bool> ExisteMejora(int mejoraId, int propiedadId)
+        {
+            var relation = await _realEstateContext.PropiedadMejoras
+                .Where(p => p.MejoraID == mejoraId && p.PropiedadID == propiedadId)
+                .FirstOrDefaultAsync();
+
+            return relation != null;
+        }
+
     }
 }

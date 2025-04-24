@@ -252,6 +252,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  Id = user.Id,
                                  Nombre = user.Nombre,
                                  Apellido = user.Apellido,
+                                 Foto = user.Foto,
                                  Email = user.Email,
                                  Telefono = user.PhoneNumber
 

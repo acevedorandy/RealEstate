@@ -5,7 +5,45 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container py-5">
+<!-- Hero Section with Cover Image -->
+<div class="hero-section bg-dark position-relative mb-5">
+    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+         class="hero-img w-100"
+         alt="Mejoras de propiedades"
+         style="height: 300px; object-fit: cover; opacity: 0.7;">
+    <div class="hero-content position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3">
+        <h1 class="display-5 fw-bold mb-3"><i class="fas fa-tools me-2"></i> Mejoras de Propiedades</h1>
+        <p class="lead mb-4">Asigna mejoras y actualizaciones para aumentar el valor de tus propiedades</p>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="container">
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-3 fs-4"></i>
+                <div>@TempData["SuccessMessage"]</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="container">
+        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                <div>@TempData["ErrorMessage"]</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<div class="container py-3">
     <div class="card border-0 shadow-lg">
         <div class="card-header bg-primary text-white py-3">
             <div class="d-flex justify-content-between align-items-center">
@@ -46,7 +84,6 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4">ID</th>
                                 <th>Mejora</th>
                                 <th>Descripción</th>
                                 <th class="text-end pe-4">Acción</th>
@@ -58,7 +95,6 @@
                                 foreach (var item in Model)
                                 {
                                     <tr class="position-relative">
-                                        <td class="ps-4 fw-bold text-primary">@item.MejoraID</td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="icon-circle bg-primary-light me-3">
@@ -98,9 +134,30 @@
 </div>
 
 <style>
+    .hero-section {
+        overflow: hidden;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .hero-img {
+        transition: transform 0.5s ease;
+    }
+
+    .hero-section:hover .hero-img {
+        transform: scale(1.03);
+    }
+
+    .hero-content {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
     .card {
         border-radius: 12px;
         overflow: hidden;
+        margin-top: -50px;
+        position: relative;
+        z-index: 1;
+        background-color: white;
     }
 
     .icon-circle {
@@ -126,10 +183,10 @@
         transition: all 0.3s ease;
     }
 
-    .btn-assign:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+        .btn-assign:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
     .empty-state {
         opacity: 0.7;
@@ -138,6 +195,20 @@
     .form-floating > .form-select {
         padding-top: 1.625rem;
         padding-bottom: 0.625rem;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-content h1 {
+            font-size: 2rem;
+        }
+
+        .hero-content p {
+            font-size: 1rem;
+        }
+
+        .card {
+            margin-top: -30px;
+        }
     }
 </style>
 
