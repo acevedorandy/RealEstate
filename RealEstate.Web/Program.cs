@@ -22,7 +22,7 @@ builder.Services.AddIdentityDependency(builder.Configuration);
 builder.Services.AddIdentityService();
 
 // Registro de las dependencias del esquema Dbo
-builder.Services.AddDboDependency();
+builder.Services.AddDboDependencyForWebApp();
 
 // Registro de las dependencias de la capa Infraestructure
 builder.Services.AddEmailDependency(builder.Configuration);

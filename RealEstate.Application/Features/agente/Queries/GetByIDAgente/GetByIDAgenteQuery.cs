@@ -3,6 +3,7 @@
 using MediatR;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using RealEstate.Persistance.Models.ViewModel;
 
 namespace RealEstate.Application.Features.agente.Queries.GetByIDAgente
 {

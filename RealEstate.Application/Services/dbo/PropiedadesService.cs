@@ -23,23 +23,18 @@ namespace RealEstate.Application.Services.dbo
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AuthenticationResponse authenticationResponse;
-        private readonly IPropiedadFotosRepository _propiedadFotosRepository;
-        private readonly IUsuariosRepository _usuariosRepository;
 
         public PropiedadesService(IPropiedadesRepository propiedadesRepository,
                                   ILogger<PropiedadesService> logger,
                                   IMapper mapper,
                                   IHttpContextAccessor httpContextAccessor,
-                                  IPropiedadFotosRepository propiedadFotosRepository,
-                                  IUsuariosRepository usuariosRepository)
+                                  IPropiedadFotosRepository propiedadFotosRepository)
         {
             _propiedadesRepository = propiedadesRepository;
             _logger = logger;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             authenticationResponse = _httpContextAccessor.HttpContext.Session.Get<AuthenticationResponse>("usuario");
-            _propiedadFotosRepository = propiedadFotosRepository;
-            _usuariosRepository = usuariosRepository;
         }
 
         public async Task<ServiceResponse> GetAgentByPropertyAsync(int propiedadId)

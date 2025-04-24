@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealEstate.Domain", "RealEstate.Domain\RealEstate.Domain.csproj", "{E1CE3924-2802-454F-986D-B331AF7F87D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstate.Domain", "RealEstate.Domain\RealEstate.Domain.csproj", "{E1CE3924-2802-454F-986D-B331AF7F87D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealEstate.Identity", "RealEstate.Identity\RealEstate.Identity.csproj", "{4DBA0C41-1A66-4919-AF03-7ABD8AD2ACBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstate.Identity", "RealEstate.Identity\RealEstate.Identity.csproj", "{4DBA0C41-1A66-4919-AF03-7ABD8AD2ACBA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealEstate.Identity.Shared", "RealEstate.Identity.Shared\RealEstate.Identity.Shared.csproj", "{462F5AAD-9FB6-4A6F-97F6-FBEA967A10B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstate.Identity.Shared", "RealEstate.Identity.Shared\RealEstate.Identity.Shared.csproj", "{462F5AAD-9FB6-4A6F-97F6-FBEA967A10B7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealEstate.Persistance", "RealEstate.Persistance\RealEstate.Persistance.csproj", "{2FA989EC-D737-49C7-94B3-D618153B0401}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstate.Persistance", "RealEstate.Persistance\RealEstate.Persistance.csproj", "{2FA989EC-D737-49C7-94B3-D618153B0401}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BackEnd", "BackEnd", "{1A4DEE1A-E1DA-43E4-9265-D46A4F3D9B16}"
 EndProject
@@ -22,6 +22,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealEstate.Infraestructure", "RealEstate.Infraestructure\RealEstate.Infraestructure.csproj", "{B2A709D4-1484-4793-ABA4-852BA1C0A7C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstate.IOC", "RealEstate.IOC\RealEstate.IOC.csproj", "{7460350F-A76D-42B6-B132-F1991ACFEC06}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealEstate.Api", "RealEstate.Api\RealEstate.Api.csproj", "{5C9D01DA-8CF5-43FB-93AE-D6E714B9DD30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +65,10 @@ Global
 		{7460350F-A76D-42B6-B132-F1991ACFEC06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7460350F-A76D-42B6-B132-F1991ACFEC06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7460350F-A76D-42B6-B132-F1991ACFEC06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C9D01DA-8CF5-43FB-93AE-D6E714B9DD30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C9D01DA-8CF5-43FB-93AE-D6E714B9DD30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C9D01DA-8CF5-43FB-93AE-D6E714B9DD30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C9D01DA-8CF5-43FB-93AE-D6E714B9DD30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +82,7 @@ Global
 		{EFE2B141-DDFC-400D-BF88-2005A3D4976F} = {1A4DEE1A-E1DA-43E4-9265-D46A4F3D9B16}
 		{B2A709D4-1484-4793-ABA4-852BA1C0A7C6} = {1A4DEE1A-E1DA-43E4-9265-D46A4F3D9B16}
 		{7460350F-A76D-42B6-B132-F1991ACFEC06} = {1A4DEE1A-E1DA-43E4-9265-D46A4F3D9B16}
+		{5C9D01DA-8CF5-43FB-93AE-D6E714B9DD30} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92462A49-96E3-4E6D-8394-0B5652A9B518}
