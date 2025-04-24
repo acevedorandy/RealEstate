@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RealEstate.Api.Controllers.Base
 {
+    [ApiVersion("1.0")]
+    [Route("api/v{version}/[controller]")]
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
     public abstract class BaseApiController : ControllerBase
     {
         private IMediator _mediator;

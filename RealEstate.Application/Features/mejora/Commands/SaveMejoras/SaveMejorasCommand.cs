@@ -27,10 +27,10 @@ namespace RealEstate.Application.Features.mejora.Commands.SaveMejoras
             var mejora = _mapper.Map<Mejoras>(request);
             var result = await _mejorasRepository.Save(mejora);
 
-            if (!result.Success || result.Data == null)
+            if (!result.Success)
                 throw new ApplicationException(result.Message ?? "Error al guardar la mejora.");
 
-            return ((Mejoras)result.Data).MejoraID;
+            return mejora.MejoraID;
         }
     }
 }

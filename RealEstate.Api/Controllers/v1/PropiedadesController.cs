@@ -8,9 +8,9 @@ using RealEstate.Persistance.Models.dbo;
 
 namespace RealEstate.Api.Controllers.v1
 {
-    [ApiVersion("1.0")]
+    /*[ApiVersion("1.0")]
     [Route("api/v{version}/[controller]")]
-    [ApiController]
+    [ApiController]*/
     [Authorize(Roles = "Administrador,Desarrollador")]
     public class PropiedadesController : BaseApiController
     {

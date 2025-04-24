@@ -1,11 +1,13 @@
-﻿using MediatR;
+﻿using System.Text.Json.Serialization;
+using MediatR;
 using RealEstate.Persistance.Interfaces.dbo;
 
 namespace RealEstate.Application.Features.agente.Commands
 {
     public class ChangeStatusAgenteCommand : IRequest<string>
     {
-        public string Id { get; set; }
+        [JsonIgnore]
+        public string? Id { get; set; }
     }
 
     public class ChangeStatusAgenteCommandHandler : IRequestHandler<ChangeStatusAgenteCommand, string>

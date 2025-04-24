@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
+using MediatR;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
 
@@ -6,16 +8,19 @@ namespace RealEstate.Application.Features.mejora.Commands.RemoveMejoras
 {
     public class RemoveMejorasCommand : IRequest<int>
     {
+        [JsonIgnore]
         public int MejoraID { get; set; }
     }
 
     public class RemoveMejorasCommandHandler : IRequestHandler<RemoveMejorasCommand, int>
     {
         private readonly IMejorasRepository _mejorasRepository;
+        private readonly IMapper _mapper;
 
-        public RemoveMejorasCommandHandler(IMejorasRepository mejorasRepository)
+        public RemoveMejorasCommandHandler(IMejorasRepository mejorasRepository, IMapper mapper)
         {
             _mejorasRepository = mejorasRepository;
+            _mapper = mapper;
         }
 
         public async Task<int> Handle(RemoveMejorasCommand request, CancellationToken cancellationToken)
@@ -28,10 +33,10 @@ namespace RealEstate.Application.Features.mejora.Commands.RemoveMejoras
             if (!mejoraGetBy.Success || mejoraGetBy.Data == null)
                 throw new InvalidOperationException("La mejora no existe.");
 
-            var mejora = (Mejoras)mejoraGetBy.Data;
+            var mejora = _mapper.Map<Mejoras>(mejoraGetBy.Data);
             await _mejorasRepository.Remove(mejora);
 
-            return mejora.MejoraID;
+            return request.MejoraID;
         }
     }
 }

@@ -114,7 +114,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                                          Nombre = mejora.Nombre,
                                          Descripcion = mejora.Descripcion,
 
-                                     }).FirstOrDefaultAsync();
+                                     }).AsNoTracking()
+                                     .FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

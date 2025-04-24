@@ -27,10 +27,10 @@ namespace RealEstate.Application.Features.tipoVenta.Commands.SaveTiposVenta
             var tipo = _mapper.Map<TiposVenta>(request);
             var result = await _tiposVentaRepository.Save(tipo);
 
-            if (!result.Success || result.Data == null)
+            if (!result.Success)
                 throw new ApplicationException(result.Message ?? "Error al guardar el tipo de venta.");
 
-            return ((TiposVenta)result.Data).TipoVentaID;
+            return tipo.TipoVentaID;
         }
     }
 }

@@ -1,18 +1,21 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using MediatR;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
+using RealEstate.Persistance.Models.dbo;
 
 namespace RealEstate.Application.Features.tipoVenta.Commands.UpdateTiposVenta
 {
-    public class UpdateTiposVentaCommand : IRequest<int>
+    public class UpdateTiposVentaCommand : IRequest<TiposVentaModel>
     {
+        [JsonIgnore]
         public int TipoVentaID { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
     }
 
-    public class UpdateTiposVentaCommandHandler : IRequestHandler<UpdateTiposVentaCommand, int>
+    public class UpdateTiposVentaCommandHandler : IRequestHandler<UpdateTiposVentaCommand, TiposVentaModel>
     {
         private readonly ITiposVentaRepository _tiposVentaRepository;
         private readonly IMapper _mapper;
@@ -23,7 +26,7 @@ namespace RealEstate.Application.Features.tipoVenta.Commands.UpdateTiposVenta
             _mapper = mapper;
         }
 
-        public async Task<int> Handle(UpdateTiposVentaCommand request, CancellationToken cancellationToken)
+        public async Task<TiposVentaModel> Handle(UpdateTiposVentaCommand request, CancellationToken cancellationToken)
         {
             if(request.TipoVentaID <= 0)
                 throw new ArgumentException("ID del tipo de venta no válido.");
@@ -33,7 +36,7 @@ namespace RealEstate.Application.Features.tipoVenta.Commands.UpdateTiposVenta
             if(!tipoGetBy.Success || tipoGetBy.Data == null)
                 throw new ArgumentException("ID del tipo de venta no existe.");
 
-            var tipo = (TiposVenta)tipoGetBy.Data;
+            var tipo = _mapper.Map<TiposVenta>(tipoGetBy.Data);
             _mapper.Map(request, tipo);
 
             var result = await _tiposVentaRepository.Update(tipo);
@@ -41,7 +44,7 @@ namespace RealEstate.Application.Features.tipoVenta.Commands.UpdateTiposVenta
             if (!result.Success)
                 throw new ApplicationException(result.Message ?? "Error al actualizar el tipo de venta.");
 
-            return tipo.TipoVentaID;
+            return result.Data;
         }
     }
 }
