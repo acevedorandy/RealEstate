@@ -1,11 +1,19 @@
 ﻿using MediatR;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.propiedad.Queries.GetByIDPropiedades
 {
+    /// <summary>
+    ///  Parametros para obtener una propiedad por su Id
+    /// </summary>
     public class GetByIDPropiedadesQuery : IRequest<PropiedadesModel>
     {
+        /// <example>
+        ///  9
+        /// </example>
+        [SwaggerParameter(Description = "Id de la propiedad de la que desea obtener su informacion")]
         public int PropiedadID { get; set; }
     }
 

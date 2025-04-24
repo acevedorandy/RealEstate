@@ -4,6 +4,9 @@ using RealEstate.Persistance.Models.dbo;
 
 namespace RealEstate.Application.Features.propiedad.Queries.GetAllPropiedades
 {
+    /// <summary>
+    ///  No necesario tener parametros aqui
+    /// </summary>
     public class GetAllPropiedadesQuery : IRequest<IEnumerable<PropiedadesModel>>
     {
     }

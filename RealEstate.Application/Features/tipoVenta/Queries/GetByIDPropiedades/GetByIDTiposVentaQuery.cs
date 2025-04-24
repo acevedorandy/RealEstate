@@ -1,11 +1,19 @@
 ﻿using MediatR;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.tipoVenta.Queries.GetByIDPropiedades
 {
+    /// <summary>
+    ///  Parametros para la obtener un tipo de Venta
+    /// </summary>
     public class GetByIDTiposVentaQuery : IRequest<TiposVentaModel>
     {
+        /// <example>
+        ///  8
+        /// </example>
+        [SwaggerParameter(Description = "Ingrese el Id del tipo de venta que se desea obtener")]
         public int TipoVentaID { get; set; }
     }
 
