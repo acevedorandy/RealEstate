@@ -38,24 +38,5 @@ namespace RealEstate.Api.Controllers
             request.Rol = "Administrador";
             return Ok(await _accountService.RegisterIdentityAsync(request, origin));
         }
-
-        /*[HttpGet("confirm-email")]
-        public async Task<IActionResult> RegisterAsync([FromQuery] string userId, [FromQuery] string token)
-        {
-            return Ok(await _accountService.ConfirmAccountAsync(userId, token));
-        }
-
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordRequest request)
-        {
-            var origin = Request.Headers["origin"];
-            return Ok(await _accountService.ForgotPasswordAsync(request, origin));
-        }
-
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordRequest request)
-        {
-            return Ok(await _accountService.ResetPasswordAsync(request));
-        }*/
     }
 }

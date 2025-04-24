@@ -109,11 +109,11 @@ namespace RealEstate.Identity.Services
                 IsActive = activeByDefaultRoles.Contains(request.Rol),
             };
 
-            if(request.Rol == "Desarrollador" || request.Rol == "Administrador")
+            /*if(request.Rol == "Desarrollador" || request.Rol == "Administrador")
             {
                 usuario.IsActive = true;
                 usuario.EmailConfirmed = true;
-            }
+            }*/
 
             var result = await _userManager.CreateAsync(usuario, request.Password);
             if (!result.Succeeded)
@@ -166,13 +166,13 @@ namespace RealEstate.Identity.Services
                     });
                     break;
 
-                case "Desarrollador":
+                /*case "Desarrollador":
                     await _userManager.AddToRoleAsync(usuario, Roles.Desarrollador.ToString());
                     break;
 
                 case "Administrador":
                     await _userManager.AddToRoleAsync(usuario, Roles.Administrador.ToString());
-                    break;
+                    break;*/
 
                 default:
                     return SetError("Rol no válido.");

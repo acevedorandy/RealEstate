@@ -21,13 +21,16 @@ namespace RealEstate.Application.Services.dbo
     public class UsuariosService : IUsuariosService
     {
         private readonly IAccountServiceForWebApp _accountService;
+        private readonly IPropiedadesRepository _propiedadesRepository;
         private readonly IMapper _mapper;
         private readonly IUsuariosRepository _usuariosRepository;
         private readonly ILogger<UsuariosService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AuthenticationResponse authentication;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UsuariosService(IAccountService accountService,
-                               IPropiedadesRepository propiedadesRepository,
         public UsuariosService(IAccountServiceForWebApp accountService,
+                               IPropiedadesRepository propiedadesRepository,
                                IMapper mapper,
                                IUsuariosRepository usuariosRepository,
                                ILogger<UsuariosService> logger,
@@ -38,6 +41,10 @@ namespace RealEstate.Application.Services.dbo
             _mapper = mapper;
             _usuariosRepository = usuariosRepository;
             _logger = logger;
+            _propiedadesRepository = propiedadesRepository;
+            _httpContextAccessor = httpContextAccessor;
+            authentication = _httpContextAccessor.HttpContext.Session.Get<AuthenticationResponse>("usuario");
+            _userManager = userManager;
         }
 
         public async Task<ServiceResponse> ActivarOrDesactivarAsync(string userId)
@@ -342,7 +349,7 @@ namespace RealEstate.Application.Services.dbo
 
                 if (result.Success)
                 {
-                    response.Model = _mapper.Map<UsuariosDto>(result.Data); 
+                    response.Model = _mapper.Map<UsuariosDto>(result.Data);
                 }
                 else
                 {

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RealEstate.Application.Contracts.dbo;
+using RealEstate.Api.Controllers.Base;
+using RealEstate.Application.Features.propiedad.Queries.GetAllPropiedades;
+using RealEstate.Application.Features.propiedad.Queries.GetByCodePropiedades;
+using RealEstate.Application.Features.propiedad.Queries.GetByIDPropiedades;
 using RealEstate.Persistance.Models.dbo;
 
 namespace RealEstate.Api.Controllers.v1
@@ -9,31 +12,17 @@ namespace RealEstate.Api.Controllers.v1
     [Route("api/v{version}/[controller]")]
     [ApiController]
     [Authorize(Roles = "Administrador,Desarrollador")]
-    public class PropiedadesController : ControllerBase
+    public class PropiedadesController : BaseApiController
     {
-        private readonly IPropiedadesService _propiedadesService;
-
-        public PropiedadesController(IPropiedadesService propiedadesService)
-        {
-            _propiedadesService = propiedadesService;
-        }
-
         [HttpGet("List")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Get()
         {
             try
             {
-                var propiedades = await _propiedadesService.GetAllAsync();
-
-                if (!propiedades.IsSuccess)
-                {
-                    return NotFound();
-                }
-
-                return Ok(propiedades);
+                return Ok(await Mediator.Send(new GetAllPropiedadesQuery()));
             }
             catch (Exception ex)
             {
@@ -42,22 +31,15 @@ namespace RealEstate.Api.Controllers.v1
             
         }
 
-        [HttpGet("GetBy{id}")]
+        [HttpGet("GetById/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             try
             {
-                var propiedad = await _propiedadesService.GetByIDAsync(id);
-
-                if (!propiedad.IsSuccess)
-                {
-                    return NotFound();
-                }
-
-                return Ok(propiedad);
+                return Ok(await Mediator.Send(new GetByIDPropiedadesQuery() { PropiedadID = id }));
             }
             catch (Exception ex)
             {
@@ -65,139 +47,20 @@ namespace RealEstate.Api.Controllers.v1
             }
         }
 
-        /*[HttpGet("GetAllPropertyByAgentAsync")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAllPropertyByAgentAsync()
-        {
-            var propiedades = await _propiedadesService.GetAllPropertyByAgentAsync();
-
-            if (!propiedades.IsSuccess)
-            {
-                return NotFound();
-            }
-
-            return Ok(propiedades);
-        }
-
-        [HttpGet("GetAllFilter/{tipoPropiedad}/{minPrice}/{maxPrice}/{habitacion}/{baños}")]
+        [HttpGet("GetBy{Code}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAllFilter(string tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
+        public async Task<IActionResult> GetByCode(string Code)
         {
             try
             {
-                var propiedades = await _propiedadesService.GetAllFilter(tipoPropiedad, minPrice, maxPrice, habitacion, baños);
-
-                if (!propiedades.IsSuccess)
-                {
-                    return NotFound();
-                }
-
-                return Ok(propiedades);
+                return Ok(await Mediator.Send(new GetByCodePropiedadesQuery() { Codigo = Code }));
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
-        [HttpGet("GetAgentByPropertyAsync/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UsuariosModel))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetAgentByPropertyAsync(int propiedadId)
-        {
-            try
-            {
-                var agente = await _propiedadesService.GetAgentByPropertyAsync(propiedadId);
-
-                if (!agente.IsSuccess)
-                {
-                    return NotFound();
-                }
-
-                return Ok(agente);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [HttpPost("Save")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] PropiedadesDto dto)
-        {
-            try
-            {
-                var propiedades = await _propiedadesService.SaveAsync(dto);
-
-                if (!propiedades.IsSuccess)
-                {
-                    return BadRequest();
-                }
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [HttpPut("Update/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesDto))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Put(int id, [FromBody] PropiedadesDto dto)
-        {
-            try
-            {
-                dto.PropiedadID = id;
-                var propiedades = await _propiedadesService.UpdateAsync(dto);
-
-                if (!propiedades.IsSuccess)
-                {
-                    return BadRequest();
-                }
-
-                return Ok(dto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [HttpDelete("Delete/{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var dto = new PropiedadesDto
-                {
-                    PropiedadID = id
-                };
-                var propiedades = await _propiedadesService.RemoveAsync(dto);
-
-                if (!propiedades.IsSuccess)
-                {
-                    return BadRequest();
-                }
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }*/
     }
 }
