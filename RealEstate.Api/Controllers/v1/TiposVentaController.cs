@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net.Mime;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstate.Api.Controllers.Base;
 using RealEstate.Application.Features.tipoVenta.Commands.RemoveTiposVenta;
@@ -7,19 +8,24 @@ using RealEstate.Application.Features.tipoVenta.Commands.UpdateTiposVenta;
 using RealEstate.Application.Features.tipoVenta.Queries.GetAllPropiedades;
 using RealEstate.Application.Features.tipoVenta.Queries.GetByIDPropiedades;
 using RealEstate.Persistance.Models.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Api.Controllers.v1
 {
-    /*[Route("api/[controller]")]
-    [ApiController]*/
+    [SwaggerTag("Mantenimiento de Tipos de Venta")]
     [Authorize(Roles = "Administrador")]
     public class TiposVentaController : BaseApiController
     {
         [HttpPost("Create")]
+        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post(SaveTiposVentaCommand command)
+        [SwaggerOperation(
+            Summary = "Crear Tipo de Propiedad",
+            Description = "Crea/Guarda un Tipo de Propiedad"
+            )]
+        public async Task<IActionResult> Post([FromBody] SaveTiposVentaCommand command)
         {
             try
             {
@@ -38,10 +44,15 @@ namespace RealEstate.Api.Controllers.v1
         }
 
         [HttpPut("Update/{id}")]
+        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TiposVentaModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Put(int id, UpdateTiposVentaCommand command)
+        [SwaggerOperation(
+            Summary = "Actualizar Tipo de Venta",
+            Description = "Actializa/Modifica un Tipo de Venta por medio del Id"
+            )]
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateTiposVentaCommand command)
         {
             command.TipoVentaID = id;
             try
@@ -69,6 +80,10 @@ namespace RealEstate.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TiposVentaModel))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(
+            Summary = "Listado de Tipos de Venta",
+            Description = "Obtiene un listado de los Tipos de Venta registrados"
+            )]
         public async Task<IActionResult> Get()
         {
             try
@@ -87,6 +102,10 @@ namespace RealEstate.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TiposVentaModel))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [SwaggerOperation(
+            Summary = "Tipos de Venta por Id",
+            Description = "Obtiene un Tipo de Venta por medio del Id"
+            )]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -99,14 +118,18 @@ namespace RealEstate.Api.Controllers.v1
             }
         }
 
-        [HttpDelete("Delete{id}")]
+        [HttpDelete("Delete")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Delete(int id, RemoveTiposVentaCommand command)
+        [SwaggerOperation(
+            Summary = "Eliminar Tipo de Venta",
+            Description = "Elimina un Tipo de Venta (Este metodo es irreversible)"
+            )]
+        public async Task<IActionResult> Delete(RemoveTiposVentaCommand command)
         {
             try
             {
-                await Mediator.Send(new RemoveTiposVentaCommand() { TipoVentaID = id });
+                await Mediator.Send(new RemoveTiposVentaCommand() { TipoVentaID = command.TipoVentaID });
                 return NoContent();
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using RealEstate.Api.Extensions;
 using RealEstate.Identity.Dependency;
@@ -32,7 +33,14 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddApiVersioningExtesion();
 builder.Services.AddSwaggerExtension();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(new ProducesAttribute("application/json"));
+}).ConfigureApiBehaviorOptions(options =>
+{
+    options.SuppressInferBindingSourcesForParameters = true;
+    options.SuppressMapClientErrors = true;
+});
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();

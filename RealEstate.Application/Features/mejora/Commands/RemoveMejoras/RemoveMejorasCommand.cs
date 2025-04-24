@@ -3,11 +3,19 @@ using AutoMapper;
 using MediatR;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.mejora.Commands.RemoveMejoras
 {
+    /// <summary>
+    ///  Parametros para la eliminacion de una mejora
+    /// </summary>
     public class RemoveMejorasCommand : IRequest<int>
     {
+        /// <example>
+        ///  2
+        /// </example>
+        [SwaggerParameter(Description = "Id de la mejora que se desea eliminar")]
         [JsonIgnore]
         public int MejoraID { get; set; }
     }

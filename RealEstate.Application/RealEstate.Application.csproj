@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="MediatR" Version="12.5.0" />
@@ -13,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

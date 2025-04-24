@@ -4,6 +4,9 @@ using RealEstate.Persistance.Models.dbo;
 
 namespace RealEstate.Application.Features.tipoPropiedad.Queries.GetAllTiposPropiedad
 {
+    /// <summary>
+    ///  No necesario tener parametros aqui
+    /// </summary>
     public class GetAllTiposPropiedadQuery : IRequest<IEnumerable<TiposPropiedadModel>>
     {
     }

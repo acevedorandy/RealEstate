@@ -3,12 +3,20 @@ using AutoMapper;
 using MediatR;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 
 namespace RealEstate.Application.Features.tipoVenta.Commands.RemoveTiposVenta
 {
+    /// <summary>
+    ///  Parametros para la eliminacion de un Tipo de Venta
+    /// </summary>
     public class RemoveTiposVentaCommand : IRequest<int>
     {
+        /// <example>
+        ///  4
+        /// </example>
+        [SwaggerParameter(Description = "Id del tipo de venta que se desea eliminar")]
         [JsonIgnore]
         public int TipoVentaID { get; set; }
     }
