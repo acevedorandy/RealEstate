@@ -47,15 +47,15 @@ namespace RealEstate.Api.Controllers.v1
             }
         }
 
-        [HttpGet("GetBy{Code}")]
+        [HttpGet("GetBy{code}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PropiedadesModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetByCode(string Code)
+        public async Task<IActionResult> GetByCode(string code)
         {
             try
             {
-                return Ok(await Mediator.Send(new GetByCodePropiedadesQuery() { Codigo = Code }));
+                return Ok(await Mediator.Send(new GetByCodePropiedadesQuery() { Codigo = code }));
             }
             catch (Exception ex)
             {

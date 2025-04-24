@@ -37,7 +37,7 @@ namespace RealEstate.Web.Helpers.Otros
 
             try
             {
-                var response = await _propiedadesService.GetAllPropertyNotSold();
+                var response = await _propiedadesService.GetAllPropertyByAgentLogged();
 
                 if (response.IsSuccess && response.Model is List<PropiedadesModel> Propiedad)
                 {

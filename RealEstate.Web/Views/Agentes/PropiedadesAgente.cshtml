@@ -5,55 +5,101 @@
 }
 
 <div class="container my-5">
-    <div class="mb-4 position-relative text-white">
-        <img src="~/images/program/propiedadAgente.jpg" alt="Portada" class="img-fluid w-100"
-             style="max-height: 300px; object-fit: cover; filter: brightness(60%);" />
-        <h1 class="position-absolute top-50 start-50 translate-middle text-center fw-bold display-5">
-            Propiedades de Agentes
-        </h1>
+    <!-- Hero Section Mejorada -->
+    <div class="hero-section mb-5 position-relative overflow-hidden rounded-3 shadow-lg">
+        <img src="~/images/program/propiedadAgente.jpg" alt="Portada" class="img-fluid w-100 hero-image" />
+        <div class="hero-overlay d-flex flex-column justify-content-center align-items-center text-center text-white p-4">
+            <h1 class="display-4 fw-bold mb-3">Propiedades Disponibles</h1>
+            <p class="lead mb-0">Descubre tu próximo hogar entre nuestras exclusivas propiedades</p>
+        </div>
     </div>
 
     @if (Model == null || !Model.Any())
     {
-        <div class="alert alert-info text-center">
-            <h4 class="alert-heading">Sin propiedades</h4>
-            <p>No hay propiedades registradas aún. Agrega una nueva para comenzar.</p>
+        <div class="alert alert-info text-center py-4">
+            <i class="fas fa-home fa-3x mb-3 text-info"></i>
+            <h3 class="alert-heading fw-bold">No hay propiedades disponibles</h3>
+            <p class="fs-5">Actualmente no tenemos propiedades listadas. Pronto agregaremos nuevas opciones.</p>
+            <a href="#" class="btn btn-primary mt-2">Contactar a un agente</a>
         </div>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var item in Model)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0">
-                        @* Imagen principal *@
-                        <img src="@item.Imagen" class="card-img-top img-fluid" alt="Imagen de @item.Titulo" style="height: 220px; object-fit: cover;">
+                    <div class="card h-100 shadow-sm border-0 overflow-hidden property-card">
+
+                        <!-- Imagen principal con efecto hover -->
+                        <div class="property-image-container">
+                            <img src="@item.Imagen" class="card-img-top property-image" alt="Imagen de @item.Titulo">
+                        </div>
 
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-primary">@item.Titulo</h5>
-                            <p class="card-text text-muted mb-2">@item.Descripcion</p>
-
-                            <div class="mb-2">
-                                <span class="badge bg-success fs-6">
-                                    <i class="fas fa-dollar-sign"></i> @item.Precio.ToString("N0")
-                                </span>
+                            <!-- Título y ubicación -->
+                            <div class="mb-3">
+                                <h5 class="card-title text-dark fw-bold">@item.Titulo</h5>
+                                <div class="d-flex align-items-center text-muted">
+                                    <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                    <small>@item.Direccion, @item.Ciudad</small>
+                                </div>
                             </div>
 
-                            <div class="mb-2 text-secondary">
-                                <i class="fas fa-map-marker-alt"></i> @item.Direccion, @item.Ciudad
+                            <!-- Descripción truncada -->
+                            <p class="card-text text-muted mb-3 flex-grow-1">@item.Descripcion</p>
+
+                            <!-- Precio destacado -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <span class="text-primary fw-bold fs-4">$@item.Precio.ToString("N0")</span>
+                                    <span class="property-badge tipo-@item.NombreTipo.ToLower().Replace(" ", "-") d-inline-flex align-items-center px-3 py-1 rounded-pill bg-gradient bg-success text-white fw-bold shadow">
+                                        <i class="fas fa-tag me-2 fs-6"></i>
+                                        <span class="text-nowrap">@item.NombreTipo</span>
+                                    </span>
+                                </div>
                             </div>
 
-                            <div class="d-flex justify-content-between text-muted mb-3 flex-wrap" style="gap: 10px;">
-                                <small><i class="fas fa-building"></i> Piso: @item.Piso</small>
-                                <small><i class="fas fa-layer-group"></i> Niveles: @item.TotalNivel</small>
-                                <small><i class="fas fa-building"></i> Habitaciones: @item.Habitaciones</small>
-                                <small><i class="fas fa-building"></i> Baños: @item.Baños</small>
-                                <small><i class="fas fa-building"></i> Parqueos: @item.Parqueos</small>
-                                <small><i class="fas fa-building"></i> Terreno: @item.TamañoTerreno</small>
-
-                                <small><i class="fas fa-home"></i> Tipo: @item.TipoPropiedad</small>
-                                <small><i class="fas fa-calendar-alt"></i> Año: @item.AñoConstruccion</small>
+                            <!-- Características principales -->
+                            <div class="property-features mb-3">
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <div class="feature-box text-center p-2 rounded">
+                                            <i class="fas fa-bed fa-lg mb-1 text-secondary"></i>
+                                            <small class="d-block">@item.Habitaciones</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box text-center p-2 rounded">
+                                            <i class="fas fa-bath fa-lg mb-1 text-secondary"></i>
+                                            <small class="d-block">@item.Baños</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box text-center p-2 rounded">
+                                            <i class="fas fa-car fa-lg mb-1 text-secondary"></i>
+                                            <small class="d-block">@item.Parqueos</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box text-center p-2 rounded">
+                                            <i class="fas fa-layer-group fa-lg mb-1 text-secondary"></i>
+                                            <small class="d-block">@item.TotalNivel</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box text-center p-2 rounded">
+                                            <i class="fas fa-ruler-combined fa-lg mb-1 text-secondary"></i>
+                                            <small class="d-block">@item.TamañoTerreno m²</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box text-center p-2 rounded">
+                                            <i class="fas fa-calendar-alt fa-lg mb-1 text-secondary"></i>
+                                            <small class="d-block">@item.AñoConstruccion.Year</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -63,6 +109,112 @@
     }
 </div>
 
+@section Styles {
+    <style>
+        /* Estilos mejorados para la vista */
+        .hero-section {
+            height: 350px;
+            position: relative;
+        }
+
+        .hero-image {
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.7);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .property-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px !important;
+        }
+
+            .property-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+            }
+
+        .property-image-container {
+            position: relative;
+            overflow: hidden;
+            height: 220px;
+        }
+
+        .property-image {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .property-card:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .property-card:hover .property-image {
+            transform: scale(1.05);
+        }
+
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 2;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .premium-badge {
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            color: #fff;
+        }
+
+        .standard-badge {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: #fff;
+        }
+
+        .feature-box {
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+            .feature-box:hover {
+                background-color: #e9ecef;
+                transform: translateY(-3px);
+            }
+    </style>
+}
+
 @section Scripts {
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        // Extensión para truncar texto
+        String.prototype.Truncate = function (length) {
+            return this.length > length ? this.substring(0, length) + '...' : this;
+        };
+    </script>
 }

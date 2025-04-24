@@ -135,7 +135,7 @@ namespace RealEstate.Web.Controllers
 
                 if (result.IsSuccess)
                 {
-                    return RedirectToAction("ObtenerConversacion", "Mensajes", new { remitenteId = dto.RemitenteID, destinatarioId = dto.DestinatarioID, propiedadId = dto.PropiedadID });
+                    return RedirectToAction("ObtenerConversacionAgente", "Mensajes", new { remitenteId = dto.RemitenteID, destinatarioId = dto.DestinatarioID, propiedadId = dto.PropiedadID });
                 }
                 else
                 {

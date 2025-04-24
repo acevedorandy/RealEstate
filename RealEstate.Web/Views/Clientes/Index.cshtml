@@ -295,7 +295,7 @@
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
         }
 
-                .hero-subtitle {
+        .hero-subtitle {
             font-size: 1.5rem;
             margin-bottom: 2rem;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
@@ -310,13 +310,13 @@
         <p class="lead text-muted mb-4">Explora nuestra exclusiva selección de propiedades premium en las mejores ubicaciones</p>
     </div>
 
-@*     <div class="hero-section">
-        <div class="hero-overlay">
-            <div class="hero-content">
-                <h1 class="hero-title"><i class="fas fa-home me-3"></i>Encuentra Tu Propiedad Ideal</h1>
-                <p class="hero-subtitle">Explora nuestra exclusiva selección de propiedades premium en las mejores ubicaciones</p>
-            </div>
-        </div>
+    @*     <div class="hero-section">
+    <div class="hero-overlay">
+    <div class="hero-content">
+    <h1 class="hero-title"><i class="fas fa-home me-3"></i>Encuentra Tu Propiedad Ideal</h1>
+    <p class="hero-subtitle">Explora nuestra exclusiva selección de propiedades premium en las mejores ubicaciones</p>
+    </div>
+    </div>
     </div> *@
 
     <!-- Alert Messages -->
@@ -428,7 +428,10 @@
                     <div class="property-card card h-100">
                         <div class="img-container">
                             <img src="@item.Imagen" class="card-img-top" alt="@item.Titulo" />
-                            <span class="property-badge tipo-@item.TipoPropiedad">@item.TipoPropiedad</span>
+                            <span class="property-badge tipo-@item.NombreTipo.ToLower().Replace(" ", "-") d-inline-flex align-items-center px-3 py-1 rounded-pill bg-gradient bg-success text-white fw-bold shadow">
+                                <i class="fas fa-tag me-2 fs-6"></i>
+                                <span class="text-nowrap">@item.NombreTipo</span>
+                            </span>                            
                             <span class="price-tag">RD$ @item.Precio.ToString("N0")</span>
                         </div>
 

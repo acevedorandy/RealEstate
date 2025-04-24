@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using RealEstate.Application.Contracts.identity;
 using RealEstate.Application.Dtos.identity;
@@ -19,8 +20,9 @@ namespace RealEstate.Identity.Services
                               SignInManager<ApplicationUser> signInManager,
                               IEmailService emailService,
                               EmailHelper emailHelper,
+                              IMapper mapper,
                               IOptions<JWTSettings> jwtSettings
-                              ) : base(userManager, emailService, emailHelper, jwtSettings)
+                              ) : base(userManager, emailService, emailHelper, jwtSettings, mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;

@@ -26,8 +26,8 @@ namespace RealEstate.Identity.Services
         protected BaseAccountService(UserManager<ApplicationUser> userManager,
                               IEmailService emailService,
                               EmailHelper emailHelper,
-                              IOptions<JWTSettings> jwtSettings
-                              )
+                              IOptions<JWTSettings> jwtSettings,
+                              IMapper mapper)
         {
             _userManager = userManager;
             _emailService = emailService;

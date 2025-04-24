@@ -464,6 +464,41 @@
                 transform: translateY(-5px) scale(1.1);
                 box-shadow: 0 15px 35px rgba(67,97,238,0.5);
             }
+
+        .property-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+            color: white;
+            margin-right: 8px;
+        }
+
+            .property-badge.casa {
+                background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            }
+
+            .property-badge.apartamento {
+                background: linear-gradient(135deg, #10b981, #059669);
+            }
+
+            .property-badge.oficina {
+                background: linear-gradient(135deg, #f59e0b, #d97706);
+            }
+
+            .property-badge.terreno {
+                background: linear-gradient(135deg, #64748b, #475569);
+            }
+
+            .property-badge.local-comercial {
+                background: linear-gradient(135deg, #ec4899, #db2777);
+            }
+
+            .property-badge.desconocido {
+                background: linear-gradient(135deg, #6b7280, #4b5563);
+            }
     </style>
 }
 
@@ -507,10 +542,7 @@
         <div class="no-properties">
             <i class="fas fa-home"></i>
             <h3>No tienes propiedades registradas</h3>
-            <p>Comienza agregando tu primera propiedad para mostrarla en tu portafolio. Haz clic en el botón "Agregar Propiedad" para comenzar.</p>
-            <a href="#" class="btn btn-refresh">
-                <i class="fas fa-plus me-2"></i> Agregar Propiedad
-            </a>
+            <p>Comienza agregando tu primera propiedad para mostrarla en tu portafolio. Ve al menú y haz clic en el botón "Propiedades" para comenzar.</p>
         </div>
     }
     else
@@ -529,17 +561,8 @@
                             <img src="@(string.IsNullOrEmpty(item.Imagen) ? "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" : item.Imagen)"
                                  class="card-img-top"
                                  alt="@item.Titulo" />
-                            @{
-                                var tipoPropiedadMap = new Dictionary<int, string>
-                    {
-                    {1, "Casa"},
-                    {2, "Apartamento"},
-                    {3, "Terreno"},
-                    };
-                            }
-
-                            <span class="property-badge @(tipoPropiedadMap.ContainsKey(item.TipoPropiedad) ? tipoPropiedadMap[item.TipoPropiedad].ToLower() : "desconocido")">
-                                @(tipoPropiedadMap.ContainsKey(item.TipoPropiedad) ? tipoPropiedadMap[item.TipoPropiedad] : "Desconocido")
+                            <span class="property-badge @item.NombreTipo.ToLower().Replace(" ", "-")">
+                                @item.NombreTipo
                             </span>
                             <span class="status-badge @statusClass">@statusText</span>
                             <span class="price-tag @(isSold ? "sold" : (!item.Disponibilidad ? "reserved" : ""))">RD$ @item.Precio.ToString("N0")</span>

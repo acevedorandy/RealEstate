@@ -331,7 +331,10 @@
                     <div class="property-card card h-100">
                         <div class="img-container">
                             <img src="@item.Imagen" class="card-img-top" alt="@item.Titulo" />
-                            <span class="property-badge tipo-@item.TipoPropiedad">@item.TipoPropiedad</span>
+                            <span class="property-badge tipo-@item.NombreTipo.ToLower().Replace(" ", "-") d-inline-flex align-items-center px-3 py-1 rounded-pill bg-gradient bg-success text-white fw-bold shadow">
+                                <i class="fas fa-tag me-2 fs-6"></i>
+                                <span class="text-nowrap">@item.NombreTipo</span>
+                            </span>
                             <span class="price-tag">RD$ @item.Precio.ToString("N0")</span>
                         </div>
 
@@ -401,7 +404,7 @@
                                     </div>
                                     <div class="feature-text">
                                         <span class="label">Año Const.</span>
-                                        <span class="value">@item.AñoConstruccion</span>
+                                        <span class="value">@item.AñoConstruccion.Year</span>
                                     </div>
                                 </div>
                             </div>
