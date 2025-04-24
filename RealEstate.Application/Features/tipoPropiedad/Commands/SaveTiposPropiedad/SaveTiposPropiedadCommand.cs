@@ -24,13 +24,13 @@ namespace RealEstate.Application.Features.tipoPropiedad.Commands.SaveTiposPropie
 
         public async Task<int> Handle(SaveTiposPropiedadCommand request, CancellationToken cancellationToken)
         {
-            var tipoVenta = _mapper.Map<TiposPropiedad>(request);
-            var result = await _tiposPropiedadRepository.Save(tipoVenta);
+            var tipoPropiedad = _mapper.Map<TiposPropiedad>(request);
+            var result = await _tiposPropiedadRepository.Save(tipoPropiedad);
 
-            if (!result.Success || result.Data == null)
-                throw new ApplicationException(result.Message ?? "Error al guardar el tipo de venta.");
+            if (!result.Success)
+                throw new ApplicationException(result.Message ?? "Error al guardar el tipo de Propiedad.");
 
-            return ((TiposPropiedad)result.Data).TipoPropiedadID;
+            return tipoPropiedad.TipoPropiedadID;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
 using RealEstate.Application.Contracts.identity;
 using RealEstate.Application.Dtos.identity;
 using RealEstate.Application.Dtos.identity.account;
@@ -9,68 +10,30 @@ using RealEstate.Application.Responses.identity;
 using RealEstate.Identity.Helpers;
 using RealEstate.Identity.Shared.Entities;
 using RealEstate.Infraestructure.Interfaces;
+using RealEstate.Infraestructure.Settings;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace RealEstate.Identity.Services
 {
-    public class AccountService : IAccountService
+    public abstract class BaseAccountService : IAccountService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly EmailHelper _emailHelper;
         private readonly IMapper _mapper;
 
-        public AccountService(UserManager<ApplicationUser> userManager,
-                              SignInManager<ApplicationUser> signInManager,
+        protected BaseAccountService(UserManager<ApplicationUser> userManager,
                               IEmailService emailService,
                               EmailHelper emailHelper,
-                              IMapper mapper)
+                              IOptions<JWTSettings> jwtSettings
+                              )
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _emailService = emailService;
             _emailHelper = emailHelper;
             _mapper = mapper;
         }
-
-        public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest authenticationRequest)
-        {
-            AuthenticationResponse response = new AuthenticationResponse();
-
-            AuthenticationResponse SetError(string errorMessage)
-            {
-                response.HasError = true;
-                response.Error = errorMessage;
-                return response;
-            }
-
-
-            var usuario = await _userManager.FindByEmailAsync(authenticationRequest.Email);
-            if (usuario == null)
-                return SetError($"No hay cuentas registradas con el correo {authenticationRequest.Email}");
-
-            var roles = await _userManager.GetRolesAsync(usuario);
-
-            if (roles.Contains("Desarrollador"))
-                return SetError("Acceso denegado para usuarios desarrolladores.");
-
-            var result = await _signInManager.PasswordSignInAsync(usuario.UserName, authenticationRequest.Password, false, lockoutOnFailure: false);
-            if (!result.Succeeded)
-                return SetError($"Credenciales inválidas para {authenticationRequest.Email}");
-
-            if (!usuario.EmailConfirmed)
-                return SetError($"Se necesita la activación del correo: {authenticationRequest.Email} para iniciar sesión.");
-
-            response.Id = usuario.Id;
-            response.Email = usuario.Email;
-            response.UserName = usuario.UserName;
-            response.Roles = (await _userManager.GetRolesAsync(usuario)).ToList();
-            response.IsVerified = usuario.EmailConfirmed;
-
-            return response;
-        }
-
         public async Task<string> ConfirmAccountAsync(string userId, string token)
         {
             async Task<string> SetError(string message) => message;
@@ -150,6 +113,12 @@ namespace RealEstate.Identity.Services
                 IsActive = activeByDefaultRoles.Contains(request.Rol),
             };
 
+            /*if(request.Rol == "Desarrollador" || request.Rol == "Administrador")
+            {
+                usuario.IsActive = true;
+                usuario.EmailConfirmed = true;
+            }*/
+
             var result = await _userManager.CreateAsync(usuario, request.Password);
 
             if (!result.Succeeded)
@@ -206,6 +175,14 @@ namespace RealEstate.Identity.Services
                     });
                     break;
 
+                /*case "Desarrollador":
+                    await _userManager.AddToRoleAsync(usuario, Roles.Desarrollador.ToString());
+                    break;
+
+                case "Administrador":
+                    await _userManager.AddToRoleAsync(usuario, Roles.Administrador.ToString());
+                    break;*/
+
                 default:
                     return SetError("Rol no válido.");
             }
@@ -242,11 +219,6 @@ namespace RealEstate.Identity.Services
                 return SetError("Ha ocurrido un error al restablecer la contraseña.");
             
             return response;
-        }
-        
-        public async Task SignOutAsync()
-        {
-            await _signInManager.SignOutAsync();
         }
     }
 }

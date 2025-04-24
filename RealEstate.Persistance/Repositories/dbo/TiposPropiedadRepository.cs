@@ -118,7 +118,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                          Descripcion = tipo.Descripcion
 
                                      }).AsNoTracking()
-                                     .ToListAsync();
+                                     .FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

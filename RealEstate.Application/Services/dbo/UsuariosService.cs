@@ -20,7 +20,7 @@ namespace RealEstate.Application.Services.dbo
 {
     public class UsuariosService : IUsuariosService
     {
-        private readonly IAccountService _accountService;
+        private readonly IAccountServiceForWebApp _accountService;
         private readonly IPropiedadesRepository _propiedadesRepository;
         private readonly IMapper _mapper;
         private readonly IUsuariosRepository _usuariosRepository;
@@ -29,7 +29,7 @@ namespace RealEstate.Application.Services.dbo
         private readonly AuthenticationResponse authentication;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UsuariosService(IAccountService accountService,
+        public UsuariosService(IAccountServiceForWebApp accountService,
                                IPropiedadesRepository propiedadesRepository,
                                IMapper mapper,
                                IUsuariosRepository usuariosRepository,
@@ -349,7 +349,7 @@ namespace RealEstate.Application.Services.dbo
 
                 if (result.Success)
                 {
-                    response.Model = _mapper.Map<UsuariosDto>(result.Data); 
+                    response.Model = _mapper.Map<UsuariosDto>(result.Data);
                 }
                 else
                 {
