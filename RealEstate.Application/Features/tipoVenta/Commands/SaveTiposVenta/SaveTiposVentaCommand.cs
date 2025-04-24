@@ -2,12 +2,24 @@
 using MediatR;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.tipoVenta.Commands.SaveTiposVenta
 {
+    /// <summary>
+    ///  Parametros para la creacion de un tipo de Venta
+    /// </summary>
     public class SaveTiposVentaCommand : IRequest<int>
     {
+        /// <example>
+        ///  Venta
+        /// </example>
+        [SwaggerParameter(Description = "Nombre del tipo de venta")]
         public string Nombre { get; set; }
+        /// <example>
+        ///  Eso es suyo
+        /// </example>
+        [SwaggerParameter(Description = "Una Descripcion del tipo de venta")]
         public string Descripcion { get; set; }
     }
 

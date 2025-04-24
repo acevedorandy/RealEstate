@@ -4,11 +4,19 @@ using MediatR;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Models.ViewModel;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.agente.Queries.GetByIDAgente
 {
+    /// <summary>
+    ///  Parametros para obtener un Agente por su Id
+    /// </summary>
     public class GetByIDAgenteQuery : IRequest<UsuariosModel>
     {
+        /// <example>
+        ///  7d3b5ae2-70be-42e7-90a7-8e34770913b3
+        /// </example>
+        [SwaggerParameter(Description = "Id del Agente del que desea obtener su informacion")]
         public string Id { get; set; }
     }
 

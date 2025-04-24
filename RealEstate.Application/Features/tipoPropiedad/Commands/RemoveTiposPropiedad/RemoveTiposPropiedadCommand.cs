@@ -3,11 +3,19 @@ using AutoMapper;
 using MediatR;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.tipoPropiedad.Commands.RemoveTiposPropiedad
 {
+    /// <summary>
+    ///  Parametros para la eliminacion de un Tipo de Propiedad
+    /// </summary>
     public class RemoveTiposPropiedadCommand : IRequest<int>
     {
+        /// <example>
+        ///  5
+        /// </example>
+        [SwaggerParameter(Description = "Id del tipo de propiedad que se desea eliminar")]
         [JsonIgnore]
         public int TipoPropiedadID { get; set; }
     }

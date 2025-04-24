@@ -27,6 +27,7 @@ namespace RealEstate.Api.Extensions
                             Email = "bennydelamparo@gmail.com"
                         }
                     });
+                    options.EnableAnnotations();
                 }
 
                 var xmlFiles = Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly);

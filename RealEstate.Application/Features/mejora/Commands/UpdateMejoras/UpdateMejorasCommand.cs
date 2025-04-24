@@ -4,14 +4,26 @@ using MediatR;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.mejora.Commands.UpdateMejoras
 {
+    /// <summary>
+    ///  Parametros para la actualizacion de una mejora
+    /// </summary>
     public class UpdateMejorasCommand : IRequest<MejorasModel>
     {
+        /// <example>
+        ///  2
+        /// </example>
         [JsonIgnore]
+        [SwaggerParameter(Description = "Id de la mejora que se desea actualizar")]
         public int MejoraID { get; set; }
+
+        [SwaggerParameter(Description = "Nuevo Nombre de la mejora")]
         public string Nombre { get; set; }
+
+        [SwaggerParameter(Description = "Una ueva Descripcion para esta mejora")]
         public string? Descripcion { get; set; }
     }
 

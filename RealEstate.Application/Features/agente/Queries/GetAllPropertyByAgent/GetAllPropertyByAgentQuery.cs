@@ -1,11 +1,19 @@
 ﻿using MediatR;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.agente.Queries.GetAllPropertyByAgent
 {
+    /// <summary>
+    ///  Parametros para obtener todas las propiedades asociadas a un Agente
+    /// </summary>
     public class GetAllPropertyByAgentQuery : IRequest<IEnumerable<PropiedadesModel>>
     {
+        /// <example>
+        ///  7d3b5ae2-70be-42e7-90a7-8e34770913b3
+        /// </example>
+        [SwaggerParameter(Description = "Id del Agente del que desea obtener las propiedades")]
         public string AgenteID { get; set; }
     }
 

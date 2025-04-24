@@ -7,14 +7,24 @@ using RealEstate.Application.Enum;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.tipoPropiedad.Commands.UpdateTiposPropiedad
 {
+    /// <summary>
+    ///  Parametros para la actualizacion de un tipo de propiedad
+    /// </summary>
     public class UpdateTiposPropiedadCommand : IRequest<TiposPropiedadModel>
     {
+        /// <example>
+        ///  10
+        /// </example>
         [JsonIgnore]
+        [SwaggerParameter(Description = "Id del tipo de propiedad que se desea actualizar")]
         public int TipoPropiedadID { get; set; }
+        [SwaggerParameter(Description = "Nuevo Nombre del tipo de propiedad")]
         public string Nombre { get; set; }
+        [SwaggerParameter(Description = "Una nueva Descripcion para este tipo de propiedad")]
         public string Descripcion { get; set; }
     }
 

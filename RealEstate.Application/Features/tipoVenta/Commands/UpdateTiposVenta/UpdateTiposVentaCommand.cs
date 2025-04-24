@@ -4,14 +4,24 @@ using MediatR;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Persistance.Models.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.tipoVenta.Commands.UpdateTiposVenta
 {
+    /// <summary>
+    ///  Parametros para la actualizacion de un tipo de venta
+    /// </summary>
     public class UpdateTiposVentaCommand : IRequest<TiposVentaModel>
     {
+        /// <example>
+        ///  11
+        /// </example>
         [JsonIgnore]
+        [SwaggerParameter(Description = "Id del tipo de venta que se desea actualizar")]
         public int TipoVentaID { get; set; }
+        [SwaggerParameter(Description = "Nuevo Nombre del tipo de venta")]
         public string Nombre { get; set; }
+        [SwaggerParameter(Description = "Una nueva Descripcion para este tipo de venta")]
         public string Descripcion { get; set; }
     }
 

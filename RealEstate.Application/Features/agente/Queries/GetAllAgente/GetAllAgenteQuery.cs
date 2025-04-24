@@ -5,6 +5,9 @@ using RealEstate.Persistance.Models.ViewModel;
 
 namespace RealEstate.Application.Features.agente.Queries.GetAllAgente
 {
+    /// <summary>
+    ///  No necesario tener parametros aqui
+    /// </summary>
     public class GetAllAgenteQuery : IRequest<IEnumerable<AgentesModel>>
     {
     }

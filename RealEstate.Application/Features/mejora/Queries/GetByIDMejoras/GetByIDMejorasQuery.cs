@@ -1,11 +1,19 @@
 ﻿using MediatR;
 using RealEstate.Persistance.Models.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.mejora.Queries.GetByIDMejoras
 {
+    /// <summary>
+    ///  Parametros para la obtener una mejora
+    /// </summary>
     public class GetByIDMejorasQuery : IRequest<MejorasModel>
     {
+        /// <example>
+        ///  8
+        /// </example>
+        [SwaggerParameter(Description = "Ingrese el Id de la mejora que se desea obtener")]
         public int MejoraID { get; set; }
     }
 

@@ -4,6 +4,9 @@ using RealEstate.Persistance.Interfaces.dbo;
 
 namespace RealEstate.Application.Features.mejora.Queries.GetAllMejoras
 {
+    /// <summary>
+    ///  No necesario tener parametros aqui
+    /// </summary>
     public class GetAllMejorasQuery : IRequest<IEnumerable<MejorasModel>>
     {
     }

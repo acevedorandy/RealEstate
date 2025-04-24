@@ -2,12 +2,24 @@
 using MediatR;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.tipoPropiedad.Commands.SaveTiposPropiedad
 {
+    /// <summary>
+    ///  Parametros para la creacion de un tipo de Propiedad
+    /// </summary>
     public class SaveTiposPropiedadCommand : IRequest<int>
     {
+        /// <example>
+        ///  Casa
+        /// </example>
+        [SwaggerParameter(Description = "Nombre del tipo de propiedad")]
         public string Nombre { get; set; }
+        /// <example>
+        ///  Efectivamente, es una casa
+        /// </example>
+        [SwaggerParameter(Description = "Una Descripcion del tipo de propiedad")]
         public string Descripcion { get; set; }
     }
 

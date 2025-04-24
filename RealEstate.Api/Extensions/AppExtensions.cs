@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace RealEstate.Api.Extensions
 {
@@ -20,6 +21,7 @@ namespace RealEstate.Api.Extensions
                     c.SwaggerEndpoint(
                        $"/swagger/{desc.GroupName}/swagger.json",
                        $"RealEstate API {desc.GroupName.ToUpperInvariant()}");
+                    c.DefaultModelRendering(ModelRendering.Model);
                 }
             });
         }

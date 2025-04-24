@@ -1,11 +1,19 @@
 ﻿using System.Text.Json.Serialization;
 using MediatR;
 using RealEstate.Persistance.Interfaces.dbo;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RealEstate.Application.Features.agente.Commands
 {
+    /// <summary>
+    ///  Parametros para Cambiar el estado de un agente (Activo/Desactivado)
+    /// </summary>
     public class ChangeStatusAgenteCommand : IRequest<string>
     {
+        /// <example>
+        ///  7d3b5ae2-70be-42e7-90a7-8e34770913b3
+        /// </example>
+        [SwaggerParameter(Description = "Id del Agente que desea cambiar el estado")]
         [JsonIgnore]
         public string? Id { get; set; }
     }
