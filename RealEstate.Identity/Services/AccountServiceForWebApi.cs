@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using RealEstate.Application.Contracts.identity;
 using RealEstate.Application.Dtos.identity;
@@ -20,11 +21,13 @@ namespace RealEstate.Identity.Services
                               IEmailService emailService,
                               EmailHelper emailHelper,
                               JWTHelper jWTHelper,
+                              IMapper mapper,
                               IOptions<JWTSettings> jwtSettings
-                              ) : base(userManager, emailService, emailHelper, jwtSettings)
+                              ) : base(userManager, emailService, emailHelper, jwtSettings, mapper)
         {
             _userManager = userManager;
             _jwtHelper = jWTHelper;
+
         }
 
         public async Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest authenticationRequest)

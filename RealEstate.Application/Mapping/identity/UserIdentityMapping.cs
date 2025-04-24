@@ -37,6 +37,9 @@ namespace RealEstate.Application.Mapping.identity
 
             CreateMap<ApplicationUser, UsuariosDto>()
                 .ReverseMap();
+
+            CreateMap<ApplicationUser, RegisterDto>()
+                .ReverseMap();
         }
     }
 }

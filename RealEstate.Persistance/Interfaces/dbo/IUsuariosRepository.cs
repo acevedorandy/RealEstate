@@ -18,5 +18,6 @@ namespace RealEstate.Persistance.Interfaces.dbo
         Task<OperationResult> GetAllAdmins();
         Task<OperationResult> RemoveAgentWithProperty(string userId);
         Task<OperationResult> UpdateIdentityUser(ApplicationUser user);
+        Task<OperationResult> UpdatePhotoIdentityUser(string Id, string foto);
     }
 }

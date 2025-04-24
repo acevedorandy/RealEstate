@@ -1,5 +1,6 @@
 ﻿
 
+using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -60,6 +61,7 @@ namespace RealEstate.Application.Dtos.identity
         public string? Rol { get; set; }
         [JsonIgnore]
         public bool IsActive { get; set; } 
+        public IFormFile FotoFile { get; set; }
 
     }
 }

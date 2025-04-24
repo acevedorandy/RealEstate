@@ -8,6 +8,8 @@ namespace RealEstate.Application.Dtos.identity.account
 {
     public class RegisterDto : AccountBaseDto
     {
+        public string Id { get; set;
+        }
         [Required(ErrorMessage = "Debe colocar su nombre.")]
         [DataType(DataType.Text)]
         public string Nombre { get; set; }

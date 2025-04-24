@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using RealEstate.Application.Contracts.identity;
 using RealEstate.Application.Dtos.identity;
+using RealEstate.Application.Dtos.identity.account;
 using RealEstate.Application.Enum;
 using RealEstate.Application.Responses.identity;
 using RealEstate.Identity.Helpers;
@@ -19,16 +21,18 @@ namespace RealEstate.Identity.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
         private readonly EmailHelper _emailHelper;
+        private readonly IMapper _mapper;
 
         protected BaseAccountService(UserManager<ApplicationUser> userManager,
                               IEmailService emailService,
                               EmailHelper emailHelper,
-                              IOptions<JWTSettings> jwtSettings
-                              )
+                              IOptions<JWTSettings> jwtSettings,
+                              IMapper mapper)
         {
             _userManager = userManager;
             _emailService = emailService;
             _emailHelper = emailHelper;
+            _mapper = mapper;
         }
         public async Task<string> ConfirmAccountAsync(string userId, string token)
         {
@@ -92,10 +96,10 @@ namespace RealEstate.Identity.Services
                 return SetError($"Ya existe un usuario con la cédula {request.Cedula}.");
 
             var activeByDefaultRoles = new List<string>
-            {
-                Roles.Desarrollador.ToString(),
-                Roles.Administrador.ToString()
-            };
+    {
+        Roles.Desarrollador.ToString(),
+        Roles.Administrador.ToString()
+    };
 
             var usuario = new ApplicationUser
             {
@@ -116,15 +120,21 @@ namespace RealEstate.Identity.Services
             }*/
 
             var result = await _userManager.CreateAsync(usuario, request.Password);
+
             if (!result.Succeeded)
                 return SetError(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            var registerDto = _mapper.Map<RegisterDto>(usuario);
+
+            registerDto.File = request.FotoFile;
+
+            response.Dynamic = registerDto;
 
             switch (request.Rol)
             {
                 case "Administrador":
                     await _userManager.AddToRoleAsync(usuario, Roles.Administrador.ToString());
 
-                    // Opcional: Enviar email de bienvenida a desarrolladores
                     await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
                     {
                         To = usuario.Email,
@@ -136,7 +146,6 @@ namespace RealEstate.Identity.Services
                 case "Desarrollador":
                     await _userManager.AddToRoleAsync(usuario, Roles.Desarrollador.ToString());
 
-                    // Opcional: Enviar email de bienvenida a desarrolladores
                     await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
                     {
                         To = usuario.Email,
@@ -150,7 +159,7 @@ namespace RealEstate.Identity.Services
                     await _emailService.SendEmailAsync(new Infraestructure.Dtos.EmailRequest
                     {
                         To = usuario.Email,
-                        Body = $"Bienvenido {usuario.Nombre} como Agente Inmobiliario. Su cuenta necesita la activacion. Por favor, contactar con un administrador.",
+                        Body = $"Bienvenido {usuario.Nombre} como Agente Inmobiliario. Su cuenta necesita la activación. Por favor, contactar con un administrador.",
                         Subject = "Registro de Agente"
                     });
                     break;
@@ -177,9 +186,9 @@ namespace RealEstate.Identity.Services
                 default:
                     return SetError("Rol no válido.");
             }
-
             return response;
         }
+
 
         public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request)
         {

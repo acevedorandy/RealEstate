@@ -245,11 +245,12 @@
     </div>
 
 
-    <!-- Filtros -->
-    <div class="filter-section">
-        <h5 class="filter-title"><i class="fas fa-filter"></i>Filtrar Propiedades</h5>
+    <!-- Filters Section -->
+    <div class="filter-card">
+        <h3 class="filter-title"><i class="fas fa-sliders-h"></i> Filtros Avanzados</h3>
         <form asp-action="Filter" method="get">
-            <div class="row g-3">
+            <div class="row g-4">
+                <!-- Tipo de Propiedad -->
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">
                         <i class="fas fa-building me-2"></i>Tipo de Propiedad
@@ -257,6 +258,13 @@
                     @Html.DropDownList("tipoPropiedad", (List<SelectListItem>)ViewBag.Tipos, "Todos los tipos", new { @class = "form-select shadow-sm" })
                 </div>
 
+                <!-- Código -->
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold"><i class="fas fa-barcode me-2"></i>Código</label>
+                    <input type="text" name="codigo" class="form-control shadow-sm" placeholder="Ej. ABC123" />
+                </div>
+
+                <!-- Rango de Precio -->
                 <div class="col-md-3">
                     <label class="form-label fw-semibold"><i class="fas fa-tag me-2"></i>Rango de Precio</label>
                     <div class="input-group mb-2">
@@ -271,30 +279,34 @@
                     </div>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label fw-semibold"><i class="fas fa-bed me-2"></i>Habitaciones</label>
-                    <select name="habitacion" class="form-select shadow-sm">
-                        <option value="">Cualquiera</option>
-                        <option value="1">1+</option>
-                        <option value="2">2+</option>
-                        <option value="3">3+</option>
-                        <option value="4">4+</option>
-                    </select>
+                <!-- Habitaciones -->
+                <div class="col-md-1">
+                    <label class="form-label fw-semibold"><i class="fas fa-bed me-2"></i>Habit.</label>
+                    @Html.TextBox("habitacion", null, new
+                        {
+                            @class = "form-control shadow-sm",
+                            type = "number",
+                            min = "0",
+                            placeholder = "0"
+                        })
                 </div>
 
-                <div class="col-md-2">
+                <!-- Baños -->
+                <div class="col-md-1">
                     <label class="form-label fw-semibold"><i class="fas fa-bath me-2"></i>Baños</label>
-                    <select name="baños" class="form-select shadow-sm">
-                        <option value="">Cualquiera</option>
-                        <option value="1">1+</option>
-                        <option value="2">2+</option>
-                        <option value="3">3+</option>
-                    </select>
+                    @Html.TextBox("baños", null, new
+                        {
+                            @class = "form-control shadow-sm",
+                            type = "number",
+                            min = "0",
+                            placeholder = "0"
+                        })
                 </div>
 
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100 shadow">
-                        <i class="fas fa-search me-2"></i> Buscar
+                <!-- Botón de búsqueda -->
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 shadow-lg">
+                        <i class="fas fa-search me-2"></i>Buscar
                     </button>
                 </div>
             </div>
@@ -306,8 +318,8 @@
     {
         <div class="no-properties">
             <i class="fas fa-home"></i>
-            <h3>No hay propiedades disponibles</h3>
-            <p>Actualmente no tenemos propiedades que coincidan con tu búsqueda.</p>
+            <h3>No encontramos propiedades</h3>
+            <p>Lo sentimos, no hay propiedades disponibles que coincidan con tus criterios de búsqueda. Intenta ajustar los filtros o vuelve a intentarlo más tarde.</p>
         </div>
     }
     else
@@ -319,7 +331,10 @@
                     <div class="property-card card h-100">
                         <div class="img-container">
                             <img src="@item.Imagen" class="card-img-top" alt="@item.Titulo" />
-                            <span class="property-badge tipo-@item.TipoPropiedad">@item.TipoPropiedad</span>
+                            <span class="property-badge tipo-@item.NombreTipo.ToLower().Replace(" ", "-") d-inline-flex align-items-center px-3 py-1 rounded-pill bg-gradient bg-success text-white fw-bold shadow">
+                                <i class="fas fa-tag me-2 fs-6"></i>
+                                <span class="text-nowrap">@item.NombreTipo</span>
+                            </span>
                             <span class="price-tag">RD$ @item.Precio.ToString("N0")</span>
                         </div>
 
@@ -389,7 +404,7 @@
                                     </div>
                                     <div class="feature-text">
                                         <span class="label">Año Const.</span>
-                                        <span class="value">@item.AñoConstruccion</span>
+                                        <span class="value">@item.AñoConstruccion.Year</span>
                                     </div>
                                 </div>
                             </div>

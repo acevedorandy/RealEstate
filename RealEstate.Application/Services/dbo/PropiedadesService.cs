@@ -89,7 +89,7 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
-        public async Task<ServiceResponse> GetAllFilter(int? tipoPropiedad, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
+        public async Task<ServiceResponse> GetAllFilter(int? tipoPropiedad, string? codigo, decimal? minPrice, decimal? maxPrice, int? habitacion, int? baños)
         {
             ServiceResponse response = new ServiceResponse();
 
@@ -110,6 +110,9 @@ namespace RealEstate.Application.Services.dbo
                 {
                     propiedades = propiedades.Where(p => p.TipoPropiedad == tipoPropiedad.Value);
                 }
+
+                if (!string.IsNullOrEmpty(codigo))
+                    propiedades = propiedades.Where(p => p.Codigo.Contains(codigo));
 
                 if (minPrice.HasValue)
                     propiedades = propiedades.Where(p => p.Precio >= minPrice.Value);

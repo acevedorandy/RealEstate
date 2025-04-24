@@ -66,9 +66,7 @@ namespace RealEstate.Web.Controllers
                 {
                     return RedirectToAction("Index", "Clientes");
                 }
-
-                // Por defecto si no tiene ninguno de los roles
-                return RedirectToAction("Welcome", "Account");
+                return RedirectToAction("Index", "Account");
             }
             else
             {
@@ -101,9 +99,34 @@ namespace RealEstate.Web.Controllers
             {
                 registerDto.HasError = response.HasError;
                 registerDto.Error = response.Error;
+                TempData["ErrorMessage"] = registerDto.Error;
+                var roles = _selectRol.Roles();
+                ViewBag.Rol = roles;
                 return View(registerDto);
             }
-            return RedirectToRoute(new { controller = "Account", action = "Welcome" });
+            else
+            {
+                registerDto = response.Dynamic; 
+                registerDto = await _imagenHelper.SavePerfilPhoto(registerDto); 
+
+                UsuariosDto dto = new UsuariosDto
+                {
+                    Id = registerDto.Id,
+                    Foto = registerDto.Foto
+                };
+
+                var updateResult = await _usuariosService.UpdatePhotoIdentityUserAsync(dto.Id, dto.Foto);
+                if (updateResult.IsSuccess)
+                {
+                    TempData["SuccessMessage"] = "Registro completado correctamente.";
+                    return RedirectToAction("Index", "Account");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Usuario registrado, pero la hubo un problema al cargar la foto.";
+                    return RedirectToAction("Index", "Account");
+                }
+            }
         }
 
         public async Task<IActionResult> ConfirmEmail(string userId, string token)

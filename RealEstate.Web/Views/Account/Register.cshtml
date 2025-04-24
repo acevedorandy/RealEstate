@@ -2,28 +2,60 @@
 @model RegisterDto;
 
 @{
+    Layout = "_Layout"; 
     ViewData["Title"] = "Registrarse";
 }
 
 <style>
     html, body {
         margin: 0;
-        overflow-y: auto; /* Permitir scroll vertical si es necesario */
+        overflow-y: auto;
         background-color: #f4f7fa;
+        height: 100%;
+    }
+
+    .container-fluid {
+        padding: 0 !important;
+        margin: 0 !important;
+        background: none !important;
     }
 
     .custom-card {
         background-color: rgba(255, 255, 255, 0.95);
-        border-radius: 1rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        max-width: 800px; /* Limitar el ancho máximo */
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        max-width: 850px;
         margin: 2rem auto;
+        position: relative;
+        overflow: hidden;
     }
 
+        .custom-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('/images/logo/real-estate-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            filter: blur(8px);
+        }
+
     .form-control, .form-select {
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        padding: 0.6rem 1rem;
+        border: 1px solid #ced4da;
+        transition: all 0.3s ease;
     }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
 
     body {
         background-image: url('/images/logo/register.jpg');
@@ -34,43 +66,111 @@
     }
 
     .container-form {
-        padding: 1.5rem;
-        backdrop-filter: blur(3px);
+        padding: 2rem;
     }
 
     .form-title {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Montserrat', sans-serif;
         color: #2c3e50;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
 
     .btn-register {
-        border-radius: 8px;
-        padding: 0.6rem;
+        border-radius: 10px;
+        padding: 0.7rem;
         font-weight: 600;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+        border: none;
+        letter-spacing: 0.5px;
     }
 
-    .btn-register:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
 
     .form-label {
-        font-weight: 500;
+        font-weight: 600;
         color: #495057;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .file-upload {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-upload-btn {
+        border: 2px dashed #ced4da;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: rgba(255,255,255,0.7);
+        width: 100%;
+    }
+
+        .file-upload-btn:hover {
+            border-color: #86b7fe;
+            background-color: rgba(134, 183, 254, 0.1);
+        }
+
+    .file-upload-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .file-upload-icon {
+        font-size: 2rem;
+        color: #3a7bd5;
+        margin-bottom: 0.5rem;
+    }
+
+    .file-upload-text {
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+
+    .file-upload-info {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    .file-name {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #495057;
+        font-weight: 500;
     }
 </style>
 
 <div class="container-fluid">
     <div class="container-form">
         <div class="card custom-card">
-            <div class="card-body p-4">
+            <div class="card-body p-5">
                 <h4 class="text-center form-title">¡Bienvenido! Crea tu cuenta</h4>
 
                 <form method="post" asp-controller="Account" asp-action="Register" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
@@ -122,6 +222,21 @@
                         <span asp-validation-for="Phone" class="text-danger small"></span>
                     </div>
 
+                    <!-- Campo para subir foto de perfil -->
+                    <div class="mb-4">
+                        <label asp-for="File" class="form-label">Foto de Perfil</label>
+                        <div class="file-upload">
+                            <label class="file-upload-btn">
+                                <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                                <div class="file-upload-text">Arrastra tu foto o haz clic para seleccionar</div>
+                                <div class="file-upload-info">Formatos aceptados: JPG, PNG (Máx. 5MB)</div>
+                                <input asp-for="File" type="file" class="file-upload-input" accept="image/*" />
+                                <div id="file-name" class="file-name"></div>
+                            </label>
+                        </div>
+                        <span asp-validation-for="File" class="text-danger small"></span>
+                    </div>
+
                     <div class="mb-4">
                         <label asp-for="Rol" class="form-label">Tipo de cuenta</label>
                         <select name="rol" asp-items="@ViewBag.Rol" class="form-select" required>
@@ -131,7 +246,9 @@
                     </div>
 
                     <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-primary btn-register">Registrarse</button>
+                        <button type="submit" class="btn btn-primary btn-register">
+                            <i class="fas fa-user-plus me-2"></i>Registrarse
+                        </button>
                     </div>
                 </form>
             </div>
@@ -141,4 +258,12 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        // Mostrar el nombre del archivo seleccionado
+        document.querySelector('.file-upload-input').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Ningún archivo seleccionado';
+            document.getElementById('file-name').textContent = fileName;
+        });
+    </script>
 }

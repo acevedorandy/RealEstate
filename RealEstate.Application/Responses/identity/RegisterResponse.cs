@@ -10,5 +10,7 @@ namespace RealEstate.Application.Responses.identity
         {
             HasError = false;
         }
+
+        public dynamic Dynamic { get; set; }
     }
 }

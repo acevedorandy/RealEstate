@@ -1,0 +1,317 @@
+﻿@model IEnumerable<RealEstate.Persistance.Models.ViewModel.MensajesViewModel>
+
+@{
+    ViewData["Title"] = "Mis Conversaciones";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+        }
+
+        /* Hero Section */
+        .chat-hero {
+            background: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80') no-repeat center center;
+            background-size: cover;
+            height: 350px;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            margin-bottom: 3rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .chat-hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 2rem;
+        }
+
+        .chat-hero-content {
+            max-width: 800px;
+        }
+
+        .chat-hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .chat-hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Chat Cards */
+        .chat-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            background: white;
+            position: relative;
+        }
+
+            .chat-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 40px rgba(67,97,238,0.15);
+            }
+
+            .chat-card.unread::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 5px;
+                height: 100%;
+                background: var(--accent-color);
+            }
+
+        .chat-card-img {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .chat-card-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.8s ease;
+            }
+
+        .chat-card:hover .chat-card-img img {
+            transform: scale(1.1);
+        }
+
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        .chat-card-body {
+            padding: 1.5rem;
+        }
+
+        .chat-card-title {
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .chat-card-subtitle {
+            color: var(--gray-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .chat-card-subtitle i {
+                margin-right: 0.5rem;
+                color: var(--accent-color);
+            }
+
+        .chat-card-message {
+            color: var(--gray-color);
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        .chat-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .chat-card-date {
+            color: var(--gray-color);
+            font-size: 0.85rem;
+        }
+
+        .chat-card-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .chat-card-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(67,97,238,0.3);
+            }
+
+        .no-chats {
+            text-align: center;
+            padding: 5rem 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+            .no-chats i {
+                font-size: 5rem;
+                color: rgba(67,97,238,0.2);
+                margin-bottom: 2rem;
+            }
+
+            .no-chats h3 {
+                color: var(--dark-color);
+                font-weight: 700;
+                margin-bottom: 1rem;
+            }
+
+            .no-chats p {
+                color: var(--gray-color);
+                margin-bottom: 2rem;
+                max-width: 500px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+        /* Responsive */
+        @@media (max-width: 992px) {
+            .chat-hero-title {
+                font-size: 2.5rem;
+            }
+
+            .chat-hero-subtitle {
+                font-size: 1.3rem;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .chat-hero {
+                height: 300px;
+            }
+
+            .chat-hero-title {
+                font-size: 2rem;
+            }
+
+            .chat-hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .chat-hero {
+                height: 250px;
+            }
+
+            .chat-hero-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+}
+
+<!-- Hero Section -->
+<div class="chat-hero">
+    <div class="chat-hero-overlay">
+        <div class="chat-hero-content">
+            <h1 class="chat-hero-title"><i class="fas fa-comments me-3"></i>Mis Conversaciones</h1>
+            <p class="chat-hero-subtitle">Revisa tus mensajes sobre las propiedades de interés</p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="no-chats">
+            <i class="fas fa-comment-slash"></i>
+            <h3>No tienes conversaciones activas</h3>
+            <p>Cuando inicies una conversación sobre una propiedad, aparecerá aquí para que puedas darle seguimiento.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var chat in Model)
+            {
+                <div class="col-lg-6">
+                    <div class="chat-card @(!chat.Visto ? "unread" : "")">
+                        <div class="chat-card-img">
+                            <img src="@(string.IsNullOrEmpty(chat.PropiedadFoto) ? "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" : chat.PropiedadFoto)"
+                                 alt="@chat.PropiedadNombre" />
+                            <span class="property-badge">@chat.Codigo</span>
+                        </div>
+                        <div class="chat-card-body">
+                            <h3 class="chat-card-title">@chat.PropiedadNombre</h3>
+                            <div class="chat-card-subtitle">
+                                <i class="fas fa-user"></i>
+                                <span>Conversación con @chat.DestinatarioNombre</span>
+                            </div>
+                            <p class="chat-card-message">@chat.Mensaje</p>
+                            <div class="chat-card-footer">
+                                <span class="chat-card-date"><i class="far fa-clock me-1"></i> @chat.Enviado.ToString("g")</span>
+                                <a href="@Url.Action("ObtenerConversacion", "Mensajes", new { propiedadId = chat.PropiedadID, destinatarioId = chat.DestinatarioID })"
+                                   class="chat-card-btn">
+                                    <i class="fas fa-comment-dots me-1"></i> Continuar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Efecto de aparición suave para las tarjetas
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.chat-card');
+
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transitionDelay = `${index * 0.1}s`;
+
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            });
+        });
+    </script>
+}

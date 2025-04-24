@@ -1,189 +1,176 @@
 ﻿@model IEnumerable<RealEstate.Persistance.Models.dbo.PropiedadesModel>
 
 @{
-    ViewData["Title"] = "Propiedades";
+    ViewData["Title"] = "Propiedades Disponibles";
 }
 
-<div class="mb-4 position-relative text-white">
-    <img src="~/images/program/propiedadesHome.jpg" alt="Portada" class="img-fluid w-100"
-         style="max-height: 300px; object-fit: cover; filter: brightness(60%);" />
-    <h1 class="position-absolute top-50 start-50 translate-middle text-center fw-bold display-5">
-        Propiedades Disponibles
-    </h1>
-</div>
-<!-- Alert Messages -->
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-check-circle me-3 fs-4"></i>
-            <div>@TempData["SuccessMessage"]</div>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<!-- Hero Section Mejorada -->
+<div class="hero-banner position-relative overflow-hidden rounded-4 mb-5">
+    <div class="hero-image-wrapper">
+        <img src="~/images/program/propiedadesHome.jpg" alt="Portada" class="hero-image">
     </div>
-}
-
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
-            <div>@TempData["ErrorMessage"]</div>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="hero-content text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">Propiedades Exclusivas</h1>
+        <p class="lead mb-0">Descubre tu próximo hogar entre nuestras selección premium</p>
     </div>
-}
-
-<div class="mb-4 text-end d-flex justify-content-end gap-3">
-    <a class="btn btn-gradient-green shadow-sm" asp-action="Create">
-        <i class="fas fa-plus-circle me-1"></i> Crear Nueva Propiedad
-    </a>
-
-        <a class="btn btn-gradient-blue shadow-sm" asp-action="Mejoras">
-        <i class="fas fa-magic me-1"></i> Mejorar Propiedad
-    </a>
 </div>
 
-<style>
-    .btn-gradient-green {
-        background: linear-gradient(135deg, #22c55e, #16a34a);
-        color: white;
-        border: none;
-        transition: all 0.3s ease-in-out;
+<div class="container">
+    <!-- Alert Messages Modernizados -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4 rounded-3 shadow-sm" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-3 fs-4"></i>
+                <div class="flex-grow-1">@TempData["SuccessMessage"]</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
     }
 
-    .btn-gradient-green:hover {
-        background: linear-gradient(135deg, #16a34a, #15803d);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show mb-4 rounded-3 shadow-sm" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                <div class="flex-grow-1">@TempData["ErrorMessage"]</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
     }
 
-    .btn-gradient-blue {
-        background: linear-gradient(135deg, #3b82f6, #06b6d4);
-        color: white;
-        border: none;
-        transition: all 0.3s ease-in-out;
-    }
+    <!-- Botones de Acción Mejorados -->
+    <div class="d-flex justify-content-end gap-3 mb-4">
+        <a class="btn btn-gradient-green shadow-sm rounded-pill px-4" asp-action="Create">
+            <i class="fas fa-plus-circle me-2"></i> Nueva Propiedad
+        </a>
 
-    .btn-gradient-blue:hover {
-        background: linear-gradient(135deg, #2563eb, #0ea5e9);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-        .btn-gradient-view {
-            background: linear-gradient(135deg, #4e73df, #224abe);
-            color: white;
-            border: none;
-            transition: all 0.3s;
-            border-radius: 0.25rem;
-        }
-
-        .btn-gradient-edit {
-            background: linear-gradient(135deg, #f6c23e, #dda20a);
-            color: white;
-            border: none;
-            transition: all 0.3s;
-            border-radius: 0.25rem;
-        }
-
-        .btn-gradient-delete {
-            background: linear-gradient(135deg, #e74a3b, #be2617);
-            color: white;
-            border: none;
-            transition: all 0.3s;
-            border-radius: 0.25rem;
-        }
-
-        .btn-gradient-improve {
-            background: linear-gradient(135deg, #1cc88a, #13855c);
-            color: white;
-            border: none;
-            transition: all 0.3s;
-            border-radius: 0.25rem;
-        }
-
-        .btn-group > .btn:not(:first-child) {
-            margin-left: 1px;
-        }
-
-        .btn-group > .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            opacity: 0.9;
-        }
-
-        .btn-group > .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-group {
-            gap: 2px;
-        }
-</style>
-
-<hr />
+        <a class="btn btn-gradient-blue shadow-sm rounded-pill px-4" asp-action="Mejoras">
+            <i class="fas fa-sparkles me-2"></i> Mejorar Propiedad
+        </a>
+    </div>
 
     @if (Model == null || !Model.Any())
     {
-        <div class="alert alert-info text-center">
-            <h4 class="alert-heading">Sin propiedades</h4>
-            <p>No hay propiedades registradas aún. Agrega una nueva para comenzar.</p>
+        <div class="empty-state text-center py-5 rounded-4 shadow-sm bg-light">
+            <div class="empty-state-icon mb-3">
+                <i class="fas fa-home fa-4x text-primary opacity-25"></i>
+            </div>
+            <h3 class="fw-bold mb-3">No hay propiedades disponibles</h3>
+            <p class="text-muted mb-4">Comienza agregando tu primera propiedad</p>
+            <a asp-action="Create" class="btn btn-primary btn-lg px-4 rounded-pill">
+                <i class="fas fa-plus me-2"></i>Agregar Propiedad
+            </a>
         </div>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var item in Model)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0">
-                        @* Imagen principal *@
-                        <img src="@item.Imagen" class="card-img-top img-fluid" alt="Imagen de @item.Titulo" style="height: 220px; object-fit: cover;">
+                    <div class="property-card card h-100 border-0 shadow-sm overflow-hidden">
+                        <!-- Badge de Precio -->
+                        <div class="property-price-badge">
+                            <i class="fas fa-tag me-1"></i>
+                            $@item.Precio.ToString("N0")
+                        </div>
 
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-primary">@item.Titulo</h5>
-                            <p class="card-text text-muted mb-2">@item.Descripcion</p>
-
-                            <div class="mb-2">
-                                <span class="badge bg-success fs-6">
-                                    <i class="fas fa-dollar-sign"></i> @item.Precio.ToString("N0")
-                                </span>
+                        <!-- Imagen con Efecto -->
+                        <div class="property-image-container">
+                            <img src="@item.Imagen" class="property-image" alt="@item.Titulo">
+                            <div class="image-overlay d-flex justify-content-center align-items-center">
+                                <button class="btn btn-light btn-sm rounded-pill px-3">
+                                    <i class="fas fa-expand me-1"></i> Ampliar
+                                </button>
                             </div>
+                        </div>
 
-                            <div class="mb-2 text-secondary">
-                                <i class="fas fa-map-marker-alt"></i> @item.Direccion, @item.Ciudad
-                            </div>
-
-                            <div class="d-flex justify-content-between text-muted mb-3 flex-wrap" style="gap: 10px;">
-                                <small><i class="fas fa-building"></i> Piso: @item.Piso</small>
-                                <small><i class="fas fa-layer-group"></i> Niveles: @item.TotalNivel</small>
-                                <small><i class="fas fa-building"></i> Habitaciones: @item.Habitaciones</small>
-                                <small><i class="fas fa-building"></i> Baños: @item.Baños</small>
-                                <small><i class="fas fa-building"></i> Parqueos: @item.Parqueos</small>
-                                <small><i class="fas fa-building"></i> Terreno: @item.TamañoTerreno</small>
-
-                                <small><i class="fas fa-home"></i> Tipo: @item.TipoPropiedad</small>
-                                <small><i class="fas fa-calendar-alt"></i> Año: @item.AñoConstruccion</small>
-                            </div>
-
-                            <div class="mt-auto">
-                                <div class="btn-group w-100 shadow-sm" role="group">
-                                    <a class="btn btn-sm btn-gradient-view" asp-action="Details" asp-route-id="@item.PropiedadID">
-                                        <i class="fas fa-eye mr-1"></i> Ver
-                                    </a>
-                                    <a class="btn btn-sm btn-gradient-edit" asp-action="Edit" asp-route-id="@item.PropiedadID">
-                                        <i class="fas fa-edit mr-1"></i> Editar
-                                    </a>
-                                    <a class="btn btn-sm btn-gradient-delete" asp-action="Delete" asp-route-id="@item.PropiedadID">
-                                        <i class="fas fa-trash-alt mr-1"></i> Eliminar
-                                    </a>
-                                    <a class="btn btn-sm btn-gradient-improve" asp-action="AdministrarMejoras" asp-route-id="@item.PropiedadID">
-                                        <i class="fas fa-home mr-1"></i> Mejoras
-                                    </a>
+                        <div class="card-body">
+                            <!-- Encabezado -->
+                            <div class="mb-3">
+                                <h3 class="property-title mb-2">@item.Titulo</h3>
+                                <div class="d-flex align-items-center text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                    <small>@item.Direccion, @item.Ciudad</small>
                                 </div>
+                                <p class="property-description text-muted">@item.Descripcion</p>
+                            </div>
+
+                            <!-- Características -->
+                            <div class="property-features mb-4">
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-door-open feature-icon"></i>
+                                            <span class="feature-value">@item.Habitaciones</span>
+                                            <small class="feature-label">Habs</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-bath feature-icon"></i>
+                                            <span class="feature-value">@item.Baños</span>
+                                            <small class="feature-label">Baños</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-car feature-icon"></i>
+                                            <span class="feature-value">@item.Parqueos</span>
+                                            <small class="feature-label">Parking</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-building feature-icon"></i>
+                                            <span class="feature-value">@item.Piso</span>
+                                            <small class="feature-label">Piso</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-layer-group feature-icon"></i>
+                                            <span class="feature-value">@item.TotalNivel</span>
+                                            <small class="feature-label">Niveles</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-ruler-combined feature-icon"></i>
+                                            <span class="feature-value">@item.TamañoTerreno</span>
+                                            <small class="feature-label">m²</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tipo y Año -->
+                            <div class="d-flex justify-content-between text-muted mb-4">
+                                <div>
+                                    <i class="fas fa-home me-1"></i>
+                                    <small>@item.NombreTipo</small>
+                                </div>
+                                <div>
+                                    <i class="fas fa-calendar me-1"></i>
+                                    <small>@item.AñoConstruccion.Year</small>
+                                </div>
+                            </div>
+
+                            <!-- Botones de Acción -->
+                            <div class="btn-group-action">
+                                <a asp-action="Details" asp-route-id="@item.PropiedadID" class="btn btn-action btn-view">
+                                    <i class="fas fa-eye me-1"></i> Ver
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.PropiedadID" class="btn btn-action btn-edit">
+                                    <i class="fas fa-pen me-1"></i> Editar
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.PropiedadID" class="btn btn-action btn-delete">
+                                    <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                </a>
+                                <a asp-action="AdministrarMejoras" asp-route-id="@item.PropiedadID" class="btn btn-action btn-improve">
+                                    <i class="fas fa-sparkles me-1"></i> Mejoras
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -193,6 +180,231 @@
     }
 </div>
 
+@section Styles {
+    <style>
+        /* Estilos Modernos */
+        .hero-banner {
+            height: 400px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-image-wrapper {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.7);
+            transition: transform 0.5s ease;
+        }
+
+        .hero-banner:hover .hero-image {
+            transform: scale(1.03);
+        }
+
+        .hero-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            padding: 0 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .empty-state {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 40px;
+            border: 1px dashed #dee2e6;
+        }
+
+        .property-card {
+            border-radius: 12px !important;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+            .property-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12) !important;
+            }
+
+        .property-price-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 2;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            display: flex;
+            align-items: center;
+        }
+
+        .property-image-container {
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .property-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .property-card:hover .property-image {
+            transform: scale(1.05);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .property-card:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .property-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 0.5rem;
+        }
+
+        .property-description {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #6c757d;
+        }
+
+        .feature-box {
+            text-align: center;
+            padding: 8px 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+            .feature-box:hover {
+                background: #e9ecef;
+                transform: translateY(-3px);
+            }
+
+        .feature-icon {
+            font-size: 1.1rem;
+            color: #3b82f6;
+            margin-bottom: 5px;
+        }
+
+        .feature-value {
+            display: block;
+            font-weight: 600;
+            color: #212529;
+            font-size: 0.95rem;
+        }
+
+        .feature-label {
+            font-size: 0.7rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-gradient-green {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+            .btn-gradient-green:hover {
+                background: linear-gradient(135deg, #16a34a, #15803d);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+        .btn-gradient-blue {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+            .btn-gradient-blue:hover {
+                background: linear-gradient(135deg, #2563eb, #0ea5e9);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+        .btn-group-action {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-action {
+            border: none;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #4e73df, #224abe);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #f6c23e, #dda20a);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #e74a3b, #be2617);
+        }
+
+        .btn-improve {
+            background: linear-gradient(135deg, #1cc88a, #13855c);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0.9;
+        }
+    </style>
+}
+
 @section Scripts {
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        // Extensión para truncar texto
+        String.prototype.Truncate = function (length) {
+            return this.length > length ? this.substring(0, length) + '...' : this;
+        };
+    </script>
 }

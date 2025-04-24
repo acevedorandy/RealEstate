@@ -9,7 +9,6 @@ using RealEstate.Application.Responses.identity;
 using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Interfaces.dbo;
 using RealEstate.Application.Helpers.web;
-using RealEstate.Persistance.Models.dbo;
 
 namespace RealEstate.Application.Services.dbo
 {
@@ -85,13 +84,67 @@ namespace RealEstate.Application.Services.dbo
             return response;
         }
 
-        public async Task<ServiceResponse> GetConversation(string remitenteId, string destinatarioId)
+        public async Task<ServiceResponse> GetChatsByAgentAsync()
         {
             ServiceResponse response = new ServiceResponse();
 
             try
             {
-                var result = await _mensajesRepository.GetAll();
+                string agenteId = authentication.Id;
+                var result = await _mensajesRepository.GetChatsByAgent(agenteId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo el mensaje.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> GetChatsByClientAsync()
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                string clienteId = authentication.Id;
+                var result = await _mensajesRepository.GetChatsByClient(clienteId);
+
+                if (!result.Success)
+                {
+                    result.Success = response.IsSuccess;
+                    result.Message = response.Messages;
+
+                    return response;
+                }
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo el mensaje.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> GetConversationAsAgentAsync(int propiedadId, string destinatarioId, string remitenteId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                var result = await _mensajesRepository.GetConversation(propiedadId, destinatarioId, remitenteId);
 
                 if (!result.Success)
                 {
@@ -100,14 +153,7 @@ namespace RealEstate.Application.Services.dbo
                     return response;
                 }
 
-                var mensajes = result.Data as List<MensajesModel>;
-
-                response.Model = mensajes
-                    .Where(m =>
-                        (m.RemitenteID == remitenteId && m.DestinatarioID == destinatarioId) ||
-                        (m.RemitenteID == destinatarioId && m.DestinatarioID == remitenteId))
-                    .OrderBy(m => m.Enviado)
-                    .ToList();
+                response.Model = result.Data;
             }
             catch (Exception ex)
             {
@@ -115,10 +161,35 @@ namespace RealEstate.Application.Services.dbo
                 response.Messages = "Ha ocurrido un error obteniendo los mensajes.";
                 _logger.LogError(response.Messages, ex.ToString());
             }
-
             return response;
         }
 
+        public async Task<ServiceResponse> GetConversationAsync(int propiedadId, string destinatarioId)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                string remitenteId = authentication.Id;
+                var result = await _mensajesRepository.GetConversation(propiedadId, destinatarioId, remitenteId);
+
+                if (!result.Success)
+                {
+                    response.IsSuccess = false;
+                    response.Messages = result.Message;
+                    return response;
+                }
+
+                response.Model = result.Data;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error obteniendo los mensajes.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
 
         public async Task<ServiceResponse> GetDestinatarioAsync()
         {
@@ -174,7 +245,25 @@ namespace RealEstate.Application.Services.dbo
 
             try
             {
-                //dto.RemitenteID = authentication.Id;
+                var mensaje = _mapper.Map<Mensajes>(dto);
+                var result = await _mensajesRepository.Save(mensaje);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Messages = "Ha ocurrido un error agregando el mensaje.";
+                _logger.LogError(response.Messages, ex.ToString());
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse> SendFirstMessage(MensajesDto dto)
+        {
+            ServiceResponse response = new ServiceResponse();
+
+            try
+            {
+                dto.RemitenteID = authentication.Id;
                 var mensaje = _mapper.Map<Mensajes>(dto);
                 var result = await _mensajesRepository.Save(mensaje);
             }

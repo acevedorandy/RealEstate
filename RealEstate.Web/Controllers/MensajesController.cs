@@ -1,54 +1,133 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RealEstate.Application.Contracts.dbo;
 using RealEstate.Application.Dtos.dbo;
-using RealEstate.Persistance.Context;
+using RealEstate.Domain.Entities.dbo;
 using RealEstate.Persistance.Models.dbo;
+using RealEstate.Persistance.Models.ViewModel;
+using RealEstate.Web.Middlewares;
 
 namespace RealEstate.Web.Controllers
 {
+    [ServiceFilter(typeof(LoginAuthorize))]
+    [Authorize]
     public class MensajesController : Controller
     {
         private readonly IMensajesService _mensajesService;
-        private readonly RealEstateContext _realEstateContext;
 
-        public MensajesController(IMensajesService mensajesService, RealEstateContext realEstateContext)
+        public MensajesController(IMensajesService mensajesService)
         { 
             _mensajesService = mensajesService;
-            _realEstateContext = realEstateContext;
         }
 
-        public async Task <IActionResult> Index()
+
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
+        public async Task<IActionResult> ChatsCliente()
         {
-            var result = await _mensajesService.GetDestinatarioAsync();
+            var result = await _mensajesService.GetChatsByClientAsync();
 
             if (result.IsSuccess)
             {
-                List<MensajesModel> mensajes = (List<MensajesModel>)result.Model; 
+                List<MensajesViewModel> mensajes = (List<MensajesViewModel>)result.Model;
                 return View(mensajes);
             }
             return View();
         }
 
-        public async Task <IActionResult> Details(int id)
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
+        public async Task<IActionResult> ObtenerConversacion(int propiedadId, string destinatarioId)
         {
-            var result = await _mensajesService.GetByIDAsync(id);
+            var result = await _mensajesService.GetConversationAsync(propiedadId, destinatarioId);
 
             if (result.IsSuccess)
             {
-                MensajesModel mensajes = (MensajesModel)result.Model; 
+                List<MensajesViewModel> mensajes = (List<MensajesViewModel>)result.Model;
                 return View(mensajes);
             }
             return View();
         }
 
-        public ActionResult Create()
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
+        [HttpPost]
+        public async Task<IActionResult> Enviar(MensajesDto dto)
         {
-            return View();
+            var result = await _mensajesService.SendFirstMessage(dto);
+
+            if (result.IsSuccess)
+            {
+                return RedirectToAction("ObtenerConversacion", "Mensajes", new { destinatarioId = dto.DestinatarioID, propiedadId = dto.PropiedadID });
+            }
+            else
+            {
+                TempData["ErrorMessage"] = result.Messages;
+                return RedirectToAction("ObtenerConversacion", "Mensajes", new { destinatarioId = dto.DestinatarioID, propiedadId = dto.PropiedadID });
+            }
         }
 
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Cliente")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task <IActionResult> Create(MensajesDto dto)
+        public async Task<IActionResult> Create(MensajesDto dto)
+        {
+            try
+            {
+                var result = await _mensajesService.SendFirstMessage(dto);
+
+                if (result.IsSuccess)
+                {
+                    TempData["SuccessMessage"] = "Mensaje enviado exitosamente.";
+                    return RedirectToAction("Details", "Clientes", new { id = dto.PropiedadID });
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = result.Messages;
+                    return View(dto);
+                }
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        /* Region del Agente */
+
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Agente")]
+        public async Task<IActionResult> ChatsAgente()
+        {
+            var result = await _mensajesService.GetChatsByAgentAsync();
+
+            if (result.IsSuccess)
+            {
+                List<MensajesViewModel> mensajes = (List<MensajesViewModel>)result.Model;
+                return View(mensajes);
+            }
+            return View();
+        }
+
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Agente")]
+        public async Task<IActionResult> ObtenerConversacionAgente(int propiedadId, string remitenteId, string destinatarioId)
+        {
+            var result = await _mensajesService.GetConversationAsAgentAsync(propiedadId, remitenteId, destinatarioId);
+
+            if (result.IsSuccess)
+            {
+                List<MensajesViewModel> mensajes = (List<MensajesViewModel>)result.Model;
+                return View(mensajes);
+            }
+            return View();
+        }
+
+        [ServiceFilter(typeof(LoginAuthorize))]
+        [Authorize(Roles = "Agente")]
+        [HttpPost]
+        public async Task<IActionResult> Replay(MensajesDto dto)
         {
             try
             {
@@ -56,94 +135,12 @@ namespace RealEstate.Web.Controllers
 
                 if (result.IsSuccess)
                 {
-                    TempData["SuccessMessage"] = "Mensaje enviado exitosamente.";
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("ObtenerConversacionAgente", "Mensajes", new { remitenteId = dto.RemitenteID, destinatarioId = dto.DestinatarioID, propiedadId = dto.PropiedadID });
                 }
                 else
                 {
                     TempData["ErrorMessage"] = result.Messages;
-                    return View(dto);
-                }
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Conversacion(string remitenteId, string destinatarioId)
-        {
-            var mensaje = await _mensajesService.GetConversation(remitenteId, destinatarioId);
-            return PartialView("_ConversacionPartial", mensaje.Model);
-        }
-
-        public async Task <IActionResult> Edit(int id)
-        {
-            var result = await _mensajesService.GetByIDAsync(id);
-
-            if (result.IsSuccess)
-            {
-                MensajesModel mensajes = (MensajesModel)result.Model;
-                return View(mensajes);
-            }
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task <IActionResult> Edit(MensajesDto dto)
-        {
-            try
-            {
-                var result = await _mensajesService.UpdateAsync(dto);
-
-                if (result.IsSuccess)
-                {
-                    TempData["SuccessMessage"] = "Mensaje actualizado exitosamente.";
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = result.Messages;
-                    return View(dto);
-                }
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        public async Task <IActionResult> Delete(int id)
-        {
-            var result = await _mensajesService.GetByIDAsync(id);
-
-            if (result.IsSuccess)
-            {
-                MensajesModel mensajes = (MensajesModel)result.Model;
-                return View(mensajes);
-            }
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task <IActionResult> Delete(MensajesDto dto)
-        {
-            try
-            {
-                var result = await _mensajesService.RemoveAsync(dto);
-
-                if (result.IsSuccess)
-                {
-                    TempData["SuccessMessage"] = "Mensaje actualizado exitosamente.";
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = result.Messages;
-                    return View(dto);
+                    return RedirectToAction("ObtenerConversacion", "Mensajes", new { remitenteId = dto.RemitenteID, destinatarioId = dto.DestinatarioID, propiedadId = dto.PropiedadID });
                 }
             }
             catch

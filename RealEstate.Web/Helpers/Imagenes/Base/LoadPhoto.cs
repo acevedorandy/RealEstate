@@ -23,7 +23,6 @@ namespace RealEstate.Web.Helpers.Imagenes.Base
 
             string uploadsFolder = Path.Combine(_webHost.WebRootPath, "images", "propiedades");
 
-            // Crear directorio si no existe (aquí se centraliza esta lógica)
             Directory.CreateDirectory(uploadsFolder);
 
             string fileExtension = Path.GetExtension(file.FileName);

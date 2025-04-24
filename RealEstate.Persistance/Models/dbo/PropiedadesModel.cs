@@ -22,6 +22,7 @@ namespace RealEstate.Persistance.Models.dbo
         public int Piso { get; set; }
         public DateTime AñoConstruccion { get; set; }
         public int TipoPropiedad { get; set; }
+        public string NombreTipo { get; set; }
         public bool Disponibilidad { get; set; }
         public string Imagen { get; set; }
         public bool? Vendida { get; set; }

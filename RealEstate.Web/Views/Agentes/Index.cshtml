@@ -2,80 +2,210 @@
 
 @{
     ViewData["Title"] = "Listado de Agentes";
-
 }
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<!-- Portada con imagen y título -->
-<div class="mb-4 position-relative text-white">
-    <img src="~/images/program/portada.jpg" alt="Portada" class="img-fluid w-100"
-         style="max-height: 300px; object-fit: cover; filter: brightness(60%);" />
-    <h1 class="position-absolute top-50 start-50 translate-middle text-center fw-bold display-5">
-        Listado de Agentes
-    </h1>
+<style>
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #e74c3c;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+        --border-radius: 8px;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--light-gray);
+        color: #333;
+    }
+
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/program/portada.jpg') center/cover no-repeat;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 3rem;
+    }
+
+    .hero-title {
+        font-weight: 600;
+        color: white;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 300;
+    }
+
+    .search-box {
+        max-width: 800px;
+        margin: 0 auto 3rem;
+    }
+
+    .search-input {
+        border-radius: var(--border-radius) 0 0 var(--border-radius);
+        border-right: none;
+        padding: 12px 20px;
+    }
+
+    .search-btn {
+        border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        background-color: var(--secondary-color);
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+        .search-btn:hover {
+            background-color: #2980b9;
+        }
+
+    .agent-card {
+        position: relative;
+        padding-top: 1rem; /* menos relleno ahora */
+        text-align: center;
+    }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+    .agent-photo-container {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .agent-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .no-photo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ecf0f1;
+        color: #7f8c8d;
+        font-size: 3rem;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .agent-name {
+        margin-top: 0.5rem; /* ya no necesita compensar */
+    }
+
+    .agent-position {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .view-properties-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .view-properties-btn:hover {
+            background-color: #1a252f;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .no-agents-message {
+        padding: 2rem;
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+
+</style>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <h1 class="hero-title display-4">Nuestros Agentes</h1>
+        <p class="hero-subtitle lead">Profesionales comprometidos con encontrar tu hogar ideal</p>
+    </div>
+</section>
+
+<!-- Search Section -->
+<div class="container">
+    <div class="search-box">
+        <form method="get" asp-controller="Agentes" asp-action="Buscar" class="d-flex">
+            <input name="nombre" id="filtroNombre" type="text"
+                   class="form-control search-input"
+                   placeholder="Buscar agente por nombre...">
+            <button type="submit" class="btn search-btn px-4">
+                <i class="fas fa-search me-2"></i> Buscar
+            </button>
+        </form>
+    </div>
 </div>
 
-<!-- Buscador por nombre -->
-<div class="container mb-4">
-    <form method="get" asp-controller="Agentes" asp-action="Buscar">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="input-group shadow-sm">
-                    <input name="nombre" id="filtroNombre" type="text" class="form-control" placeholder="Buscar por nombre o apellido..." />
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> <!-- Si usas Font Awesome -->
-                        <!-- <i class="bi bi-search"></i>  Bootstrap Icons alternativa -->
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-
-
-<!-- Cards de usuarios -->
+<!-- Agents Grid -->
 <div class="container">
     @if (Model == null || !Model.Any())
     {
-        <div class="alert alert-info text-center">
-            No hay agentes disponibles por el momento.
+        <div class="no-agents-message text-center">
+            <i class="fas fa-user-tie fa-2x mb-3" style="color: #bdc3c7;"></i>
+            <h4 class="mb-3">No hay agentes disponibles</h4>
+            <p class="text-muted">Actualmente no tenemos agentes registrados en nuestro sistema.</p>
         </div>
     }
     else
     {
-        <div class="row justify-content-center g-4" id="usuariosContainer">
+        <div class="row" id="usuariosContainer">
             @foreach (var usuario in Model)
             {
-                <div class="col-sm-12 col-md-6 col-lg-4 d-flex justify-content-center usuario-card"
+                <div class="col-md-4 col-lg-3 mb-4 usuario-card"
                      data-nombre="@($"{usuario.Nombre} {usuario.Apellido}".ToLower())">
-                    <div class="card shadow-sm border-0 w-100" style="max-width: 330px;">
-                        <div class="card-body text-center">
-                            <div class="mb-3 d-flex justify-content-center">
-                                @if (!string.IsNullOrEmpty(usuario.Foto))
-                                {
-                                    <img src="@usuario.Foto" alt="Foto de @usuario.Nombre"
-                                         class="rounded-circle shadow border"
-                                         style="width: 120px; height: 120px; object-fit: cover;" />
-                                }
-                                else
-                                {
-                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white"
-                                         style="width: 120px; height: 120px;">
-                                        Sin foto
-                                    </div>
-                                }
-                            </div>
-
-                            <h5 class="card-title">@usuario.Nombre @usuario.Apellido</h5>
-
-                            <!-- Campo hidden para usuario.Id -->
-                            <input type="hidden" name="usuarioId" value="@usuario.Id" />
-
-                            <a href="@Url.Action("PropiedadesAgente", "Agentes", new { agenteId = usuario.Id })"
-                               class="btn btn-outline-primary mt-3">
-                                <i class="bi bi-house-door"></i> Ver propiedades
-                            </a>
+                    <div class="agent-card text-center p-4">
+                        <div class="agent-photo-container">
+                            @if (!string.IsNullOrEmpty(usuario.Foto))
+                            {
+                                <img src="@usuario.Foto" alt="@usuario.Nombre" class="agent-photo" onerror="this.onerror=null;this.src='/images/default-agent.jpg';">
+                            }
+                            else
+                            {
+                                <div class="agent-photo no-photo">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            }
                         </div>
+
+                        <h5 class="agent-name">@usuario.Nombre @usuario.Apellido</h5>
+                        <p class="agent-position">Agente Inmobiliario</p>
+
+                        <a href="@Url.Action("PropiedadesAgente", "Agentes", new { agenteId = usuario.Id })"
+                           class="btn view-properties-btn">
+                            <i class="fas fa-home me-2"></i> Ver propiedades
+                        </a>
                     </div>
                 </div>
             }
@@ -83,25 +213,22 @@
     }
 </div>
 
-<!-- JS para filtrar por nombre -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const filtroInput = document.getElementById('filtroNombre');
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filtroInput = document.getElementById('filtroNombre');
 
-        if (filtroInput) {
-            filtroInput.addEventListener('input', function () {
-                const filtro = this.value.trim().toLowerCase();
-                const cards = document.querySelectorAll('.usuario-card');
+            if (filtroInput) {
+                filtroInput.addEventListener('input', function () {
+                    const filtro = this.value.trim().toLowerCase();
+                    const cards = document.querySelectorAll('.usuario-card');
 
-                cards.forEach(card => {
-                    const nombreCompleto = card.getAttribute('data-nombre');
-                    if (nombreCompleto.includes(filtro)) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
+                    cards.forEach(card => {
+                        const nombreCompleto = card.getAttribute('data-nombre');
+                        card.style.display = nombreCompleto.includes(filtro) ? 'block' : 'none';
+                    });
                 });
-            });
-        }
-    });
-</script>
+            }
+        });
+    </script>
+}

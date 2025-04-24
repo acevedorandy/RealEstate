@@ -261,7 +261,7 @@
                     <div class="row">
                         <div class="col-6 col-md-4 mb-3 text-center">
                             <div class="feature-icon"><i class="bi bi-house-door-fill"></i></div>
-                            <div class="feature-value">@Model.PropiedadesModel.TipoPropiedad</div>
+                            <div class="feature-value">@Model.PropiedadesModel.NombreTipo</div>
                             <small class="text-muted">Tipo</small>
                         </div>
 
@@ -340,11 +340,41 @@
 
         <!-- Columna lateral (Agente + Contacto) -->
         <div class="col-lg-4">
+            <!-- Alert Messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle me-3 fs-4"></i>
+                        <div>@TempData["SuccessMessage"]</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                        <div>@TempData["ErrorMessage"]</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
             <!-- Tarjeta del agente -->
             <div class="card agent-card mb-4">
                 <div class="card-body text-center p-4">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="agent-img rounded-circle mb-3" alt="Agente @Model.UsuariosModel.Nombre" />
-                    <h4 class="mb-2">@Model.UsuariosModel.Nombre @Model.UsuariosModel.Apellido</h4>
+                    @{
+                        var foto = string.IsNullOrEmpty(Model.UsuariosModel.Foto)
+                        ? "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                        : Model.UsuariosModel.Foto;
+                    }
+
+                    <img src="@foto"
+                         class="agent-img rounded-circle mb-3"
+                         alt="Agente @Model.UsuariosModel.Nombre"
+                         style="width: 120px; height: 120px; object-fit: cover;" />                    <h4 class="mb-2">@Model.UsuariosModel.Nombre @Model.UsuariosModel.Apellido</h4>
                     <p class="text-muted mb-3">Agente Inmobiliario</p>
 
                     <div class="d-flex justify-content-center gap-2 mb-3">

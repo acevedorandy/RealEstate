@@ -75,6 +75,14 @@ namespace RealEstate.Web.Controllers
         {
             try
             {
+                var mejoraExiste = await _mejorasService.ExisteMejoraAsync(dto.MejoraID, dto.PropiedadID);
+
+                if (mejoraExiste)
+                {
+                    TempData["ErrorMessage"] = "Al parecer esta propiedad ya posee esta mejora.";
+                    return RedirectToAction("Mejoras", "Propiedades");
+                }
+
                 var result = await _propiedadMejorasService.SaveAsync(dto);
 
                 if (result.IsSuccess)
@@ -117,6 +125,13 @@ namespace RealEstate.Web.Controllers
             if (resultAgente.IsSuccess)
             {
                 propiedadDetalles.UsuariosModel = (UsuariosModel)resultAgente.Model;
+            }
+
+            var resultMejora = await _mejorasService.GetMejorasByPropertyAsync(id);
+
+            if (resultMejora.IsSuccess)
+            {
+                propiedadDetalles.MejorasModels = (List<PropiedadMejorasModelViewModel>)resultMejora.Model;
             }
 
             return View(propiedadDetalles);

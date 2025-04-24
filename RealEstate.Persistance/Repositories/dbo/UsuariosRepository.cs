@@ -84,6 +84,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  Cedula = usuario.Cedula,
                                  Email = usuario.Email,
                                  Telefono = usuario.PhoneNumber,
+                                 Foto = usuario.Foto,
                                  Rol = rol.Name,
                                  IsActive = usuario.IsActive
 
@@ -124,6 +125,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  UserName = usuario.UserName,
                                  Cedula = usuario.Cedula,
                                  Email = usuario.Email,
+                                 Foto = usuario.Foto,
                                  Telefono = usuario.PhoneNumber,
                                  Rol = rol.Name,
                                  IsActive = usuario.IsActive
@@ -492,6 +494,44 @@ namespace RealEstate.Persistance.Repositories.dbo
 
                 user.Foto = userToUpdate.Foto;
                 result.Data = userToUpdate;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error actualizando el usuario.";
+                _logger.LogError(ex, result.Message);
+            }
+            return result;
+        }
+
+        public async Task<OperationResult> UpdatePhotoIdentityUser(string Id, string foto)
+        {
+            OperationResult result = new OperationResult();
+
+            OperationResult SetError(string message)
+            {
+                result.Success = false;
+                result.Message = message;
+                return result;
+            }
+
+            try
+            {
+                var UserUpdatePhoto = await _identityContext.Users.FindAsync(Id);
+                if (UserUpdatePhoto == null)
+                    return SetError("Usuario no encontrado.");
+
+                UserUpdatePhoto.Foto = foto;
+
+                var updateResult = await _userManager.UpdateAsync(UserUpdatePhoto);
+
+                if (!updateResult.Succeeded)
+                {
+                    var errors = string.Join("; ", updateResult.Errors.Select(e => e.Description));
+                    return SetError("Error actualizando usuario: " + errors);
+                }
+
+                result.Data = updateResult;
             }
             catch (Exception ex)
             {

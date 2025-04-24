@@ -117,51 +117,47 @@ namespace RealEstate.Persistance.Repositories.dbo
 
             try
             {
-                var propiedades = await _realEstateContext.Propiedades
-                    .ToListAsync();
-
-                var usuarios = await _identityContext.Users
-                    .ToListAsync();
-
-                var tipoVentas = await _realEstateContext.TiposVenta 
-                    .ToListAsync();
+                var propiedades = await _realEstateContext.Propiedades.ToListAsync();
+                var usuarios = await _identityContext.Users.ToListAsync();
+                var tipoVentas = await _realEstateContext.TiposVenta.ToListAsync();
+                var tipoPropiedades = await _realEstateContext.TiposPropiedad.ToListAsync();
 
                 var datos = (from propiedad in propiedades
                              join agente in usuarios on propiedad.AgenteID equals agente.Id
                              join ventas in tipoVentas on propiedad.TipoVenta equals ventas.TipoVentaID
+                             join tipo in tipoPropiedades on propiedad.TipoPropiedad equals tipo.TipoPropiedadID // ← join con TipoPropiedad
 
                              orderby propiedad.PropiedadID descending
 
-                             //where propiedad.Vendida == false || propiedad.Vendida == null
-
                              select new PropiedadesModel()
-                                {
-                                    PropiedadID = propiedad.PropiedadID,
-                                    Codigo = propiedad.Codigo,
-                                    AgenteID = agente.Id,
-                                    Titulo = propiedad.Titulo,
-                                    Descripcion = propiedad.Descripcion,
-                                    Precio = propiedad.Precio,
-                                    Direccion = propiedad.Direccion,
-                                    Ciudad = propiedad.Ciudad,
-                                    Sector = propiedad.Sector,
-                                    CodigoPostal = propiedad.CodigoPostal,
-                                    Habitaciones = propiedad.Habitaciones,
-                                    Baños = propiedad.Baños,
-                                    Parqueos = propiedad.Parqueos,
-                                    TamañoTerreno = propiedad.TamañoTerreno,
-                                    TotalNivel = propiedad.TotalNivel,
-                                    Piso = propiedad.Piso,
-                                    AñoConstruccion = propiedad.AñoConstruccion,
-                                    TipoPropiedad = propiedad.TipoPropiedad,
-                                    Disponibilidad = propiedad.Disponibilidad,
-                                    Imagen = propiedad != null ? propiedad.Imagen : (string?)null,
-                                    Vendida = propiedad.Vendida,
-                                    TipoVenta = ventas.TipoVentaID,
-
-                                }).ToList();
+                             {
+                                 PropiedadID = propiedad.PropiedadID,
+                                 Codigo = propiedad.Codigo,
+                                 AgenteID = agente.Id,
+                                 Titulo = propiedad.Titulo,
+                                 Descripcion = propiedad.Descripcion,
+                                 Precio = propiedad.Precio,
+                                 Direccion = propiedad.Direccion,
+                                 Ciudad = propiedad.Ciudad,
+                                 Sector = propiedad.Sector,
+                                 CodigoPostal = propiedad.CodigoPostal,
+                                 Habitaciones = propiedad.Habitaciones,
+                                 Baños = propiedad.Baños,
+                                 Parqueos = propiedad.Parqueos,
+                                 TamañoTerreno = propiedad.TamañoTerreno,
+                                 TotalNivel = propiedad.TotalNivel,
+                                 Piso = propiedad.Piso,
+                                 AñoConstruccion = propiedad.AñoConstruccion,
+                                 TipoPropiedad = tipo.TipoPropiedadID,
+                                 NombreTipo = tipo.Nombre, // ← acá se asigna el nombre
+                                 Disponibilidad = propiedad.Disponibilidad,
+                                 Imagen = propiedad != null ? propiedad.Imagen : (string?)null,
+                                 Vendida = propiedad.Vendida,
+                                 TipoVenta = ventas.TipoVentaID,
+                             }).ToList();
 
                 result.Data = datos;
+
             }
             catch (Exception ex)
             {
@@ -187,9 +183,13 @@ namespace RealEstate.Persistance.Repositories.dbo
                 var tipoVentas = await _realEstateContext.TiposVenta
                     .ToListAsync();
 
+                var tipoPropiedades = await _realEstateContext.TiposPropiedad
+                    .ToListAsync();
+
                 var datos = (from propiedad in propiedades
                              join agente in usuarios on propiedad.AgenteID equals agente.Id
                              join ventas in tipoVentas on propiedad.TipoVenta equals ventas.TipoVentaID
+                             join tipo in tipoPropiedades on propiedad.TipoPropiedad equals tipo.TipoPropiedadID 
 
                              where propiedad.PropiedadID == id
 
@@ -212,7 +212,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  TotalNivel = propiedad.TotalNivel,
                                  Piso = propiedad.Piso,
                                  AñoConstruccion = propiedad.AñoConstruccion,
-                                 TipoPropiedad = propiedad.TipoPropiedad,
+                                 TipoPropiedad = tipo.TipoPropiedadID,
+                                 NombreTipo = tipo.Nombre,
                                  Disponibilidad = propiedad.Disponibilidad,
                                  Imagen = propiedad.Imagen,
                                  TipoVenta = ventas.TipoVentaID,
@@ -252,6 +253,7 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  Id = user.Id,
                                  Nombre = user.Nombre,
                                  Apellido = user.Apellido,
+                                 Foto = user.Foto,
                                  Email = user.Email,
                                  Telefono = user.PhoneNumber
 
@@ -283,9 +285,13 @@ namespace RealEstate.Persistance.Repositories.dbo
                 var tipoVentas = await _realEstateContext.TiposVenta
                     .ToListAsync();
 
+                var tipoPropiedades = await _realEstateContext.TiposPropiedad
+                    .ToListAsync();
+
                 var datos = (from propiedad in propiedades
                              join agente in usuarios on propiedad.AgenteID equals agente.Id
                              join ventas in tipoVentas on propiedad.TipoVenta equals ventas.TipoVentaID
+                             join tipo in tipoPropiedades on propiedad.TipoPropiedad equals tipo.TipoPropiedadID 
 
                              orderby propiedad.PropiedadID descending
 
@@ -311,7 +317,8 @@ namespace RealEstate.Persistance.Repositories.dbo
                                  TotalNivel = propiedad.TotalNivel,
                                  Piso = propiedad.Piso,
                                  AñoConstruccion = propiedad.AñoConstruccion,
-                                 TipoPropiedad = propiedad.TipoPropiedad,
+                                 TipoPropiedad = tipo.TipoPropiedadID,
+                                 NombreTipo = tipo.Nombre,
                                  Disponibilidad = propiedad.Disponibilidad,
                                  Imagen = propiedad.Imagen,
                                  Vendida = propiedad.Vendida,

@@ -4,236 +4,629 @@
     ViewData["Title"] = $"Vendo {Model.PropiedadesModel.Titulo}";
 }
 
-<!-- CSS de Bootstrap y Bootstrap Icons -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-<!-- JS de Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<style>
-    .property-header {
-        background-color: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1.5rem;
-    }
-    .price-badge {
-        font-size: 1.5rem;
-        padding: 0.5rem 1rem;
-    }
-    .feature-icon {
-        font-size: 1.5rem;
-        color: #0d6efd;
-    }
-    .thumbnail {
-        transition: transform 0.2s;
-    }
-    .thumbnail:hover {
-        transform: scale(1.05);
-        cursor: pointer;
-    }
-    .agent-card {
-        border-radius: 0.5rem;
-        overflow: hidden;
-        max-height: 180px;
-    }
-    .offer-btn {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        z-index: 1000;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .agent-avatar {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-    }
-    .title-agent-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 20px;
-    }
-    .title-container {
-        flex: 1;
-    }
-    .agent-container {
-        width: 300px;
-    }
-    media (max-width: 992px) {
-        .title-agent-container {
-            flex-direction: column;
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --light-gray: #f5f7fa;
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            --card-radius: 16px;
         }
-        .agent-container {
+
+        /* Hero Section */
+        .property-hero {
+            background: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80') no-repeat center center;
+            background-size: cover;
+            height: 500px;
+            position: relative;
+            margin-bottom: 2rem;
+            border-radius: 0 0 30px 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 3rem;
+            color: white;
+        }
+
+        .hero-content {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .property-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .property-location {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .price-badge {
+            background: rgba(255,255,255,0.95);
+            color: var(--primary-color);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: inline-block;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* Main Content */
+        .property-container {
+            margin-top: -100px;
+            position: relative;
+            z-index: 2;
+            background: white;
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            padding: 3rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Gallery */
+        .main-carousel {
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .carousel-item img {
+            height: 550px;
+            object-fit: cover;
             width: 100%;
         }
-    }
-</style>
 
-<div class="container py-4">
-    <!-- Contenedor de título y agente -->
-    <div class="title-agent-container mb-4">
-        <!-- Título y precio -->
-        <div class="title-container property-header">
-            <div>
-                <h3 class="mb-1">@Model.PropiedadesModel.Titulo</h3>
-                <p class="mb-0"><i class="bi bi-geo-alt-fill"></i> @Model.PropiedadesModel.Sector, @Model.PropiedadesModel.Ciudad</p>
-            </div>
-            <div class="price-badge d-inline-block">
-                RD$@Model.PropiedadesModel.Precio.ToString("N0")
-            </div>
-        </div>
-        
-        <!-- Tarjeta del agente (versión compacta) -->
-        <div class="agent-container">
-            <div class="card shadow-sm agent-card h-100">
-                <div class="card-body d-flex align-items-center">
-                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="rounded-circle me-3 shadow-sm agent-avatar" />
-                    <div>
-                        <h6 class="mb-1">@Model.UsuariosModel.Nombre @Model.UsuariosModel.Apellido</h6>
-                        <p class="text-muted small mb-2">Agente Inmobiliario</p>
-                        <!--
-                        <div class="d-flex gap-2">
-                            <a href="tel:@Model.UsuariosModel.Telefono" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-telephone"></i>
-                            </a>
-                            <a href="https://wa.me/Model.UsuariosModel.Celular" target="_blank" class="btn btn-sm btn-success">
-                                <i class="bi bi-whatsapp"></i>
-                            </a>
-                            <a href="mailto:@Model.UsuariosModel.Email" class="btn btn-sm btn-outline-dark">
-                                <i class="bi bi-envelope-fill"></i>
-                            </a>
-                        </div>
-                        -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        .thumbnail-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
 
-    <div class="row">
-        <!-- Galería + Info -->
-        <div class="col-lg-12">
-            <!-- Galería -->
-            @if (Model.PropiedadFotosModel != null && Model.PropiedadFotosModel.Any())
-            {
-                <div id="mainCarousel" class="carousel slide mb-3 shadow-sm" data-bs-ride="carousel">
-                    <div class="carousel-inner rounded">
-                        @for (int i = 0; i < Model.PropiedadFotosModel.Count; i++)
-                        {
-                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                <img src="@Url.Content(Model.PropiedadFotosModel[i].Imagen)" class="d-block w-100" style="max-height: 500px; object-fit: cover;" />
-                            </div>
-                        }
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon"></span>
-                    </button>
-                </div>
+        .thumbnail {
+            width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 3px solid transparent;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
 
-                <!-- Miniaturas -->
-                <div class="d-flex flex-wrap gap-2 mb-4">
-                    @for (int i = 0; i < Model.PropiedadFotosModel.Count; i++)
-                    {
-                        <img src="@Url.Content(Model.PropiedadFotosModel[i].Imagen)"
-                             class="thumbnail rounded"
-                             style="height: 80px; width: auto; object-fit: cover;"
-                             onclick="$('#mainCarousel').carousel(@i)" />
-                    }
-                </div>
+            .thumbnail:hover {
+                transform: translateY(-5px) scale(1.05);
+                border-color: var(--primary-color);
+                box-shadow: 0 10px 20px rgba(67,97,238,0.2);
             }
 
-            <!-- Descripción -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-card-text"></i> Descripción</h5>
-                    <p class="card-text">@Model.PropiedadesModel.Descripcion</p>
-                </div>
-            </div>
-
-            <!-- Resumen -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-4"><i class="bi bi-info-circle"></i> Detalles de la propiedad</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-house-door-fill feature-icon me-2"></i>Tipo de propiedad</span>
-                                    <span class="badge bg-light text-dark">@Model.PropiedadesModel.TipoPropiedad</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-geo-alt-fill feature-icon me-2"></i>Ubicación</span>
-                                    <span class="badge bg-light text-dark">@Model.PropiedadesModel.Ciudad, @Model.PropiedadesModel.Sector</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-aspect-ratio-fill feature-icon me-2"></i>Tamaño del terreno</span>
-                                    <span class="badge bg-light text-dark">@Model.PropiedadesModel.TamañoTerreno m²</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-calendar-event feature-icon me-2"></i>Año de construcción</span>
-                                    <span class="badge bg-light text-dark">@Model.PropiedadesModel.AñoConstruccion.ToString("yyyy")</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-6">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>
-                                        <i class="fas fa-bed"></i>
-                                        Habitaciones
-                                    </span>
-                                    <span class="badge bg-light text-dark">@Model.PropiedadesModel.Habitaciones</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-badge-wc-fill feature-icon me-2"></i>Baños</span>
-                                    <span class="badge bg-light text-dark">@Model.PropiedadesModel.Baños</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-car-front-fill feature-icon me-2"></i>Parqueos</span>
-                                    <span class="badge bg-light text-dark">@Model.PropiedadesModel.Parqueos</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-building feature-icon me-2"></i>Piso/Nivel</span>
-                                    <span class="badge bg-light text-dark">@Model.PropiedadesModel.Piso de @Model.PropiedadesModel.TotalNivel</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Características adicionales (comentado) -->
-            @*
-            @if (Model.PropiedadesModel.Caracteristicas != null && Model.PropiedadesModel.Caracteristicas.Any())
-            {
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4"><i class="bi bi-star-fill"></i> Características</h5>
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach (var feature in Model.PropiedadesModel.Caracteristicas)
-                            {
-                                <span class="badge bg-primary bg-opacity-10 text-primary p-2">
-                                    <i class="bi bi-check-circle-fill me-1"></i> @feature
-                                </span>
-                            }
-                        </div>
-                    </div>
-                </div>
+            .thumbnail.active {
+                border-color: var(--primary-color);
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(67,97,238,0.3);
             }
-            *@
+
+        /* Cards Design */
+        .detail-card {
+            border: none;
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+            .detail-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+            }
+
+        .card-header-custom {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1.2rem 2rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+            border-bottom: none;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Description Card */
+        .description-card .card-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--dark-color);
+        }
+
+        /* Features Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+            .feature-card:hover {
+                background: white;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            }
+
+        .feature-icon-container {
+            width: 50px;
+            height: 50px;
+            background: rgba(67,97,238,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.2rem;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .feature-content {
+            flex-grow: 1;
+        }
+
+        .feature-label {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-bottom: 0.2rem;
+        }
+
+        .feature-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        /* Amenities Card */
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .amenity-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: var(--light-gray);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+            .amenity-item:hover {
+                background: white;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+                transform: translateX(5px);
+            }
+
+        .amenity-icon {
+            color: var(--primary-color);
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .amenity-name {
+            font-weight: 500;
+        }
+
+        /* Floating Button */
+        .offer-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 1000;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1.2rem 2.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 15px 35px rgba(67,97,238,0.3);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+            .offer-btn:hover {
+                transform: translateY(-5px) scale(1.05);
+                box-shadow: 0 20px 40px rgba(67,97,238,0.4);
+                color: white;
+            }
+
+        /* Responsive */
+        @@media (max-width: 1200px) {
+            .property-container {
+                padding: 2.5rem;
+            }
+        }
+
+        @@media (max-width: 992px) {
+            .property-title {
+                font-size: 2.5rem;
+            }
+
+            .property-hero {
+                height: 450px;
+            }
+
+            .carousel-item img {
+                height: 450px;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .property-hero {
+                height: 380px;
+                border-radius: 0 0 20px 20px;
+            }
+
+            .hero-overlay {
+                padding: 2rem;
+            }
+
+            .property-title {
+                font-size: 2rem;
+            }
+
+            .property-location {
+                font-size: 1.1rem;
+            }
+
+            .price-badge {
+                font-size: 1.4rem;
+                padding: 0.6rem 1.5rem;
+            }
+
+            .property-container {
+                padding: 2rem;
+                margin-top: -80px;
+            }
+
+            .carousel-item img {
+                height: 350px;
+            }
+
+            .thumbnail {
+                width: 90px;
+                height: 70px;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .offer-btn {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+                bottom: 30px;
+                right: 30px;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .property-hero {
+                height: 320px;
+            }
+
+            .property-title {
+                font-size: 1.8rem;
+            }
+
+            .property-container {
+                padding: 1.5rem;
+                border-radius: 16px;
+            }
+
+            .carousel-item img {
+                height: 250px;
+            }
+
+            .thumbnail-container {
+                gap: 0.8rem;
+            }
+
+            .thumbnail {
+                width: 70px;
+                height: 55px;
+                border-radius: 8px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .amenities-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .offer-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+}
+
+<!-- Hero Section with Cover Image -->
+<div class="property-hero">
+    <div class="hero-overlay">
+        <div class="hero-content">
+            <h1 class="property-title">@Model.PropiedadesModel.Titulo</h1>
+            <div class="property-location">
+                <i class="fas fa-map-marker-alt me-2"></i>
+                @Model.PropiedadesModel.Sector, @Model.PropiedadesModel.Ciudad
+            </div>
+            <div class="price-badge">
+                RD$ @Model.PropiedadesModel.Precio.ToString("N0")
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Botón flotante para ver ofertas -->
+<div class="container px-0">
+    <div class="property-container">
+        <!-- Gallery -->
+        @if (Model.PropiedadFotosModel != null && Model.PropiedadFotosModel.Any())
+        {
+            <div id="mainCarousel" class="carousel slide main-carousel" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @for (int i = 0; i < Model.PropiedadFotosModel.Count; i++)
+                    {
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <img src="@Url.Content(Model.PropiedadFotosModel[i].Imagen)" class="d-block w-100" alt="Foto de propiedad" />
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <div class="thumbnail-container">
+                @for (int i = 0; i < Model.PropiedadFotosModel.Count; i++)
+                {
+                    <img src="@Url.Content(Model.PropiedadFotosModel[i].Imagen)"
+                         class="thumbnail @(i == 0 ? "active" : "")"
+                         onclick="$('#mainCarousel').carousel(@i); $('.thumbnail').removeClass('active'); $(this).addClass('active');" />
+                }
+            </div>
+        }
+
+        <!-- Description -->
+        <div class="detail-card description-card">
+            <div class="card-header-custom">
+                <i class="fas fa-align-left me-2"></i> Descripción
+            </div>
+            <div class="card-body">
+                <p class="card-text">@Model.PropiedadesModel.Descripcion</p>
+            </div>
+        </div>
+
+        <!-- Property Features -->
+        <div class="detail-card">
+            <div class="card-header-custom">
+                <i class="fas fa-home me-2"></i> Detalles de la Propiedad
+            </div>
+            <div class="card-body">
+                <div class="feature-grid">
+                    <!-- Feature 1 -->
+                    <div class="feature-card">
+                        <div class="feature-icon-container">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-label">Tipo de propiedad</div>
+                            <div class="feature-value">@Model.PropiedadesModel.NombreTipo</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="feature-card">
+                        <div class="feature-icon-container">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-label">Ubicación</div>
+                            <div class="feature-value">@Model.PropiedadesModel.Ciudad</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="feature-card">
+                        <div class="feature-icon-container">
+                            <i class="fas fa-ruler-combined"></i>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-label">Tamaño del terreno</div>
+                            <div class="feature-value">@Model.PropiedadesModel.TamañoTerreno m²</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="feature-card">
+                        <div class="feature-icon-container">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-label">Año de construcción</div>
+                            <div class="feature-value">@Model.PropiedadesModel.AñoConstruccion.ToString("yyyy")</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="feature-card">
+                        <div class="feature-icon-container">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-label">Habitaciones</div>
+                            <div class="feature-value">@Model.PropiedadesModel.Habitaciones</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="feature-card">
+                        <div class="feature-icon-container">
+                            <i class="fas fa-bath"></i>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-label">Baños</div>
+                            <div class="feature-value">@Model.PropiedadesModel.Baños</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 7 -->
+                    <div class="feature-card">
+                        <div class="feature-icon-container">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-label">Parqueos</div>
+                            <div class="feature-value">@Model.PropiedadesModel.Parqueos</div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 8 -->
+                    <div class="feature-card">
+                        <div class="feature-icon-container">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="feature-content">
+                            <div class="feature-label">Piso/Nivel</div>
+                            <div class="feature-value">@Model.PropiedadesModel.Piso de @Model.PropiedadesModel.TotalNivel</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Amenities -->
+        @if (Model.MejorasModels != null && Model.MejorasModels.Any())
+        {
+            <div class="detail-card">
+                <div class="card-header-custom">
+                    <i class="fas fa-star me-2"></i> Amenidades y Características
+                </div>
+                <div class="card-body">
+                    <div class="amenities-grid">
+                        @foreach (var mejora in Model.MejorasModels)
+                        {
+                            <div class="amenity-item">
+                                <i class="fas fa-check-circle amenity-icon"></i>
+                                <span class="amenity-name">@mejora.Nombre.Replace("G/", "")</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Floating Button -->
 <a href="@Url.Action("PropertyOffers", "Propiedades", new { id = Model.PropiedadesModel.PropiedadID })"
-   class="btn btn-warning offer-btn rounded-pill px-4 py-2 d-flex align-items-center">
-    <i class="bi bi-cash-stack me-2"></i> Ver Ofertas
+   class="offer-btn">
+    <i class="fas fa-hand-holding-usd me-2"></i> Ver Ofertas
 </a>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Activar thumbnails al hacer clic
+        $(document).ready(function () {
+            $('.thumbnail').click(function () {
+                $('.thumbnail').removeClass('active');
+                $(this).addClass('active');
+            });
+
+            // Animación para las cards de características
+            $('.feature-card').each(function (index) {
+                $(this).css('opacity', '0');
+                $(this).css('transform', 'translateY(20px)');
+                $(this).delay(index * 100).animate({
+                    opacity: 1,
+                    transform: 'translateY(0)'
+                }, 400);
+            });
+
+            // Animación para las amenidades
+            $('.amenity-item').each(function (index) {
+                $(this).css('opacity', '0');
+                $(this).delay(index * 50).animate({
+                    opacity: 1
+                }, 300);
+            });
+        });
+    </script>
+}

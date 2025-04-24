@@ -1,71 +1,130 @@
 ﻿@model IEnumerable<RealEstate.Persistance.Models.dbo.PropiedadesModel>
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Propiedades Favoritas";
 }
 
-
-<div class="mb-4 position-relative text-white">
-    <img src="~/images/program/propiedadesHome.jpg" alt="Portada" class="img-fluid w-100"
-         style="max-height: 300px; object-fit: cover; filter: brightness(60%);" />
-    <h1 class="position-absolute top-50 start-50 translate-middle text-center fw-bold display-5">
-        Propiedades Favoritas
-    </h1>
+<!-- Hero Section Moderna -->
+<div class="hero-banner position-relative overflow-hidden rounded-4 mb-5">
+    <div class="hero-image-wrapper">
+        <img src="~/images/program/propiedadesHome.jpg" alt="Portada" class="hero-image">
+    </div>
+    <div class="hero-content text-center text-white">
+        <h1 class="display-4 fw-bold mb-3">Tus Propiedades Favoritas</h1>
+        <p class="lead mb-0">Descubre joyas inmobiliarias seleccionadas especialmente para ti</p>
+    </div>
 </div>
 
+<div class="container">
     @if (Model == null || !Model.Any())
     {
-        <div class="alert alert-info text-center">
-            <h4 class="alert-heading">Sin propiedades</h4>
-            <p>No hay propiedades registradas aún. Agrega una nueva para comenzar.</p>
+        <div class="empty-state text-center py-5">
+            <div class="empty-state-icon">
+                <i class="fas fa-heart-broken fa-4x text-primary"></i>
+            </div>
+            <h3 class="mt-4">No tienes propiedades favoritas aún</h3>
+            <p class="text-muted mb-4">Comienza a explorar y marca tus propiedades preferidas</p>
+            <a href="#" class="btn btn-primary btn-lg px-4">
+                <i class="fas fa-search me-2"></i>Explorar Propiedades
+            </a>
         </div>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var item in Model)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm border-0">
-                        @* Imagen principal *@
-                        <img src="@item.Imagen" class="card-img-top img-fluid" alt="Imagen de @item.Titulo" style="height: 220px; object-fit: cover;">
+                    <div class="property-card card h-100 border-0 shadow-sm overflow-hidden">
+                        <!-- Badge de Destacado -->
+                        <div class="property-badge @(item.Precio > 500000 ? "premium" : "standard")">
+                            <i class="fas @(item.Precio > 500000 ? "fa-crown" : "fa-star") me-1"></i>
+                            @(item.Precio > 500000 ? "Premium" : "Destacado")
+                        </div>
 
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-primary">@item.Titulo</h5>
-                            <p class="card-text text-muted mb-2">@item.Descripcion</p>
-
-                            <div class="mb-2">
-                                <span class="badge bg-success fs-6">
-                                    <i class="fas fa-dollar-sign"></i> @item.Precio.ToString("N0")
-                                </span>
+                        <!-- Gallery Slider -->
+                        <div class="property-image-container">
+                            <img src="@item.Imagen" class="property-image" alt="@item.Titulo">
+                            <div class="image-overlay d-flex justify-content-center align-items-center">
+                                <button class="btn btn-light btn-sm rounded-pill px-3 shadow-sm">
+                                    <i class="fas fa-expand-arrows-alt me-1"></i> Vista 360°
+                                </button>
                             </div>
+                        </div>
 
-                            <div class="mb-2 text-secondary">
-                                <i class="fas fa-map-marker-alt"></i> @item.Direccion, @item.Ciudad
-                            </div>
-
-                            <div class="d-flex justify-content-between text-muted mb-3 flex-wrap" style="gap: 10px;">
-                                <small><i class="fas fa-building"></i> Piso: @item.Piso</small>
-                                <small><i class="fas fa-layer-group"></i> Niveles: @item.TotalNivel</small>
-                                <small><i class="fas fa-building"></i> Habitaciones: @item.Habitaciones</small>
-                                <small><i class="fas fa-building"></i> Baños: @item.Baños</small>
-                                <small><i class="fas fa-building"></i> Parqueos: @item.Parqueos</small>
-                                <small><i class="fas fa-building"></i> Terreno: @item.TamañoTerreno</small>
-
-                                <small><i class="fas fa-home"></i> Tipo: @item.TipoPropiedad</small>
-                                <small><i class="fas fa-calendar-alt"></i> Año: @item.AñoConstruccion</small>
-                            </div>
-
-                            <div class="mt-auto">
-                                <div class="btn-group w-100">
-                                    <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@item.PropiedadID">
-                                        <i class="fas fa-eye"></i> Ver
-                                    </a>
-
-                                    <form asp-action="Favorite" method="post" style="display:inline;">
-                                        <input type="hidden" name="PropiedadID" value="@item.PropiedadID" />
-                                    </form>
+                        <div class="card-body">
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h3 class="property-title mb-1">@item.Titulo</h3>
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                        <small>@item.Direccion, @item.Ciudad</small>
+                                    </div>
                                 </div>
+                                <div class="property-price">
+                                    <span class="text-primary fw-bold">$@item.Precio.ToString("N0")</span>
+                                    <small class="d-block text-muted text-end">@item.TipoPropiedad</small>
+                                </div>
+                            </div>
+
+                            <!-- Descripción -->
+                            <p class="property-description text-muted mb-4">@item.Descripcion.(120)</p>
+
+                            <!-- Características -->
+                            <div class="property-features mb-4">
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-bed feature-icon"></i>
+                                            <span class="feature-value">@item.Habitaciones</span>
+                                            <small class="feature-label">Habs</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-bath feature-icon"></i>
+                                            <span class="feature-value">@item.Baños</span>
+                                            <small class="feature-label">Baños</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-car feature-icon"></i>
+                                            <span class="feature-value">@item.Parqueos</span>
+                                            <small class="feature-label">Parking</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-layer-group feature-icon"></i>
+                                            <span class="feature-value">@item.TotalNivel</span>
+                                            <small class="feature-label">Pisos</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-ruler-combined feature-icon"></i>
+                                            <span class="feature-value">@item.TamañoTerreno</span>
+                                            <small class="feature-label">m²</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="feature-box">
+                                            <i class="fas fa-calendar feature-icon"></i>
+                                            <span class="feature-value">@item.AñoConstruccion.Year</span>
+                                            <small class="feature-label">Año</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Acciones -->
+                            <div class="d-flex justify-content-between">
+                                <a asp-action="Details" asp-route-id="@item.PropiedadID"
+                                   class="btn btn-primary btn-sm rounded-pill px-3">
+                                    <i class="fas fa-eye me-1"></i> Ver Detalles
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -75,6 +134,181 @@
     }
 </div>
 
+@section Styles {
+    <style>
+        /* Estilos modernos */
+        .hero-banner {
+            height: 400px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-image-wrapper {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+            transition: transform 0.5s ease;
+        }
+
+        .hero-banner:hover .hero-image {
+            transform: scale(1.03);
+        }
+
+        .hero-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .empty-state {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 40px;
+        }
+
+        .empty-state-icon {
+            color: rgba(13, 110, 253, 0.2);
+        }
+
+        .property-card {
+            border-radius: 12px !important;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+            .property-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12) !important;
+            }
+
+        .property-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 2;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .premium {
+            background: linear-gradient(135deg, #ffc107, #ff6b00);
+        }
+
+        .standard {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+
+        .property-image-container {
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .property-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .property-card:hover .property-image {
+            transform: scale(1.05);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .property-card:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .property-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #212529;
+        }
+
+        .property-price {
+            text-align: right;
+        }
+
+            .property-price span {
+                font-size: 1.3rem;
+                line-height: 1.2;
+            }
+
+        .property-description {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .feature-box {
+            text-align: center;
+            padding: 8px 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+            .feature-box:hover {
+                background: #f8f9fa;
+                transform: translateY(-3px);
+            }
+
+        .feature-icon {
+            font-size: 1.1rem;
+            color: #0d6efd;
+            margin-bottom: 5px;
+        }
+
+        .feature-value {
+            display: block;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .feature-label {
+            font-size: 0.7rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-rounded {
+            border-radius: 50px !important;
+        }
+    </style>
+}
+
 @section Scripts {
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        // Extensión para truncar texto
+        String.prototype.Truncate = function (length) {
+            return this.length > length ? this.substring(0, length) + '...' : this;
+        };
+    </script>
 }
