@@ -46,9 +46,6 @@
                         <div class="property-image-container">
                             <img src="@item.Imagen" class="property-image" alt="@item.Titulo">
                             <div class="image-overlay d-flex justify-content-center align-items-center">
-                                <button class="btn btn-light btn-sm rounded-pill px-3 shadow-sm">
-                                    <i class="fas fa-expand-arrows-alt me-1"></i> Vista 360°
-                                </button>
                             </div>
                         </div>
 
@@ -64,12 +61,12 @@
                                 </div>
                                 <div class="property-price">
                                     <span class="text-primary fw-bold">$@item.Precio.ToString("N0")</span>
-                                    <small class="d-block text-muted text-end">@item.TipoPropiedad</small>
+                                    <small class="d-block text-muted text-end">@item.NombreTipo</small>
                                 </div>
                             </div>
 
                             <!-- Descripción -->
-                            <p class="property-description text-muted mb-4">@item.Descripcion.(120)</p>
+                            <p class="property-description text-muted mb-4">@item.Descripcion</p>
 
                             <!-- Características -->
                             <div class="property-features mb-4">

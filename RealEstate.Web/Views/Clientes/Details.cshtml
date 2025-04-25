@@ -193,6 +193,28 @@
             padding: 1.5rem 0;
         }
     }
+
+    .feature-item {
+        transition: all 0.3s ease;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+        .feature-item:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-3px);
+        }
+
+    .feature-icon.text-danger {
+        color: #dc3545 !important; /* Rojo Bootstrap */
+        font-size: 1.8rem; /* Tamaño aumentado */
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
 </style>
 
 <div class="property-header text-center mb-4">
@@ -277,10 +299,12 @@
                             <small class="text-muted">Año construcción</small>
                         </div>
 
-                        <div class="col-6 col-md-4 mb-3 text-center">
-                            <div class="feature-icon"><i class="bi bi-bed-fill"></i></div>
-                            <div class="feature-value">@Model.PropiedadesModel.Habitaciones</div>
-                            <small class="text-muted">Habitaciones</small>
+                        <div class="col-6 col-md-4 mb-3 text-center feature-item">
+                            <div class="feature-icon text-danger">
+                                <i class="fas fa-bed"></i>  <!-- Tamaño normal (quitamos fa-lg) -->
+                            </div>
+                            <div class="feature-value fw-bold text-dark fs-6">@Model.PropiedadesModel.Habitaciones</div>
+                            <small class="text-muted fs-7">Habitaciones</small>
                         </div>
 
                         <div class="col-6 col-md-4 mb-3 text-center">
